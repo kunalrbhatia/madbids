@@ -7,17 +7,7 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { MButton, MTextField } from "../common/FormElements";
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © madbids "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import { MButton, MTextField, Copyright } from "../common/FormElements";
 export default class Forgot extends Component {
   constructor(props) {
     super(props);
@@ -43,7 +33,7 @@ export default class Forgot extends Component {
             alignItems: "center"
           }}
         >
-          <Avatar style={{ margin: 1, backgroundColor: "#00f" }}>
+          <Avatar style={{ margin: 1, backgroundColor: "#000" }}>
             <VpnKeyIcon />
           </Avatar>
           <Typography component="h1" variant="h5">

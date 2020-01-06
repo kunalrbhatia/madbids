@@ -5,6 +5,8 @@ import Forgot from "./components/users/forget";
 import { Router, Route } from "react-router-dom";
 import history from "./components/common/history";
 import { Helper } from "./components/common/helper";
+import Bidlist from "./components/bids/bidlist";
+import BidPage from "./components/bids/bidpage";
 
 class App extends Component {
   constructor() {
@@ -28,21 +30,30 @@ class App extends Component {
       return (
         <Router basename={"/db"} history={history}>
           <Route path="/login" component={props => <Login {...props} globalVars={globalVars} />} />
-          {/* <Route path="/signup" component={props => <Signup {...props} globalVars={globalVars} />} /> */}
         </Router>
       );
     } else if (hash === "/newuser" || hash === "/signup") {
       return (
         <Router basename={"/db"} history={history}>
           <Route path="/newuser" component={props => <NewUser {...props} globalVars={globalVars} />} />
-          {/* <Route path="/signup" component={props => <Signup {...props} globalVars={globalVars} />} /> */}
         </Router>
       );
     } else if (hash === "/forgot-passowrd") {
       return (
         <Router basename={"/db"} history={history}>
           <Route path="/forgot-passowrd" component={props => <Forgot {...props} globalVars={globalVars} />} />
-          {/* <Route path="/signup" component={props => <Signup {...props} globalVars={globalVars} />} /> */}
+        </Router>
+      );
+    } else if (hash === "/bidlist") {
+      return (
+        <Router basename={"/db"} history={history}>
+          <Route path="/bidlist" component={props => <Bidlist {...props} globalVars={globalVars} />} />
+        </Router>
+      );
+    } else if (hash === "/bidpage") {
+      return (
+        <Router basename={"/db"} history={history}>
+          <Route path="/bidpage" component={props => <BidPage {...props} globalVars={globalVars} />} />
         </Router>
       );
     } else {
@@ -53,19 +64,6 @@ class App extends Component {
       );
     }
   }
-  /* return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
-          React
-        </a>
-      </header>
-    </div>
-  ); */
 }
 
 export default App;

@@ -21,7 +21,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { IconButton, Snackbar/* , Icon  */} from "@material-ui/core/";
+import { IconButton, Snackbar /* , Icon  */, Typography } from "@material-ui/core/";
 import CloseIcon from "@material-ui/icons/Close";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -50,7 +50,7 @@ const useStyles = makeStyles(theme => ({
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    fontSize:12,
+    fontSize: 12,
     "& label.Mui-focused": {
       color: "#2AAA9E"
     },
@@ -204,7 +204,15 @@ function MCheckbox(params) {
     </FormGroup>
   );
 }
-
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {"Copyright © madbids "}
+      {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
 function MTextField(params) {
   const classes = useStyles();
   if (params.type === "select") {
@@ -324,4 +332,4 @@ function MSnackbar(params) {
   );
 }
 
-export { MTextField, MButton, MDialog, MSwithch, MCheckbox, MSnackbar };
+export { MTextField, MButton, MDialog, MSwithch, MCheckbox, MSnackbar, Copyright };

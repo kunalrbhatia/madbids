@@ -10,17 +10,7 @@ import Box from "@material-ui/core/Box";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { MButton } from "../common/FormElements";
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © madbids "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import { MButton, Copyright } from "../common/FormElements";
 export default class SignIn extends Component {
   constructor(props) {
     super(props);
@@ -44,7 +34,7 @@ export default class SignIn extends Component {
             alignItems: "center"
           }}
         >
-          <Avatar style={{ margin: 1, backgroundColor: "#00f" }}>
+          <Avatar style={{ margin: 1, backgroundColor: "#000" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
