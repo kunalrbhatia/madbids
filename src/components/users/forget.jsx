@@ -1,16 +1,13 @@
 import React, { Component } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
+import VpnKeyIcon from "@material-ui/icons/VpnKey";
 import Link from "@material-ui/core/Link";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { MButton } from "../common/FormElements";
+import { MButton, MTextField } from "../common/FormElements";
 
 function Copyright() {
   return (
@@ -21,7 +18,7 @@ function Copyright() {
     </Typography>
   );
 }
-export default class SignIn extends Component {
+export default class Forgot extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,8 +26,10 @@ export default class SignIn extends Component {
     };
   }
   handleChange = () => event => {
-    console.log("ok");
+    if (event.target.textContent === "Submit") {
+    }
   };
+
   render() {
     const { onChange } = this.state;
     return (
@@ -38,17 +37,17 @@ export default class SignIn extends Component {
         <CssBaseline />
         <div
           style={{
-            marginTop: "6em",
+            marginTop: "1em",
             display: "flex",
             flexDirection: "column",
             alignItems: "center"
           }}
         >
           <Avatar style={{ margin: 1, backgroundColor: "#00f" }}>
-            <LockOutlinedIcon />
+            <VpnKeyIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Forgot Password
           </Typography>
           <form
             style={{
@@ -57,53 +56,42 @@ export default class SignIn extends Component {
             }}
             noValidate
           >
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
+            <MTextField
+              required={true}
+              type="email"
               name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
+              fullWidth={true}
+              label="E-mail"
+              margin="dense"
+              onChange={onChange}
+              helperText="E-mail"
+            ></MTextField>
+
             <MButton
+              name="submit"
               style={{ margin: "3px 0px 2px" }}
               value={"Submit"}
               color={"primary"}
               onClick={onChange}
               fullWidth={true}
             >
-              Login
+              Submit
             </MButton>
             <Grid container>
               <Grid item xs>
-                <Link href="/forgot-passowrd" variant="body2">
-                  Forgot password?
+                <Link href="/" variant="body2">
+                  Home
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="/newuser" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                <Link href="/login" variant="body2">
+                  {"Login"}
                 </Link>
               </Grid>
             </Grid>
           </form>
         </div>
-        <Box mt={8}>
+        <Box mt={4}>
           <Copyright />
         </Box>
       </Container>

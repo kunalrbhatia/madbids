@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Login from "./components/users/login";
-import { Router, Route, Switch } from "react-router-dom";
+import NewUser from "./components/users/newUser";
+import Forgot from "./components/users/forget";
+import { Router, Route } from "react-router-dom";
 import history from "./components/common/history";
 import { Helper } from "./components/common/helper";
 
@@ -22,10 +24,24 @@ class App extends Component {
   render() {
     let hash = history.location.pathname;
     const { globalVars } = this.state;
-    if (hash === "/login" || hash === "/signup") {
+    if (hash === "/login" || hash === "/signin") {
       return (
         <Router basename={"/db"} history={history}>
           <Route path="/login" component={props => <Login {...props} globalVars={globalVars} />} />
+          {/* <Route path="/signup" component={props => <Signup {...props} globalVars={globalVars} />} /> */}
+        </Router>
+      );
+    } else if (hash === "/newuser" || hash === "/signup") {
+      return (
+        <Router basename={"/db"} history={history}>
+          <Route path="/newuser" component={props => <NewUser {...props} globalVars={globalVars} />} />
+          {/* <Route path="/signup" component={props => <Signup {...props} globalVars={globalVars} />} /> */}
+        </Router>
+      );
+    } else if (hash === "/forgot-passowrd") {
+      return (
+        <Router basename={"/db"} history={history}>
+          <Route path="/forgot-passowrd" component={props => <Forgot {...props} globalVars={globalVars} />} />
           {/* <Route path="/signup" component={props => <Signup {...props} globalVars={globalVars} />} /> */}
         </Router>
       );
