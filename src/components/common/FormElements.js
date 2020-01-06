@@ -21,7 +21,15 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { IconButton, Snackbar /* , Icon  */, Typography } from "@material-ui/core/";
+import {
+  IconButton,
+  Snackbar /* , Icon  */,
+  Typography,
+  Card,
+  CardHeader,
+  CardMedia,
+  CardContent
+} from "@material-ui/core/";
 import CloseIcon from "@material-ui/icons/Close";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -184,7 +192,47 @@ function MSwithch(params) {
     />
   );
 }
-
+function MCard(params) {
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ];
+  return (
+    <Card raised={true} style={{ maxWidth: 345 }}>
+      <CardHeader
+        title={
+          <Typography variant="body2" color="textSecondary" component="p">
+            {params.title}
+          </Typography>
+        }
+        subheader={monthNames[new Date().getMonth()] + ", " + new Date().getFullYear()}
+      />
+      <CardMedia
+        style={{
+          height: 0,
+          paddingTop: "56.25%" // 16:9
+        }}
+        image={params.image}
+        title={params.imageTitle}
+      />
+      <CardContent style={{}}>
+        <Typography variant="body2" color="textSecondary" component="p">
+          {params.content}
+        </Typography>
+      </CardContent>
+    </Card>
+  );
+}
 function MCheckbox(params) {
   return (
     <FormGroup>
@@ -332,4 +380,4 @@ function MSnackbar(params) {
   );
 }
 
-export { MTextField, MButton, MDialog, MSwithch, MCheckbox, MSnackbar, Copyright };
+export { MTextField, MButton, MDialog, MSwithch, MCheckbox, MSnackbar, Copyright, MCard };
