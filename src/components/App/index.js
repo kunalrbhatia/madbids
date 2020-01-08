@@ -8,7 +8,7 @@ import { Helper } from "../common/helper";
 import Bidlist from "../bids/bidlist";
 import BidPage from "../bids/bidpage";
 import * as ROUTES from "../../constants/routes";
-let hash = "";
+//let hash = "";
 class App extends Component {
   constructor() {
     super();
@@ -25,9 +25,8 @@ class App extends Component {
     };
   }
   render() {
-    hash = history.location.pathname;
+    //hash = history.location.pathname;
     const { globalVars } = this.state;
-    console.log("hash", hash);
     return (
       <Router basename={"/db"} history={history}>
         <Switch>

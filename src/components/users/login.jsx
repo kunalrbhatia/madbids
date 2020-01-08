@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import Link from "@material-ui/core/Link";
@@ -10,19 +9,41 @@ import Box from "@material-ui/core/Box";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { MButton, Copyright } from "../common/FormElements";
-export default class SignIn extends Component {
+import { MButton, Copyright, MTextField } from "../common/FormElements";
+import { withFirebase } from "../Firebase";
+import { compose } from "recompose";
+import * as ROUTES from "../../constants/routes";
+class Login extends Component {
   constructor(props) {
     super(props);
+    console.log(props);
     this.state = {
-      onChange: this.handleChange()
+      onChange: this.handleChange(),
+      email: "",
+      passowrd: "",
+      error: ""
     };
   }
-  handleChange = () => event => {
-    console.log("ok");
+  handleChange = () => e => {
+    if (e.currentTarget.name === "email") {
+      this.setState({ email: e.currentTarget.value });
+    } else if (e.currentTarget.name === "password") {
+      this.setState({ password: e.currentTarget.value });
+    } else if (e.currentTarget.name === "submit") {
+      const { email, password } = this.state;
+      this.props.firebase
+        .doSignInWithEmailAndPassword(email, password)
+        .then(() => {
+          this.props.history.push(ROUTES.BIDLIST);
+        })
+        .catch(error => {
+          this.setState({ error });
+        });
+      e.preventDefault();
+    }
   };
   render() {
-    const { onChange } = this.state;
+    const { onChange, email } = this.state;
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -47,28 +68,27 @@ export default class SignIn extends Component {
             }}
             noValidate
           >
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
+            <MTextField
+              required={true}
+              type="email"
+              value={email}
               name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
+              fullWidth={true}
+              label="E-mail Address"
+              margin="dense"
+              onChange={onChange}
+              helperText="E-mail"
+            ></MTextField>
+            <MTextField
+              required={true}
               type="password"
-              id="password"
-              autoComplete="current-password"
-            />
+              name="password"
+              fullWidth={true}
+              label="Password"
+              margin="dense"
+              onChange={onChange}
+              helperText="Password"
+            ></MTextField>
             <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
             <MButton
               style={{ margin: "3px 0px 2px" }}
@@ -76,6 +96,7 @@ export default class SignIn extends Component {
               color={"primary"}
               onClick={onChange}
               fullWidth={true}
+              name={"submit"}
             >
               Login
             </MButton>
@@ -100,3 +121,5 @@ export default class SignIn extends Component {
     );
   }
 }
+const login = compose(withFirebase)(Login);
+export default withFirebase(login);
