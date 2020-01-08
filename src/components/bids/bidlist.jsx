@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Container, Box } from "@material-ui/core";
 import { Copyright, MCard } from "../common/FormElements";
 import paytm_cash from "../../assets/images/paytm_cash.jpg";
+import * as ROUTES from "../../constants/routes";
 export default class Bidlist extends Component {
   constructor(props) {
     super(props);
@@ -11,7 +12,7 @@ export default class Bidlist extends Component {
   }
   handleChange = () => event => {
     if (event.currentTarget.name === "bid_1") {
-      this.props.history.push("./bidpage");
+      this.props.history.push(ROUTES.BIDPAGE);
     }
   };
   render() {

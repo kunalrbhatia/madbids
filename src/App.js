@@ -7,6 +7,7 @@ import history from "./components/common/history";
 import { Helper } from "./components/common/helper";
 import Bidlist from "./components/bids/bidlist";
 import BidPage from "./components/bids/bidpage";
+import * as ROUTES from "./constants/routes.js";
 let hash = "";
 class App extends Component {
   constructor() {
@@ -25,42 +26,20 @@ class App extends Component {
   }
   render() {
     hash = history.location.pathname;
-    console.log("hash", hash);
     const { globalVars } = this.state;
-    if (hash === "/login" || hash === "/signin") {
-      return (
-        <Router basename={"/db"} history={history}>
-          <Route path="/login" component={props => <Login {...props} globalVars={globalVars} />} />
-        </Router>
-      );
-    } else if (hash === "/newuser" || hash === "/signup") {
-      return (
-        <Router basename={"/db"} history={history}>
-          <Route path="/newuser" component={props => <NewUser {...props} globalVars={globalVars} />} />
-        </Router>
-      );
-    } else if (hash === "/forgot-passowrd") {
-      return (
-        <Router basename={"/db"} history={history}>
-          <Route path="/forgot-passowrd" component={props => <Forgot {...props} globalVars={globalVars} />} />
-        </Router>
-      );
-    } else if (hash === "/bidlist") {
-      return (
-        <Router basename={"/db"} history={history}>
-          <Route path="/bidlist" component={props => <Bidlist {...props} globalVars={globalVars} />} />
-        </Router>
-      );
-    } else {
-      return (
-        <Router basename={"/db"} history={history}>
-          <Switch>
-            <Route path="/bidpage" component={props => <BidPage {...props} globalVars={globalVars} />} />
-            <Route path="*" component={props => <Login {...props} globalVars={globalVars} />} />
-          </Switch>
-        </Router>
-      );
-    }
+    console.log("hash", hash);
+    return (
+      <Router basename={"/db"} history={history}>
+        <Switch>
+          <Route path={ROUTES.SIGN_IN} component={props => <Login {...props} globalVars={globalVars} />} />
+          <Route path={ROUTES.SIGN_UP} component={props => <NewUser {...props} globalVars={globalVars} />} />
+          <Route path={ROUTES.PASSWORD_FORGET} component={props => <Forgot {...props} globalVars={globalVars} />} />
+          <Route path={ROUTES.BIDLIST} component={props => <Bidlist {...props} globalVars={globalVars} />} />
+          <Route path={ROUTES.BIDPAGE} component={props => <BidPage {...props} globalVars={globalVars} />} />
+          <Route path="*" component={props => <Login {...props} globalVars={globalVars} />} />
+        </Switch>
+      </Router>
+    );
   }
 }
 
