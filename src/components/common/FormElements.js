@@ -28,7 +28,8 @@ import {
   Card,
   CardHeader,
   CardMedia,
-  CardContent
+  CardContent,
+  CardActions
 } from "@material-ui/core/";
 import CloseIcon from "@material-ui/icons/Close";
 import FormGroup from "@material-ui/core/FormGroup";
@@ -230,6 +231,13 @@ function MCard(params) {
           {params.content}
         </Typography>
       </CardContent>
+      <CardActions style={{ display: params.actionEnabled ? "block" : "none" }}>
+        <Button name={params.name} size="small" onClick={params.onChange}>
+          <Typography variant="body2" color="textSecondary" component="p">
+            Tap to bid
+          </Typography>
+        </Button>
+      </CardActions>
     </Card>
   );
 }

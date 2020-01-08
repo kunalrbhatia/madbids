@@ -10,7 +10,8 @@ export default class Bidlist extends Component {
     };
   }
   handleChange = () => event => {
-    if (event.target.textContent === "Submit") {
+    if (event.currentTarget.name === "bid_1") {
+      this.props.history.push("./bidpage");
     }
   };
   render() {
@@ -19,10 +20,13 @@ export default class Bidlist extends Component {
       <Container component="main" maxWidth="xs">
         <div style={{ marginBottom: 20 }}>
           <MCard
+            name={"bid_1"}
+            actionEnabled={true}
             title={"Win \u20B9200 Paytm Cash"}
             image={paytm_cash}
             imageTitle="Paytm Cash"
             content={"Bid and Win \u20B9200 Paytm Cash"}
+            onChange={onChange}
           ></MCard>
         </div>
         <Box mt={4}>

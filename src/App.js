@@ -2,12 +2,12 @@ import React, { Component } from "react";
 import Login from "./components/users/login";
 import NewUser from "./components/users/newUser";
 import Forgot from "./components/users/forget";
-import { Router, Route } from "react-router-dom";
+import { Router, Route, Switch } from "react-router-dom";
 import history from "./components/common/history";
 import { Helper } from "./components/common/helper";
 import Bidlist from "./components/bids/bidlist";
 import BidPage from "./components/bids/bidpage";
-
+let hash = "";
 class App extends Component {
   constructor() {
     super();
@@ -24,7 +24,8 @@ class App extends Component {
     };
   }
   render() {
-    let hash = history.location.pathname;
+    hash = history.location.pathname;
+    console.log("hash", hash);
     const { globalVars } = this.state;
     if (hash === "/login" || hash === "/signin") {
       return (
@@ -50,16 +51,13 @@ class App extends Component {
           <Route path="/bidlist" component={props => <Bidlist {...props} globalVars={globalVars} />} />
         </Router>
       );
-    } else if (hash === "/bidpage") {
-      return (
-        <Router basename={"/db"} history={history}>
-          <Route path="/bidpage" component={props => <BidPage {...props} globalVars={globalVars} />} />
-        </Router>
-      );
     } else {
       return (
         <Router basename={"/db"} history={history}>
-          <Route path="*" component={props => <Login {...props} globalVars={globalVars} />} />
+          <Switch>
+            <Route path="/bidpage" component={props => <BidPage {...props} globalVars={globalVars} />} />
+            <Route path="*" component={props => <Login {...props} globalVars={globalVars} />} />
+          </Switch>
         </Router>
       );
     }
