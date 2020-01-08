@@ -13,23 +13,67 @@ import ChildFriendlyIcon from "@material-ui/icons/ChildFriendly";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { MButton, MTextField, Copyright } from "../common/FormElements";
-export default class NewUser extends Component {
+import { withFirebase } from "../Firebase";
+import { compose } from "recompose";
+import * as ROUTES from "../../constants/routes";
+class NewUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
       onChange: this.handleChange(),
-      gender: "female"
+      gender: "female",
+      fname: "",
+      lname: "",
+      email: "",
+      password: "",
+      cpassword: "",
+      cno: "",
+      secretQuestion: "",
+      secretAnswer: ""
     };
   }
   handleChange = () => event => {
-    if (event.target.textContent === "Register") {
+    if (event.target.name === "register") {
+      const { gender, fname, lname, email, password, cpassword, cno, secretQuestion, secretAnswer } = this.state;
+      this.props.firebase
+        .doCreateUserWithEmailAndPassword(email, password)
+        .then(authUser => {
+          this.props.history.push(ROUTES.BIDLIST);
+        })
+        .catch(error => {
+          this.setState({ error });
+        });
+      event.preventDefault();
     } else if (event.target.name === "gender") {
       this.setState({ gender: event.target.value });
+    } else if (event.target.name === "fname") {
+      this.setState({ fname: event.target.value });
+    } else if (event.target.name === "lname") {
+      this.setState({ lname: event.target.value });
+    } else if (event.target.name === "email") {
+      this.setState({ email: event.target.value });
+    } else if (event.target.name === "password") {
+      this.setState({ password: event.target.value });
+    } else if (event.target.name === "cpassword") {
+      this.setState({ cpassword: event.target.value });
+    } else if (event.target.name === "cno") {
+      this.setState({ cno: event.target.value });
     }
   };
 
   render() {
-    const { onChange, gender } = this.state;
+    const {
+      onChange,
+      gender,
+      fname,
+      lname,
+      email,
+      password,
+      cpassword,
+      cno,
+      secretQuestion,
+      secretAnswer
+    } = this.state;
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -58,6 +102,7 @@ export default class NewUser extends Component {
               required={true}
               type="text"
               name="fname"
+              value={fname}
               fullWidth={true}
               label="First Name"
               margin="dense"
@@ -68,15 +113,36 @@ export default class NewUser extends Component {
               required={true}
               type="text"
               name="lname"
+              value={lname}
               fullWidth={true}
               label="Last Name"
               margin="dense"
               onChange={onChange}
               helperText="Last name"
             ></MTextField>
+            <FormControl component="fieldset">
+              <FormLabel component="legend">Gender</FormLabel>
+              <RadioGroup aria-label="gender" name="gender" value={gender} onChange={onChange}>
+                <FormControlLabel value="female" control={<Radio />} label="Female" />
+                <FormControlLabel value="male" control={<Radio />} label="Male" />
+                <FormControlLabel value="other" control={<Radio />} label="Other" />
+              </RadioGroup>
+            </FormControl>
+            <MTextField
+              required={false}
+              type="number"
+              name="cno"
+              value={cno}
+              fullWidth={true}
+              label="Contact Number"
+              margin="dense"
+              onChange={onChange}
+              helperText="Contact Number"
+            ></MTextField>
             <MTextField
               required={true}
               type="email"
+              value={email}
               name="email"
               fullWidth={true}
               label="E-mail"
@@ -88,6 +154,7 @@ export default class NewUser extends Component {
               required={true}
               type="password"
               name="password"
+              value={password}
               fullWidth={true}
               label="Password"
               margin="dense"
@@ -98,6 +165,7 @@ export default class NewUser extends Component {
               required={true}
               type="password"
               name="cpassword"
+              value={cpassword}
               fullWidth={true}
               label="Confirm Password"
               margin="dense"
@@ -105,23 +173,31 @@ export default class NewUser extends Component {
               helperText="Confirm Password"
             ></MTextField>
             <MTextField
-              required={false}
-              type="number"
-              name="cno"
+              name={"secretQuestion"}
+              type={"select"}
+              data={[
+                { value: "1", label: "What is your mother's year of birth?" },
+                { value: "2", label: "What is your family nick name?" },
+                { value: "3", label: "Where you met your life patner first time?" }
+              ]}
+              label={"Secret Question"}
+              value={secretQuestion}
+              onChange={onChange}
               fullWidth={true}
-              label="Contact Number"
+              helperText={"Select a Secret Question"}
+            ></MTextField>
+            <MTextField
+              required={true}
+              type="text"
+              name="secretAnswer"
+              value={secretAnswer}
+              fullWidth={true}
+              label="Your answer"
               margin="dense"
               onChange={onChange}
-              helperText="Contact Number"
+              helperText="Answer is case insensitive"
             ></MTextField>
-            <FormControl component="fieldset">
-              <FormLabel component="legend">Gender</FormLabel>
-              <RadioGroup aria-label="gender" name="gender" value={gender} onChange={onChange}>
-                <FormControlLabel value="female" control={<Radio />} label="Female" />
-                <FormControlLabel value="male" control={<Radio />} label="Male" />
-                <FormControlLabel value="other" control={<Radio />} label="Other" />
-              </RadioGroup>
-            </FormControl>
+
             <MButton
               name="register"
               style={{ margin: "3px 0px 2px" }}
@@ -153,3 +229,5 @@ export default class NewUser extends Component {
     );
   }
 }
+const newuser = compose(withFirebase)(NewUser);
+export default withFirebase(newuser);
