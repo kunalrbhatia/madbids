@@ -29,20 +29,52 @@ class NewUser extends Component {
       cpassword: "",
       cno: "",
       secretQuestion: "",
-      secretAnswer: ""
+      secretAnswer: "",
+      users: []
     };
   }
   handleChange = () => event => {
-    if (event.target.name === "register") {
+    if (event.currentTarget.name === "register") {
       const { gender, fname, lname, email, password, cpassword, cno, secretQuestion, secretAnswer } = this.state;
-      this.props.firebase
-        .doCreateUserWithEmailAndPassword(email, password)
-        .then(authUser => {
-          this.props.history.push(ROUTES.BIDLIST);
-        })
-        .catch(error => {
-          this.setState({ error });
-        });
+      this.props.firebase.users().on("value", snapshot => {
+        const usersObject = snapshot.val();
+        const usersList = Object.keys(usersObject).map(key => ({
+          ...usersObject[key],
+          uid: key
+        }));
+        this.setState(
+          {
+            users: usersList,
+            loading: false
+          },
+          () => {
+            if (!this.findIfUserExists(email)) {
+              this.props.firebase
+                .doCreateUserWithEmailAndPassword(email, password)
+                .then(authUser => {
+                  return this.props.firebase.user(authUser.user.uid).set({
+                    email,
+                    password,
+                    cno,
+                    fname,
+                    lname,
+                    gender,
+                    secretQuestion,
+                    secretAnswer
+                  });
+                })
+                .then(() => {
+                  this.props.history.push(ROUTES.BIDLIST);
+                })
+                .catch(error => {
+                  this.setState({ error });
+                });
+            } else {
+              console.log("user does exist");
+            }
+          }
+        );
+      });
       event.preventDefault();
     } else if (event.target.name === "gender") {
       this.setState({ gender: event.target.value });
@@ -60,7 +92,16 @@ class NewUser extends Component {
       this.setState({ cno: event.target.value });
     }
   };
-
+  findIfUserExists = email => {
+    for (let i = 0; i < this.state.users.length; i++) {
+      const e = this.state.users[i];
+      if (e.email === email) {
+        console.log("found");
+        return true;
+      }
+    }
+    return false;
+  };
   render() {
     const {
       onChange,

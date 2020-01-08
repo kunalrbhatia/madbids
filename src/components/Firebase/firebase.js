@@ -2,14 +2,7 @@ import app from "firebase/app";
 import * as fb from "../../constants/fb";
 import "firebase/auth";
 import "firebase/database";
-const config = {
-  apiKey: fb.firebase.dev.apiKey,
-  authDomain: fb.firebase.dev.authDomain,
-  projectId: fb.firebase.dev.projectId,
-  storageBucket: fb.firebase.dev.storageBucket,
-  messagingSenderId: fb.firebase.dev.messagingSenderId
-};
-
+const config = fb.firebase.dev;
 class Firebase {
   constructor() {
     app.initializeApp(config);
