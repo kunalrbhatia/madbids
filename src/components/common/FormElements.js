@@ -21,6 +21,9 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import AccountCircle from "@material-ui/icons/AccountCircle";
 import {
   IconButton,
   Snackbar /* , Icon  */,
@@ -29,7 +32,8 @@ import {
   CardHeader,
   CardMedia,
   CardContent,
-  CardActions
+  CardActions,
+  Menu
 } from "@material-ui/core/";
 import CloseIcon from "@material-ui/icons/Close";
 import FormGroup from "@material-ui/core/FormGroup";
@@ -55,6 +59,9 @@ const useStyles = makeStyles(theme => ({
   container: {
     display: "flex",
     flexWrap: "wrap"
+  },
+  menuButton: {
+    marginRight: theme.spacing(2)
   },
   textField: {
     marginLeft: theme.spacing(1),
@@ -130,6 +137,9 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
     left: 0,
     right: 0
+  },
+  title: {
+    flexGrow: 1
   }
 }));
 
@@ -352,35 +362,76 @@ function MTextField(params) {
     );
   }
 }
-
+function MAppBar(params) {
+  const classes = useStyles();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleMenu = event => {
+    console.log(event.currentTarget);
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+    params.handleClose();
+  };
+  return (
+    <div className={classes.root}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" className={classes.title}>
+            Home
+          </Typography>
+          <div style={{ marginRight: 0 }}>
+            <IconButton
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleMenu}
+              color="inherit"
+            >
+              <AccountCircle />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right"
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right"
+              }}
+              open={open}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={handleClose}>Logout</MenuItem>
+            </Menu>
+          </div>
+        </Toolbar>
+      </AppBar>
+    </div>
+  );
+}
 function MSnackbar(params) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(params.open);
-
-  const handleClose = (e, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpen(false);
-  };
-
   return (
     <Snackbar
       anchorOrigin={{
         vertical: params.vPos ? params.vPos : "bottom",
         horizontal: params.hPos ? params.hPos : "left"
       }}
-      open={open}
+      open={params.open}
       autoHideDuration={params.autoHideDuration ? params.autoHideDuration : 600000}
-      onClose={handleClose}
+      onClose={params.onClose}
       className={classes.info}
       ContentProps={{
         "aria-describedby": "message-id"
       }}
       message={params.message}
       action={[
-        <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={handleClose}>
+        <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={params.onClose}>
           <CloseIcon />
         </IconButton>
       ]}
@@ -388,4 +439,4 @@ function MSnackbar(params) {
   );
 }
 
-export { MTextField, MButton, MDialog, MSwithch, MCheckbox, MSnackbar, Copyright, MCard };
+export { MTextField, MButton, MDialog, MSwithch, MCheckbox, MSnackbar, Copyright, MCard, MAppBar };

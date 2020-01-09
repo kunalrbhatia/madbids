@@ -12,7 +12,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import ChildFriendlyIcon from "@material-ui/icons/ChildFriendly";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { MButton, MTextField, Copyright } from "../common/FormElements";
+import { MButton, MTextField, Copyright, MSnackbar } from "../common/FormElements";
 import { withFirebase } from "../Firebase";
 import { compose } from "recompose";
 import * as ROUTES from "../../constants/routes";
@@ -21,6 +21,7 @@ class NewUser extends Component {
     super(props);
     this.state = {
       onChange: this.handleChange(),
+      snackClose: this.snackClose(),
       gender: "female",
       fname: "",
       lname: "",
@@ -30,51 +31,60 @@ class NewUser extends Component {
       cno: "",
       secretQuestion: "",
       secretAnswer: "",
-      users: []
+      users: [],
+      snackMsg: "",
+      snackOpen: false
     };
   }
+  snackClose = () => e => {
+    this.setState({ snackMsg: "Password and confirm password doesn't match", snackOpen: false }, () => {});
+  };
   handleChange = () => event => {
     if (event.currentTarget.name === "register") {
       const { gender, fname, lname, email, password, cpassword, cno, secretQuestion, secretAnswer } = this.state;
-      this.props.firebase.users().on("value", snapshot => {
-        const usersObject = snapshot.val();
-        const usersList = Object.keys(usersObject).map(key => ({
-          ...usersObject[key],
-          uid: key
-        }));
-        this.setState(
-          {
-            users: usersList,
-            loading: false
-          },
-          () => {
-            if (!this.findIfUserExists(email)) {
-              this.props.firebase
-                .doCreateUserWithEmailAndPassword(email, password)
-                .then(authUser => {
-                  return this.props.firebase.user(authUser.user.uid).set({
-                    email,
-                    password,
-                    cno,
-                    fname,
-                    lname,
-                    gender,
-                    secretQuestion,
-                    secretAnswer
+      if (password === cpassword) {
+        this.props.firebase.users().on("value", snapshot => {
+          const usersObject = snapshot.val();
+          const usersList = Object.keys(usersObject).map(key => ({
+            ...usersObject[key],
+            uid: key
+          }));
+          this.setState(
+            {
+              users: usersList,
+              loading: false
+            },
+            () => {
+              if (!this.findIfUserExists(email)) {
+                this.props.firebase
+                  .doCreateUserWithEmailAndPassword(email, password)
+                  .then(authUser => {
+                    return this.props.firebase.user(authUser.user.uid).set({
+                      email,
+                      password,
+                      cno,
+                      fname,
+                      lname,
+                      gender,
+                      secretQuestion,
+                      secretAnswer
+                    });
+                  })
+                  .then(() => {
+                    this.props.history.push(ROUTES.BIDLIST);
+                  })
+                  .catch(error => {
+                    this.setState({ error });
                   });
-                })
-                .then(() => {
-                  this.props.history.push(ROUTES.BIDLIST);
-                })
-                .catch(error => {
-                  this.setState({ error });
-                });
-            } else {
-              console.log("user does exist");
+              } else {
+                console.log("user does exist");
+              }
             }
-          }
-        );
-      });
+          );
+        });
+      } else {
+        this.setState({ snackMsg: "Password and confirm password doesn't match", snackOpen: true });
+      }
       event.preventDefault();
     } else if (event.target.name === "gender") {
       this.setState({ gender: event.target.value });
@@ -90,6 +100,10 @@ class NewUser extends Component {
       this.setState({ cpassword: event.target.value });
     } else if (event.target.name === "cno") {
       this.setState({ cno: event.target.value });
+    } else if (event.target.name === "secretQuestion") {
+      this.setState({ secretQuestion: event.target.value });
+    } else if (event.target.name === "secretAnswer") {
+      this.setState({ secretAnswer: event.target.value });
     }
   };
   findIfUserExists = email => {
@@ -113,7 +127,10 @@ class NewUser extends Component {
       cpassword,
       cno,
       secretQuestion,
-      secretAnswer
+      secretAnswer,
+      snackMsg,
+      snackOpen,
+      snackClose
     } = this.state;
     return (
       <Container component="main" maxWidth="xs">
@@ -249,6 +266,14 @@ class NewUser extends Component {
             >
               Register
             </MButton>
+            <MSnackbar
+              autoHideDuration={5000}
+              open={snackOpen}
+              vPos={"bottom"}
+              hPos={"left"}
+              message={snackMsg}
+              onClose={snackClose}
+            ></MSnackbar>
             <Grid container>
               <Grid item xs>
                 <Link href="/" variant="body2">
