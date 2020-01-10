@@ -204,7 +204,7 @@ function MSwithch(params) {
   );
 }
 function MCard(params) {
-  const monthNames = [
+  /* const monthNames = [
     "January",
     "February",
     "March",
@@ -217,7 +217,7 @@ function MCard(params) {
     "October",
     "November",
     "December"
-  ];
+  ]; */
   return (
     <Card raised={true}>
       <CardHeader

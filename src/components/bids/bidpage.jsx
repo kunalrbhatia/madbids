@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Box, Paper, Grid, Slider, Input } from "@material-ui/core";
+import { Container, Box, Paper, Grid, Slider } from "@material-ui/core";
 import { Copyright, MCard, MTextField, MButton } from "../common/FormElements";
 export default class BidPage extends Component {
   constructor(props) {
@@ -78,7 +78,7 @@ export default class BidPage extends Component {
                 value={value}
                 inputProps={{
                   step: 0.1,
-                  min: 0,
+                  min: 1,
                   max: 100.0,
 
                   "aria-labelledby": "input-slider"
