@@ -219,7 +219,7 @@ function MCard(params) {
     "December"
   ];
   return (
-    <Card raised={true} style={{ maxWidth: 345, margin: "0 auto" }}>
+    <Card raised={true}>
       <CardHeader
         title={
           <Typography variant="body2" color="textSecondary" component="p">
@@ -334,6 +334,7 @@ function MTextField(params) {
         label={"" + params.label}
         className={clsx(classes.textField, classes.dense)}
         margin="dense"
+        onBlur={params.onBlur}
         rows={params.rows ? params.rows : 1}
         onChange={params.onChange}
         value={params.value}
