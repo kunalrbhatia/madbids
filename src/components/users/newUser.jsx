@@ -59,6 +59,7 @@ class NewUser extends Component {
                 this.props.firebase
                   .doCreateUserWithEmailAndPassword(email, password)
                   .then(authUser => {
+                    this.props.globalVars.userId = authUser.user.uid;
                     return this.props.firebase.user(authUser.user.uid).set({
                       email,
                       password,

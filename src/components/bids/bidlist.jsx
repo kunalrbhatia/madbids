@@ -12,14 +12,16 @@ class Bidlist extends Component {
       onAppBarClose: this.handleAppBarClose(),
       productList: []
     };
-    this.props.firebase.products().on("value", snapshot => {
-      const productsObject = snapshot.val();
-      const _productsList = Object.keys(productsObject).map(key => ({
-        ...productsObject[key],
-        pid: key
-      }));
-      this.setState({ productList: _productsList }, () => {});
-    });
+    setTimeout(() => {
+      this.props.firebase.products().on("value", snapshot => {
+        const productsObject = snapshot.val();
+        const _productsList = Object.keys(productsObject).map(key => ({
+          ...productsObject[key],
+          pid: key
+        }));
+        this.setState({ productList: _productsList }, () => {});
+      });
+    }, 3000);
   }
 
   handleAppBarClose = () => e => {
@@ -34,7 +36,6 @@ class Bidlist extends Component {
   render() {
     const { onChange, onAppBarClose, productList } = this.state;
     const mCards = productList.map((pl, idx) => {
-      console.log(pl);
       return (
         <div style={{ marginBottom: 20 }} key={pl.pid}>
           <MCard

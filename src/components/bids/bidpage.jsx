@@ -1,48 +1,69 @@
 import React, { Component } from "react";
 import { Container, Box, Paper, Grid, Slider } from "@material-ui/core";
-import { Copyright, MCard, MTextField, MButton } from "../common/FormElements";
-export default class BidPage extends Component {
+import { Copyright, MCard, MTextField, MButton, MSnackbar } from "../common/FormElements";
+import * as ROUTES from "../../constants/routes";
+import { withFirebase } from "../Firebase";
+import { compose } from "recompose";
+class BidPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0,
-      onChange: this.handleChange()
+      bidValue: 0,
+      onChange: this.handleChange(),
+      snackClose: this.snackClose(),
+      uid: this.props.globalVars.userId,
+      pl: this.props.globalVars.productInfo,
+      snackMsg: "",
+      snackOpen: false
     };
     console.log(this.props);
   }
+  snackClose = () => e => {
+    this.setState({ snackMsg: "", snackOpen: false }, () => {});
+  };
   handleChange = () => event => {
-    if (event.target.textContent === "Submit") {
+    if (event.currentTarget.name === "submit") {
+      this.props.firebase
+        .bids()
+        .push({
+          bid_price: this.state.bidValue,
+          user_key: this.state.uid,
+          product_key: this.state.pl.pid
+        })
+        .then(e => {
+          setTimeout(() => {
+            this.props.history.push(ROUTES.BIDLIST);
+          }, 2000);
+          this.setState({ snackMsg: "Thanks for biding!", snackOpen: true }, () => {});
+        });
     }
   };
   render() {
-    const pl = this.props.globalVars.productInfo;
-    const { onChange, value } = this.state;
+    const { onChange, bidValue, pl, snackOpen, snackClose, snackMsg } = this.state;
     const handleSliderChange = (event, newValue) => {
       this.setState({
-        value: newValue
+        bidValue: newValue
       });
     };
 
     const handleInputChange = event => {
-      console.log(event.target.value);
       this.setState({
-        value: parseFloat(event.target.value)
+        bidValue: parseFloat(event.target.value)
       });
-      //setValue(event.target.value === '' ? '' : Number(event.target.value));
     };
 
     const handleBlur = e => {
-      if (value < 0) {
+      if (bidValue < 0) {
         this.setState({
           value: 0
         });
-      } else if (value > 100) {
+      } else if (bidValue > 100) {
         this.setState({
           value: 100
         });
       } else {
         this.setState({
-          value: e.target.value
+          bidValue: e.target.value
         });
       }
     };
@@ -61,7 +82,7 @@ export default class BidPage extends Component {
           <Grid container spacing={2} alignItems="center">
             <Grid item xs>
               <Slider
-                value={typeof value === "number" ? value : 0}
+                value={typeof bidValue === "number" ? bidValue : 0}
                 onChange={handleSliderChange}
                 aria-labelledby="input-slider"
               />
@@ -75,7 +96,7 @@ export default class BidPage extends Component {
                 name="cno"
                 fullWidth={true}
                 label="Bid Value"
-                value={value}
+                value={bidValue}
                 inputProps={{
                   step: 0.1,
                   min: 1,
@@ -105,6 +126,14 @@ export default class BidPage extends Component {
             </Grid>
           </Grid>
         </Paper>
+        <MSnackbar
+          autoHideDuration={1900}
+          open={snackOpen}
+          vPos={"bottom"}
+          hPos={"left"}
+          message={snackMsg}
+          onClose={snackClose}
+        ></MSnackbar>
         <Box mt={4}>
           <Copyright />
         </Box>
@@ -112,3 +141,5 @@ export default class BidPage extends Component {
     );
   }
 }
+const bidpage = compose(withFirebase)(BidPage);
+export default withFirebase(bidpage);
