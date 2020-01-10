@@ -66,7 +66,7 @@ class Login extends Component {
               width: "100%", // Fix IE 11 issue.
               marginTop: 1
             }}
-            noValidate
+            
           >
             <MTextField
               required={true}
