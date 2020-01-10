@@ -25,14 +25,15 @@ class Bidlist extends Component {
   handleAppBarClose = () => e => {
     console.log("on handleAppBarClose");
   };
-  handleChange = () => event => {
+  handleChange = () => (event, idx) => {
     if (event.currentTarget.name === "bid_1") {
+      this.props.globalVars.productInfo = this.state.productList[idx];
       this.props.history.push(ROUTES.BIDPAGE);
     }
   };
   render() {
     const { onChange, onAppBarClose, productList } = this.state;
-    const mCards = productList.map(pl => {
+    const mCards = productList.map((pl, idx) => {
       console.log(pl);
       return (
         <div style={{ marginBottom: 20 }} key={pl.pid}>
@@ -44,7 +45,7 @@ class Bidlist extends Component {
             imageTitle={pl.name}
             content={pl.description}
             price={pl.price}
-            onChange={onChange}
+            onChange={e => onChange(e, idx)}
           ></MCard>
         </div>
       );

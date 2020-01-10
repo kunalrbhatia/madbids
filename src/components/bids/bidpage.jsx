@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 import { Container, Box, Paper, Grid, Slider, Input } from "@material-ui/core";
 import { Copyright, MCard, MTextField, MButton } from "../common/FormElements";
-import paytm_cash from "../../assets/images/paytm_cash.jpg";
 export default class BidPage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      value:0,
+      value: 0,
       onChange: this.handleChange()
     };
     console.log(this.props);
@@ -16,59 +15,59 @@ export default class BidPage extends Component {
     }
   };
   render() {
+    const pl = this.props.globalVars.productInfo;
     const { onChange, value } = this.state;
     const handleSliderChange = (event, newValue) => {
       this.setState({
-        value:newValue
-      })
+        value: newValue
+      });
     };
-  
+
     const handleInputChange = event => {
       console.log(event.target.value);
       this.setState({
-        value:parseFloat(event.target.value)
-      })
+        value: parseFloat(event.target.value)
+      });
       //setValue(event.target.value === '' ? '' : Number(event.target.value));
     };
 
-    const handleBlur = (e) => {
+    const handleBlur = e => {
       if (value < 0) {
         this.setState({
-          value:0
+          value: 0
         });
       } else if (value > 100) {
         this.setState({
-          value:100
-        })
-      }else {
+          value: 100
+        });
+      } else {
         this.setState({
-          value:e.target.value
-        })
+          value: e.target.value
+        });
       }
     };
     return (
-
       <Container component="main" maxWidth="xs">
         <MCard
           name={"bid_1"}
-          actionEnabled={false}
-          title={"Win \u20B9200 Paytm Cash"}
-          image={paytm_cash}
-          imageTitle="Paytm Cash"
-          content={"Bid and Win \u20B9200 Paytm Cash"}
-          onChange={onChange}
+          actionEnabled={true}
+          title={pl.name}
+          image={pl.photo_url}
+          imageTitle={pl.name}
+          content={pl.description}
+          price={pl.price}
         ></MCard>
-        <Paper style={{ marginTop: 20, padding:20 }} elevation={6}>
+        <Paper style={{ marginTop: 20, padding: 20 }} elevation={6}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs>
               <Slider
-                value={typeof value === 'number' ? value : 0}
+                value={typeof value === "number" ? value : 0}
                 onChange={handleSliderChange}
                 aria-labelledby="input-slider"
               />
             </Grid>
           </Grid>
-          <Grid container spacing={2} alignItems="center">  
+          <Grid container spacing={2} alignItems="center">
             <Grid item xs={12}>
               <MTextField
                 required={true}
@@ -80,9 +79,9 @@ export default class BidPage extends Component {
                 inputProps={{
                   step: 0.1,
                   min: 0,
-                  max: 100.00,
-                  
-                  'aria-labelledby': 'input-slider',
+                  max: 100.0,
+
+                  "aria-labelledby": "input-slider"
                 }}
                 margin="dense"
                 onChange={handleInputChange}
@@ -104,7 +103,7 @@ export default class BidPage extends Component {
                 Register Bid
               </MButton>
             </Grid>
-          </Grid>            
+          </Grid>
         </Paper>
         <Box mt={4}>
           <Copyright />
