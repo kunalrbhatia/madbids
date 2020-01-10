@@ -219,14 +219,18 @@ function MCard(params) {
     "December"
   ];
   return (
-    <Card raised={true} style={{ maxWidth: 345 }}>
+    <Card raised={true} style={{ maxWidth: 345, margin: "0 auto" }}>
       <CardHeader
         title={
           <Typography variant="body2" color="textSecondary" component="p">
             {params.title}
           </Typography>
         }
-        subheader={monthNames[new Date().getMonth()] + ", " + new Date().getFullYear()}
+        subheader={
+          <Typography variant="body2" color="textSecondary" component="p">
+            {params.price}
+          </Typography>
+        }
       />
       <CardMedia
         style={{

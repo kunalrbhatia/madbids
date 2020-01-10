@@ -1,16 +1,27 @@
 import React, { Component } from "react";
 import { Container, Box } from "@material-ui/core";
 import { Copyright, MCard, MAppBar } from "../common/FormElements";
-import paytm_cash from "../../assets/images/paytm_cash.jpg";
 import * as ROUTES from "../../constants/routes";
-export default class Bidlist extends Component {
+import { withFirebase } from "../Firebase";
+import { compose } from "recompose";
+class Bidlist extends Component {
   constructor(props) {
     super(props);
     this.state = {
       onChange: this.handleChange(),
-      onAppBarClose: this.handleAppBarClose()
+      onAppBarClose: this.handleAppBarClose(),
+      productList: []
     };
+    this.props.firebase.products().on("value", snapshot => {
+      const productsObject = snapshot.val();
+      const _productsList = Object.keys(productsObject).map(key => ({
+        ...productsObject[key],
+        pid: key
+      }));
+      this.setState({ productList: _productsList }, () => {});
+    });
   }
+
   handleAppBarClose = () => e => {
     console.log("on handleAppBarClose");
   };
@@ -20,21 +31,28 @@ export default class Bidlist extends Component {
     }
   };
   render() {
-    const { onChange, onAppBarClose } = this.state;
-    return (
-      <Container component="main" maxWidth="xs">
-        <MAppBar handleClose={onAppBarClose}></MAppBar>
-        <div style={{ marginBottom: 20 }}>
+    const { onChange, onAppBarClose, productList } = this.state;
+    const mCards = productList.map(pl => {
+      console.log(pl);
+      return (
+        <div style={{ marginBottom: 20 }} key={pl.pid}>
           <MCard
             name={"bid_1"}
             actionEnabled={true}
-            title={"Win \u20B9200 Paytm Cash"}
-            image={paytm_cash}
-            imageTitle="Paytm Cash"
-            content={"Bid and Win \u20B9200 Paytm Cash"}
+            title={pl.name}
+            image={pl.photo_url}
+            imageTitle={pl.name}
+            content={pl.description}
+            price={pl.price}
             onChange={onChange}
           ></MCard>
         </div>
+      );
+    });
+    return (
+      <Container component="main" maxWidth="xs">
+        <MAppBar handleClose={onAppBarClose}></MAppBar>
+        {mCards}
         <Box mt={4}>
           <Copyright />
         </Box>
@@ -42,3 +60,5 @@ export default class Bidlist extends Component {
     );
   }
 }
+const bidList = compose(withFirebase)(Bidlist);
+export default withFirebase(bidList);
