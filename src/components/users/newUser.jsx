@@ -276,12 +276,12 @@ class NewUser extends Component {
             ></MSnackbar>
             <Grid container>
               <Grid item xs>
-                <Link href="/" variant="body2">
+                <Link href={ROUTES.LANDING} variant="body2">
                   Home
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="/login" variant="body2">
+                <Link href={ROUTES.SIGN_IN} variant="body2">
                   {"Login"}
                 </Link>
               </Grid>

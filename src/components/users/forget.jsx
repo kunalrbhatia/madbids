@@ -8,6 +8,7 @@ import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { MButton, MTextField, Copyright } from "../common/FormElements";
+import * as ROUTES from "../../constants/routes";
 export default class Forgot extends Component {
   constructor(props) {
     super(props);
@@ -69,12 +70,12 @@ export default class Forgot extends Component {
             </MButton>
             <Grid container>
               <Grid item xs>
-                <Link href="/" variant="body2">
+                <Link href={ROUTES.LANDING} variant="body2">
                   Home
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="/login" variant="body2">
+                <Link href={ROUTES.SIGN_IN} variant="body2">
                   {"Login"}
                 </Link>
               </Grid>
