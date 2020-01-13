@@ -24,8 +24,12 @@ class Bidlist extends Component {
     }, 3000);
   }
 
-  handleAppBarClose = () => e => {
-    console.log("on handleAppBarClose");
+  handleAppBarClose = () => str => {
+    if (str === "logout") {
+      this.props.firebase.doSignOut().then(e => {
+        this.props.history.push(ROUTES.LANDING);
+      });
+    }
   };
   handleChange = () => (event, idx) => {
     if (event.currentTarget.name === "bid_1") {

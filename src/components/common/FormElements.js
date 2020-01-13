@@ -375,9 +375,10 @@ function MAppBar(params) {
     console.log(event.currentTarget);
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleClose = str => {
     setAnchorEl(null);
-    params.handleClose();
+    console.log(str);
+    params.handleClose(str);
   };
   return (
     <div className={classes.root}>
@@ -411,7 +412,7 @@ function MAppBar(params) {
               open={open}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Logout</MenuItem>
+              <MenuItem onClick={e => handleClose("logout")}>Logout</MenuItem>
             </Menu>
           </div>
         </Toolbar>
