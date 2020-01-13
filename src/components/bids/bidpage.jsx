@@ -16,7 +16,6 @@ class BidPage extends Component {
       snackMsg: "",
       snackOpen: false
     };
-    console.log(this.props);
   }
   snackClose = () => e => {
     this.setState({ snackMsg: "", snackOpen: false }, () => {});
@@ -79,6 +78,19 @@ class BidPage extends Component {
           price={pl.price}
         ></MCard>
         <Paper style={{ marginTop: 20, padding: 20 }} elevation={6}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12}>
+              <MCard
+                name={"bid_1"}
+                actionEnabled={false}
+                title={"Win \u20B9200 Paytm Cash"}
+                image={paytm_cash}
+                imageTitle="Paytm Cash"
+                content={"Bid and Win \u20B9200 Paytm Cash"}
+                onChange={onChange}
+              ></MCard>
+            </Grid>
+          </Grid>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs>
               <Slider
