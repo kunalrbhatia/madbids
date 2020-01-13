@@ -68,26 +68,18 @@ class BidPage extends Component {
     };
     return (
       <Container component="main" maxWidth="xs">
-        <MCard
-          name={"bid_1"}
-          actionEnabled={true}
-          title={pl.name}
-          image={pl.photo_url}
-          imageTitle={pl.name}
-          content={pl.description}
-          price={pl.price}
-        ></MCard>
+        
         <Paper style={{ marginTop: 20, padding: 20 }} elevation={6}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12}>
-              <MCard
-                name={"bid_1"}
-                actionEnabled={false}
-                title={"Win \u20B9200 Paytm Cash"}
-                image={paytm_cash}
-                imageTitle="Paytm Cash"
-                content={"Bid and Win \u20B9200 Paytm Cash"}
-                onChange={onChange}
+            <MCard
+              name={"bid_1"}
+              actionEnabled={false}
+              title={pl.name}
+              image={pl.photo_url}
+              imageTitle={pl.name}
+              content={pl.description}
+              price={pl.price}
               ></MCard>
             </Grid>
           </Grid>
