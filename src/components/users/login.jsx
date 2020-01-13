@@ -33,6 +33,9 @@ class Login extends Component {
       const { email, password } = this.state;
       this.props.firebase
         .doSignInWithEmailAndPassword(email, password)
+        .then(authUser => {
+          this.props.globalVars.userId = authUser.user.uid;
+        })
         .then(() => {
           this.props.history.push(ROUTES.BIDLIST);
         })
@@ -66,7 +69,6 @@ class Login extends Component {
               width: "100%", // Fix IE 11 issue.
               marginTop: 1
             }}
-            
           >
             <MTextField
               required={true}

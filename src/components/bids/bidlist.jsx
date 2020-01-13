@@ -12,29 +12,30 @@ class Bidlist extends Component {
       onAppBarClose: this.handleAppBarClose(),
       productList: []
     };
-    this.props.firebase.products().on("value", snapshot => {
-      const productsObject = snapshot.val();
-      const _productsList = Object.keys(productsObject).map(key => ({
-        ...productsObject[key],
-        pid: key
-      }));
-      this.setState({ productList: _productsList }, () => {});
-    });
+    setTimeout(() => {
+      this.props.firebase.products().on("value", snapshot => {
+        const productsObject = snapshot.val();
+        const _productsList = Object.keys(productsObject).map(key => ({
+          ...productsObject[key],
+          pid: key
+        }));
+        this.setState({ productList: _productsList }, () => {});
+      });
+    }, 3000);
   }
 
   handleAppBarClose = () => e => {
     console.log("on handleAppBarClose");
   };
-  handleChange = () => event => {
+  handleChange = () => (event, idx) => {
     if (event.currentTarget.name === "bid_1") {
-       
+      this.props.globalVars.productInfo = this.state.productList[idx];
       this.props.history.push(ROUTES.BIDPAGE);
     }
   };
   render() {
     const { onChange, onAppBarClose, productList } = this.state;
-    const mCards = productList.map(pl => {
-      console.log(pl);
+    const mCards = productList.map((pl, idx) => {
       return (
         <div style={{ marginBottom: 20 }} key={pl.pid}>
           <MCard
@@ -45,7 +46,7 @@ class Bidlist extends Component {
             imageTitle={pl.name}
             content={pl.description}
             price={pl.price}
-            onChange={onChange}
+            onChange={e => onChange(e, idx)}
           ></MCard>
         </div>
       );
