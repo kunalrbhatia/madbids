@@ -27,6 +27,7 @@ class Bidlist extends Component {
   };
   handleChange = () => event => {
     if (event.currentTarget.name === "bid_1") {
+       
       this.props.history.push(ROUTES.BIDPAGE);
     }
   };

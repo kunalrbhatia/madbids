@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Box, Paper, Grid, Slider, Input } from "@material-ui/core";
+import { Container, Box, Paper, Grid, Slider } from "@material-ui/core";
 import { Copyright, MCard, MTextField, MButton } from "../common/FormElements";
 import paytm_cash from "../../assets/images/paytm_cash.jpg";
 export default class BidPage extends Component {
@@ -9,7 +9,6 @@ export default class BidPage extends Component {
       value:0,
       onChange: this.handleChange()
     };
-    console.log(this.props);
   }
   handleChange = () => event => {
     if (event.target.textContent === "Submit") {
@@ -27,8 +26,7 @@ export default class BidPage extends Component {
       console.log(event.target.value);
       this.setState({
         value:parseFloat(event.target.value)
-      })
-      //setValue(event.target.value === '' ? '' : Number(event.target.value));
+      });      
     };
 
     const handleBlur = (e) => {
@@ -40,29 +38,31 @@ export default class BidPage extends Component {
         this.setState({
           value:100
         })
-      }else {
-        this.setState({
-          value:e.target.value
-        })
       }
     };
     return (
 
       <Container component="main" maxWidth="xs">
-        <MCard
-          name={"bid_1"}
-          actionEnabled={false}
-          title={"Win \u20B9200 Paytm Cash"}
-          image={paytm_cash}
-          imageTitle="Paytm Cash"
-          content={"Bid and Win \u20B9200 Paytm Cash"}
-          onChange={onChange}
-        ></MCard>
+        
         <Paper style={{ marginTop: 20, padding:20 }} elevation={6}>
+          <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12}>
+              <MCard
+                name={"bid_1"}
+                actionEnabled={false}
+                title={"Win \u20B9200 Paytm Cash"}
+                image={paytm_cash}
+                imageTitle="Paytm Cash"
+                content={"Bid and Win \u20B9200 Paytm Cash"}
+                onChange={onChange}
+              ></MCard>
+            </Grid>
+          </Grid>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs>
               <Slider
-                value={typeof value === 'number' ? value : 0}
+                /* value={typeof value === 'number' ? value : 0} */
+                value={value}
                 onChange={handleSliderChange}
                 aria-labelledby="input-slider"
               />
@@ -78,10 +78,9 @@ export default class BidPage extends Component {
                 label="Bid Value"
                 value={value}
                 inputProps={{
-                  step: 0.1,
-                  min: 0,
-                  max: 100.00,
-                  
+                  step: "0.01",
+                  min: "0",
+                  max: "100.00",
                   'aria-labelledby': 'input-slider',
                 }}
                 margin="dense"
