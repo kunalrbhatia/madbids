@@ -12,6 +12,7 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+.ProductName{font-size:14px;}
 
 .slider {
   -webkit-appearance: none;

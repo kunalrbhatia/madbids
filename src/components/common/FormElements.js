@@ -222,12 +222,12 @@ function MCard(params) {
     <Card raised={true}>
       <CardHeader
         title={
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="h6" color="primary" component="p">
             {params.title}
           </Typography>
         }
         subheader={
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="subtitle1" color="secondary" component="p">
             {params.price}
           </Typography>
         }
@@ -241,13 +241,13 @@ function MCard(params) {
         title={params.imageTitle}
       />
       <CardContent style={{}}>
-        <Typography variant="body2" color="textSecondary" component="p">
+        <Typography variant="body2" color="textPrimary" component="p">
           {params.content}
         </Typography>
       </CardContent>
       <CardActions style={{ display: params.actionEnabled ? "block" : "none" }}>
         <Button name={params.name} size="small" onClick={params.onChange}>
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography variant="button" color="textSecondary" component="p">
             Tap to bid
           </Typography>
         </Button>
