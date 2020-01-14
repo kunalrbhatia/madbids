@@ -32,15 +32,27 @@ class App extends Component {
             path={ROUTES.SIGN_IN}
             component={props => <Login {...props} globalVars={globalVars} helper={this.Helper} />}
           />
-          <Route path={ROUTES.SIGN_UP} component={props => <NewUser {...props} globalVars={globalVars} />} />
-          <Route path={ROUTES.PASSWORD_FORGET} component={props => <Forgot {...props} globalVars={globalVars} />} />
+          <Route
+            path={ROUTES.SIGN_UP}
+            component={props => <NewUser {...props} globalVars={globalVars} helper={this.Helper} />}
+          />
+          <Route
+            path={ROUTES.PASSWORD_FORGET}
+            component={props => <Forgot {...props} globalVars={globalVars} helper={this.Helper} />}
+          />
           <Route
             path={ROUTES.BIDLIST}
             component={props => <Bidlist {...props} globalVars={globalVars} helper={this.Helper} />}
           />
-          <Route path={ROUTES.BIDPAGE} component={props => <BidPage {...props} globalVars={globalVars} />} />
-          <Route path={ROUTES.WINNER} component={props => <Winner {...props} globalVars={globalVars} />} />
-          <Route path="*" component={props => <Login {...props} globalVars={globalVars} />} />
+          <Route
+            path={ROUTES.BIDPAGE}
+            component={props => <BidPage {...props} globalVars={globalVars} helper={this.Helper} />}
+          />
+          <Route
+            path={ROUTES.WINNER}
+            component={props => <Winner {...props} globalVars={globalVars} helper={this.Helper} />}
+          />
+          <Route path="*" component={props => <Login {...props} globalVars={globalVars} helper={this.Helper} />} />
         </Switch>
       </Router>
     );

@@ -22,14 +22,6 @@ class Bidlist extends Component {
     this.total = this.state.apis.length;
     this.getDataFromDB();
   }
-  getIndex = (array, name) => {
-    for (let i = 0; i < array.length; i++) {
-      const e = array[i];
-      if (e.name === name) {
-        return i;
-      }
-    }
-  };
   getDataFromDB = () => {
     if (this.current < this.total) {
       if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
@@ -80,6 +72,7 @@ class Bidlist extends Component {
         if (now > strt_date && now < end_date) {
           for (let j = 0; j < prodsData.length; j++) {
             const e2 = prodsData[j];
+            e2.auction_id = e1.id;
             if (e1.product_key === parseInt(e2.id)) {
               pl.push(e2);
             }

@@ -16,6 +16,7 @@ class BidPage extends Component {
       snackMsg: "",
       snackOpen: false
     };
+    console.log(this.props.globalVars.productInfo);
   }
   snackClose = () => e => {
     this.setState({ snackMsg: "", snackOpen: false }, () => {});
@@ -27,7 +28,8 @@ class BidPage extends Component {
         .push({
           bid_price: this.state.bidValue,
           user_key: this.state.uid,
-          product_key: this.state.pl.pid
+          product_key: this.state.pl.pid,
+          auction_key: this.state.pl.auction_id
         })
         .then(e => {
           setTimeout(() => {
@@ -68,23 +70,33 @@ class BidPage extends Component {
     };
     return (
       <Container component="main" maxWidth="xs">
-          <Grid container spacing={2} alignItems="center" style={{marginTop:10}}>
-            <Grid item xs={12}>
-              <MCard
-                name={"bid_1"}
-                actionEnabled={false}
-                title={pl.name}
-                image={pl.photo_url}
-                imageTitle={pl.name}
-                content={pl.description}
-                price={pl.price}
-                ></MCard>
-            </Grid>
+        <Grid container spacing={2} alignItems="center" style={{ marginTop: 10 }}>
+          <Grid item xs={12}>
+            <MCard
+              name={"bid_1"}
+              actionEnabled={false}
+              title={pl.name}
+              image={pl.photo_url}
+              imageTitle={pl.name}
+              content={pl.description}
+              price={pl.price}
+            ></MCard>
           </Grid>
-          <Paper style={{ marginTop: 20, padding: 20 }} elevation={6}>
+        </Grid>
+        <Paper style={{ marginTop: 20, padding: 20 }} elevation={6}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12}>
-              <input type="range" min={0} max={100} value={typeof bidValue === "number" ? bidValue : 0} step={0.01} className="slider" id="cno" name="cno"  onChange={handleInputChange}/>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={typeof bidValue === "number" ? bidValue : 0}
+                step={0.01}
+                className="slider"
+                id="cno"
+                name="cno"
+                onChange={handleInputChange}
+              />
             </Grid>
           </Grid>
           <Grid container spacing={2} alignItems="center">
