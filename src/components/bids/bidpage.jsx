@@ -68,36 +68,25 @@ class BidPage extends Component {
     };
     return (
       <Container component="main" maxWidth="xs">
-        
-        <Paper style={{ marginTop: 20, padding: 20 }} elevation={6}>
-          <Grid container spacing={2} alignItems="center">
+          <Grid container spacing={2} alignItems="center" style={{marginTop:10}}>
             <Grid item xs={12}>
-            <MCard
-              name={"bid_1"}
-              actionEnabled={false}
-              title={pl.name}
-              image={pl.photo_url}
-              imageTitle={pl.name}
-              content={pl.description}
-              price={pl.price}
-              ></MCard>
+              <MCard
+                name={"bid_1"}
+                actionEnabled={false}
+                title={pl.name}
+                image={pl.photo_url}
+                imageTitle={pl.name}
+                content={pl.description}
+                price={pl.price}
+                ></MCard>
             </Grid>
           </Grid>
+          <Paper style={{ marginTop: 20, padding: 20 }} elevation={6}>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12}>
               <input type="range" min={0} max={100} value={typeof bidValue === "number" ? bidValue : 0} step={0.01} className="slider" id="cno" name="cno"  onChange={handleInputChange}/>
             </Grid>
           </Grid>
-          {/* <Grid container spacing={2} alignItems="center">
-            <Grid item xs>
-              <Slider
-                value={typeof bidValue === "number" ? bidValue : 0}
-                onChange={handleSliderChange}
-                aria-labelledby="input-slider"
-              />
-            </Grid>
-          </Grid> */}
-          
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12}>
               <MTextField
