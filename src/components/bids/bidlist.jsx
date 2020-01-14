@@ -14,7 +14,8 @@ class Bidlist extends Component {
       apis: [
         { name: APIS.PRODUCTS, data: [], url: this.props.firebase.products() },
         { name: APIS.AUCTIONS, data: [], url: this.props.firebase.auctions() }
-      ]
+      ],
+      productList: []
     };
     this.current = 0;
     this.total = this.state.apis.length;
@@ -30,7 +31,6 @@ class Bidlist extends Component {
   };
   getDataFromDB = () => {
     if (this.current < this.total) {
-      console.log(this.current);
       if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
         this.state.apis[this.current].url.on("value", snapshot => {
           const object = snapshot.val();
@@ -64,7 +64,28 @@ class Bidlist extends Component {
         );
       }
     } else {
-      console.log(this.state);
+      let auctionsIndex = this.getIndex(this.state.apis, APIS.AUCTIONS);
+      let auctionsList = this.state.apis[auctionsIndex].data;
+      let prodsIndex = this.getIndex(this.state.apis, APIS.PRODUCTS);
+      let prodsData = this.state.apis[prodsIndex].data;
+      let pl = [];
+      for (let i = 0; i < auctionsList.length; i++) {
+        const e1 = auctionsList[i];
+        let strt_date = new Date();
+        strt_date = Date.parse(e1.start_date);
+        let end_date = new Date();
+        end_date = Date.parse(e1.end_date);
+        let now = new Date();
+        if (now > strt_date && now < end_date) {
+          for (let j = 0; j < prodsData.length; j++) {
+            const e2 = prodsData[j];
+            if (e1.product_key === parseInt(e2.id)) {
+              pl.push(e2);
+            }
+          }
+        }
+      }
+      this.setState({ productList: pl });
     }
   };
   handleAppBarClose = () => str => {
@@ -81,8 +102,8 @@ class Bidlist extends Component {
     }
   };
   render() {
-    const { onChange, onAppBarClose, apis } = this.state;
-    const mCards = apis[this.getIndex(apis, APIS.PRODUCTS)].data.map((pl, idx) => {
+    const { onChange, onAppBarClose, productList } = this.state;
+    const mCards = productList.map((pl, idx) => {
       return (
         <div style={{ marginBottom: 20 }} key={pl.id}>
           <MCard
@@ -101,14 +122,13 @@ class Bidlist extends Component {
     return (
       <div>
         <MAppBar handleClose={onAppBarClose}></MAppBar>
-        <Container component="main" maxWidth="xs" style={{marginTop:20}}>
+        <Container component="main" maxWidth="xs" style={{ marginTop: 20 }}>
           {mCards}
           <Box mt={4}>
             <Copyright />
           </Box>
         </Container>
       </div>
-      
     );
   }
 }
