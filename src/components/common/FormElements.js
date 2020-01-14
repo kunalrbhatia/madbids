@@ -405,7 +405,7 @@ function MAppBar(params) {
     params.handleClose(str);
   };
   return (
-    <div className={classes.root}>
+    <div>
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>

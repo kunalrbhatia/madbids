@@ -99,13 +99,16 @@ class Bidlist extends Component {
       );
     });
     return (
-      <Container component="main" maxWidth="xs">
+      <div>
         <MAppBar handleClose={onAppBarClose}></MAppBar>
-        {mCards}
-        <Box mt={4}>
-          <Copyright />
-        </Box>
-      </Container>
+        <Container component="main" maxWidth="xs" style={{marginTop:20}}>
+          {mCards}
+          <Box mt={4}>
+            <Copyright />
+          </Box>
+        </Container>
+      </div>
+      
     );
   }
 }
