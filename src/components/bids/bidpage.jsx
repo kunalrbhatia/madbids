@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Box, Paper, Grid, Slider } from "@material-ui/core";
+import { Container, Box, Paper, Grid } from "@material-ui/core";
 import { Copyright, MCard, MTextField, MButton, MSnackbar } from "../common/FormElements";
 import * as ROUTES from "../../constants/routes";
 import { withFirebase } from "../Firebase";
@@ -41,11 +41,6 @@ class BidPage extends Component {
   };
   render() {
     const { onChange, bidValue, pl, snackOpen, snackClose, snackMsg } = this.state;
-    const handleSliderChange = (event, newValue) => {
-      this.setState({
-        bidValue: newValue
-      });
-    };
 
     const handleInputChange = event => {
       this.setState({

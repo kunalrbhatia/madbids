@@ -16,6 +16,7 @@ import { MButton, MTextField, Copyright, MSnackbar } from "../common/FormElement
 import { withFirebase } from "../Firebase";
 import { compose } from "recompose";
 import * as ROUTES from "../../constants/routes";
+import * as APIS from "../../constants/fbapis";
 class NewUser extends Component {
   constructor(props) {
     super(props);
@@ -33,9 +34,15 @@ class NewUser extends Component {
       secretAnswer: "",
       users: [],
       snackMsg: "",
-      snackOpen: false
+      snackOpen: false,
+      apis: [{ name: APIS.USERS, data: [], url: this.props.firebase.users() }]
     };
+    this.helper = this.props.helper;
+    this.current = 0;
+    this.total = this.state.apis.length;
+    this.getDataFromDB();
   }
+  getDataFromDB = () => {};
   snackClose = () => e => {
     this.setState({ snackMsg: "Password and confirm password doesn't match", snackOpen: false }, () => {});
   };

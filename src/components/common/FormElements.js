@@ -374,8 +374,8 @@ function STable(params) {
     const e = data[i];
     tbody += (
       <tr>
-        <td>e.name</td>
-        <td>e.bidPrice</td>
+        <td>{e.name}</td>
+        <td>{e.bidPrice}</td>
       </tr>
     );
   }
@@ -469,4 +469,4 @@ function MSnackbar(params) {
   );
 }
 
-export { MTextField, MButton, MDialog, MSwithch, MCheckbox, MSnackbar, Copyright, MCard, MAppBar };
+export { MTextField, MButton, MDialog, MSwithch, MCheckbox, MSnackbar, Copyright, MCard, MAppBar, STable };
