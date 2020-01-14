@@ -42,7 +42,32 @@ class NewUser extends Component {
     this.total = this.state.apis.length;
     this.getDataFromDB();
   }
-  getDataFromDB = () => {};
+  getDataFromDB = () => {
+    if (this.current < this.total) {
+      if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
+        this.state.apis[this.current].url.on("value", snapshot => {
+          const object = snapshot.val();
+          const _list = Object.keys(object).map(key => ({
+            ...object[key],
+            id: key
+          }));
+          let apis_copy = this.state.apis;
+          apis_copy[this.current]["data"] = _list;
+          this.setState(
+            {
+              apis: apis_copy
+            },
+            () => {
+              this.current++;
+              this.getDataFromDB();
+            }
+          );
+        });
+      }
+    } else {
+      this.setState({ users: this.state.apis[this.helper.getIndex(this.state.apis, APIS.USERS)] });
+    }
+  };
   snackClose = () => e => {
     this.setState({ snackMsg: "Password and confirm password doesn't match", snackOpen: false }, () => {});
   };
@@ -50,49 +75,31 @@ class NewUser extends Component {
     if (event.currentTarget.name === "register") {
       const { gender, fname, lname, email, password, cpassword, cno, secretQuestion, secretAnswer } = this.state;
       if (password === cpassword) {
-        this.props.firebase.users().on("value", snapshot => {
-          const usersObject = snapshot.val();
-          let usersList = [];
-          if (usersObject) {
-            usersList = Object.keys(usersObject).map(key => ({
-              ...usersObject[key],
-              uid: key
-            }));
-          }
-          this.setState(
-            {
-              users: usersList,
-              loading: false
-            },
-            () => {
-              if (!this.findIfUserExists(email)) {
-                this.props.firebase
-                  .doCreateUserWithEmailAndPassword(email, password)
-                  .then(authUser => {
-                    this.props.globalVars.userId = authUser.user.uid;
-                    return this.props.firebase.users(this.props.globalVars.userId).set({
-                      email,
-                      password,
-                      cno,
-                      fname,
-                      lname,
-                      gender,
-                      secretQuestion,
-                      secretAnswer
-                    });
-                  })
-                  .then(() => {
-                    this.props.history.push(ROUTES.BIDLIST);
-                  })
-                  .catch(error => {
-                    this.setState({ error });
-                  });
-              } else {
-                console.log("user does exist");
-              }
-            }
-          );
-        });
+        if (!this.findIfUserExists(email)) {
+          this.props.firebase
+            .doCreateUserWithEmailAndPassword(email, password)
+            .then(authUser => {
+              this.props.globalVars.userId = authUser.user.uid;
+              return this.props.firebase.users(this.props.globalVars.userId).set({
+                email,
+                password,
+                cno,
+                fname,
+                lname,
+                gender,
+                secretQuestion,
+                secretAnswer
+              });
+            })
+            .then(() => {
+              this.props.history.push(ROUTES.BIDLIST);
+            })
+            .catch(error => {
+              this.setState({ error });
+            });
+        } else {
+          console.log("user does exist");
+        }
       } else {
         this.setState({ snackMsg: "Password and confirm password doesn't match", snackOpen: true });
       }
