@@ -9,10 +9,12 @@ import Bidlist from "../bids/bidlist";
 import BidPage from "../bids/bidpage";
 import Winner from "../bids/winner";
 import * as ROUTES from "../../constants/routes";
+import { withFirebase } from "../Firebase";
+import { compose } from "recompose";
 //let hash = "";
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.Helper = new Helper();
     this.state = {
       globalVars: {
@@ -38,5 +40,5 @@ class App extends Component {
     );
   }
 }
-
-export default App;
+const app = compose(withFirebase)(App);
+export default withFirebase(app);

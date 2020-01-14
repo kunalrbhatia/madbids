@@ -10,20 +10,41 @@ class Bidlist extends Component {
     this.state = {
       onChange: this.handleChange(),
       onAppBarClose: this.handleAppBarClose(),
-      productList: []
+      productList: [],
+      auctionsList: []
     };
-    setTimeout(() => {
-      this.props.firebase.products().on("value", snapshot => {
+    this.getDataFromDB();
+  }
+  getDataFromDB = async () => {
+    if (!this.props.globalVars.products) {
+      await this.props.firebase.products().on("value", snapshot => {
         const productsObject = snapshot.val();
         const _productsList = Object.keys(productsObject).map(key => ({
           ...productsObject[key],
           pid: key
         }));
-        this.setState({ productList: _productsList }, () => {});
+        this.setState({ productList: _productsList }, () => {
+          this.props.globalVars.products = _productsList;
+        });
       });
-    }, 3000);
-  }
-
+    } else {
+      this.setState({ productList: this.props.globalVars.products });
+    }
+    if (!this.props.globalVars.auctions) {
+      await this.props.firebase.auctions().on("value", snapshot => {
+        const auctionsObject = snapshot.val();
+        const _auctionsList = Object.keys(auctionsObject).map(key => ({
+          ...auctionsObject[key],
+          pid: key
+        }));
+        this.setState({ auctionsList: _auctionsList }, () => {
+          this.props.globalVars.auctions = _auctionsList;
+        });
+      });
+    } else {
+      this.setState({ auctionsList: this.props.globalVars.auctions });
+    }
+  };
   handleAppBarClose = () => str => {
     if (str === "logout") {
       this.props.firebase.doSignOut().then(e => {

@@ -45,10 +45,13 @@ class NewUser extends Component {
       if (password === cpassword) {
         this.props.firebase.users().on("value", snapshot => {
           const usersObject = snapshot.val();
-          const usersList = Object.keys(usersObject).map(key => ({
-            ...usersObject[key],
-            uid: key
-          }));
+          let usersList = [];
+          if (usersObject) {
+            usersList = Object.keys(usersObject).map(key => ({
+              ...usersObject[key],
+              uid: key
+            }));
+          }
           this.setState(
             {
               users: usersList,
@@ -60,7 +63,7 @@ class NewUser extends Component {
                   .doCreateUserWithEmailAndPassword(email, password)
                   .then(authUser => {
                     this.props.globalVars.userId = authUser.user.uid;
-                    return this.props.firebase.user(authUser.user.uid).set({
+                    return this.props.firebase.users(this.props.globalVars.userId).set({
                       email,
                       password,
                       cno,

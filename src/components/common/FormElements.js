@@ -367,6 +367,30 @@ function MTextField(params) {
     );
   }
 }
+function STable(params) {
+  let data = params.data;
+  let tbody = "";
+  for (let i = 0; i < data.length; i++) {
+    const e = data[i];
+    tbody += (
+      <tr>
+        <td>e.name</td>
+        <td>e.bidPrice</td>
+      </tr>
+    );
+  }
+  return (
+    <div>
+      <table>
+        <th>
+          <td>Bider Name</td>
+          <td>Bider's Bid</td>
+        </th>
+        {tbody}
+      </table>
+    </div>
+  );
+}
 function MAppBar(params) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);

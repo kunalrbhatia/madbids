@@ -1,29 +1,50 @@
 import { Component } from "react";
 
-let a = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
-let b = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
+let a = [
+  "",
+  "one ",
+  "two ",
+  "three ",
+  "four ",
+  "five ",
+  "six ",
+  "seven ",
+  "eight ",
+  "nine ",
+  "ten ",
+  "eleven ",
+  "twelve ",
+  "thirteen ",
+  "fourteen ",
+  "fifteen ",
+  "sixteen ",
+  "seventeen ",
+  "eighteen ",
+  "nineteen "
+];
+let b = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
 let getCommon_Data = {
-  "currency_List":[],
-  "country_List":[],
-  "tax_List":[],
-  "product_List":[],
-  "supplier_List":[],
-  "customer_List":[]
+  product_List: []
 };
 
 export class Helper extends Component {
-  
-  setCommonData = (node) =>{
+  setCommonData = (node, data) => {
+    let datanode = node + "_List";
+    switch (datanode) {
+      case "product_List":
+        getCommon_Data.product_List = data;
+        break;
+      default:
+        break;
+    }
+  };
 
-  }
-
-   getCommonData = node =>{
-    let datanode = node+"_List";
-    if(getCommon_Data[datanode].length>0){
-      return "found"
-    }else
-      return "not found"
-  }
+  getCommonData = node => {
+    let datanode = node + "_List";
+    if (getCommon_Data[datanode].length > 0) {
+      return "found";
+    } else return "not found";
+  };
 
   validateData(data, field) {
     switch (field) {
@@ -45,7 +66,7 @@ export class Helper extends Component {
   }
 
   showOverlay = () => {
-    document.getElementsByTagName('body')[0].classList.add("fixbody");
+    document.getElementsByTagName("body")[0].classList.add("fixbody");
     const overlay = document.createElement("div");
     overlay.id = "overlay";
     overlay.classList.add("overlay");
@@ -60,10 +81,9 @@ export class Helper extends Component {
     document.getElementById("overlay").style.display = "block";
   };
   hideOverlay = () => {
-    document.getElementsByTagName('body')[0].classList.remove("fixbody");
+    document.getElementsByTagName("body")[0].classList.remove("fixbody");
     const elem = document.getElementById("overlay");
-    if(elem)
-      document.body.removeChild(elem);
+    if (elem) document.body.removeChild(elem);
   };
 
   b64toBlob(b64Data, contentType, sliceSize) {
@@ -93,19 +113,18 @@ export class Helper extends Component {
     document.getElementById("OCRBox").style.display = "block";
   };
 
- 
-  inWords = (num) => {
+  inWords = num => {
     let str = "";
-    if ((num = num.toString()).length > 9) return 'overflow';
-    let n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-    if (!n) return; 
-    str += (n[1] !== 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
-    str += (n[2] !== 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh ' : '';
-    str += (n[3] !== 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
-    str += (n[4] !== 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
-    str += (n[5] !== 0) ? ((str !== '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) + 'only ' : '';
+    if ((num = num.toString()).length > 9) return "overflow";
+    let n = ("000000000" + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+    if (!n) return;
+    str += n[1] !== 0 ? (a[Number(n[1])] || b[n[1][0]] + " " + a[n[1][1]]) + "crore " : "";
+    str += n[2] !== 0 ? (a[Number(n[2])] || b[n[2][0]] + " " + a[n[2][1]]) + "lakh " : "";
+    str += n[3] !== 0 ? (a[Number(n[3])] || b[n[3][0]] + " " + a[n[3][1]]) + "thousand " : "";
+    str += n[4] !== 0 ? (a[Number(n[4])] || b[n[4][0]] + " " + a[n[4][1]]) + "hundred " : "";
+    str += n[5] !== 0 ? (str !== "" ? "and " : "") + (a[Number(n[5])] || b[n[5][0]] + " " + a[n[5][1]]) + "only " : "";
     return str;
-}
+  };
 
   getQueryString = param => {
     let query = "";
@@ -117,16 +136,16 @@ export class Helper extends Component {
     return query;
   };
 
-  getDays = (date1, date2) =>{
-    let Difference_In_Time = date2.getTime() - date1.getTime(); 
-    return(parseInt(Difference_In_Time / (1000 * 3600 * 24)));
-  }
+  getDays = (date1, date2) => {
+    let Difference_In_Time = date2.getTime() - date1.getTime();
+    return parseInt(Difference_In_Time / (1000 * 3600 * 24));
+  };
 
   addDays = (date, days) => {
-    const newDate = new Date(Number(date))
-    newDate.setDate(date.getDate() + days)
-    return newDate
-  }
+    const newDate = new Date(Number(date));
+    newDate.setDate(date.getDate() + days);
+    return newDate;
+  };
 
   getProcessedImage = (url, data) => {
     const options = {
@@ -284,7 +303,7 @@ export class Helper extends Component {
       return 0;
     }
   }
-  
+
   trimValue(value) {
     return value
       .toString()

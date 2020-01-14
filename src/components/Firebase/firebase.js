@@ -15,8 +15,9 @@ class Firebase {
   doSignOut = () => this.auth.signOut();
   doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
   doPasswordUpdate = password => this.auth.currentUser.updatePassword(password);
-  user = uid => this.db.ref(`users/${uid}`);
+  auctions = () => this.db.ref("auctions");
   users = () => this.db.ref("users");
+  user = uid => this.db.ref(`users/${uid}`);
   products = () => this.db.ref("products");
   bids = () => this.db.ref("bids");
   bid = bid => this.db.ref(`bids/${bid}`);
