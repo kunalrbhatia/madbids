@@ -38,7 +38,14 @@ export class Helper extends Component {
         break;
     }
   };
-
+  getIndex = (array, name) => {
+    for (let i = 0; i < array.length; i++) {
+      const e = array[i];
+      if (e.name === name) {
+        return i;
+      }
+    }
+  };
   getCommonData = node => {
     let datanode = node + "_List";
     if (getCommon_Data[datanode].length > 0) {

@@ -17,6 +17,7 @@ class Bidlist extends Component {
       ],
       productList: []
     };
+    this.helper = this.props.helper;
     this.current = 0;
     this.total = this.state.apis.length;
     this.getDataFromDB();
@@ -64,9 +65,9 @@ class Bidlist extends Component {
         );
       }
     } else {
-      let auctionsIndex = this.getIndex(this.state.apis, APIS.AUCTIONS);
+      let auctionsIndex = this.helper.getIndex(this.state.apis, APIS.AUCTIONS);
       let auctionsList = this.state.apis[auctionsIndex].data;
-      let prodsIndex = this.getIndex(this.state.apis, APIS.PRODUCTS);
+      let prodsIndex = this.helper.getIndex(this.state.apis, APIS.PRODUCTS);
       let prodsData = this.state.apis[prodsIndex].data;
       let pl = [];
       for (let i = 0; i < auctionsList.length; i++) {
