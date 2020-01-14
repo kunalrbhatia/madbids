@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Container, Box } from "@material-ui/core";
 import { Copyright, MCard, MAppBar } from "../common/FormElements";
 import * as ROUTES from "../../constants/routes";
+import * as APIS from "../../constants/fbapis";
 import { withFirebase } from "../Firebase";
 import { compose } from "recompose";
 class Bidlist extends Component {
@@ -10,39 +11,60 @@ class Bidlist extends Component {
     this.state = {
       onChange: this.handleChange(),
       onAppBarClose: this.handleAppBarClose(),
-      productList: [],
-      auctionsList: []
+      apis: [
+        { name: APIS.PRODUCTS, data: [], url: this.props.firebase.products() },
+        { name: APIS.AUCTIONS, data: [], url: this.props.firebase.auctions() }
+      ]
     };
+    this.current = 0;
+    this.total = this.state.apis.length;
     this.getDataFromDB();
   }
-  getDataFromDB = async () => {
-    if (!this.props.globalVars.products) {
-      await this.props.firebase.products().on("value", snapshot => {
-        const productsObject = snapshot.val();
-        const _productsList = Object.keys(productsObject).map(key => ({
-          ...productsObject[key],
-          pid: key
-        }));
-        this.setState({ productList: _productsList }, () => {
-          this.props.globalVars.products = _productsList;
-        });
-      });
-    } else {
-      this.setState({ productList: this.props.globalVars.products });
+  getIndex = (array, name) => {
+    for (let i = 0; i < array.length; i++) {
+      const e = array[i];
+      if (e.name === name) {
+        return i;
+      }
     }
-    if (!this.props.globalVars.auctions) {
-      await this.props.firebase.auctions().on("value", snapshot => {
-        const auctionsObject = snapshot.val();
-        const _auctionsList = Object.keys(auctionsObject).map(key => ({
-          ...auctionsObject[key],
-          pid: key
-        }));
-        this.setState({ auctionsList: _auctionsList }, () => {
-          this.props.globalVars.auctions = _auctionsList;
+  };
+  getDataFromDB = () => {
+    if (this.current < this.total) {
+      console.log(this.current);
+      if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
+        this.state.apis[this.current].url.on("value", snapshot => {
+          const object = snapshot.val();
+          const _list = Object.keys(object).map(key => ({
+            ...object[key],
+            id: key
+          }));
+          let apis_copy = this.state.apis;
+          apis_copy[this.current]["data"] = _list;
+          this.setState(
+            {
+              apis: apis_copy
+            },
+            () => {
+              this.current++;
+              this.getDataFromDB();
+            }
+          );
         });
-      });
+      } else {
+        let apis_copy = this.state.apis;
+        apis_copy[this.current]["data"] = this.props.globalVars["" + this.state.apis[this.current].name];
+        this.setState(
+          {
+            apis: apis_copy
+          },
+          () => {
+            this.current++;
+            this.getDataFromDB();
+          }
+        );
+      }
     } else {
-      this.setState({ auctionsList: this.props.globalVars.auctions });
+      console.log(this.state);
     }
   };
   handleAppBarClose = () => str => {
@@ -59,10 +81,10 @@ class Bidlist extends Component {
     }
   };
   render() {
-    const { onChange, onAppBarClose, productList } = this.state;
-    const mCards = productList.map((pl, idx) => {
+    const { onChange, onAppBarClose, apis } = this.state;
+    const mCards = apis[this.getIndex(apis, APIS.PRODUCTS)].data.map((pl, idx) => {
       return (
-        <div style={{ marginBottom: 20 }} key={pl.pid}>
+        <div style={{ marginBottom: 20 }} key={pl.id}>
           <MCard
             name={"bid_1"}
             actionEnabled={true}
