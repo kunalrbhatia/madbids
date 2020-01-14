@@ -84,6 +84,11 @@ class BidPage extends Component {
             </Grid>
           </Grid>
           <Grid container spacing={2} alignItems="center">
+            <Grid item xs={12}>
+              <input type="range" min={0} max={100} value={typeof bidValue === "number" ? bidValue : 0} step={0.01} className="slider" id="cno" name="cno"  onChange={handleInputChange}/>
+            </Grid>
+          </Grid>
+          {/* <Grid container spacing={2} alignItems="center">
             <Grid item xs>
               <Slider
                 value={typeof bidValue === "number" ? bidValue : 0}
@@ -91,7 +96,8 @@ class BidPage extends Component {
                 aria-labelledby="input-slider"
               />
             </Grid>
-          </Grid>
+          </Grid> */}
+          
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12}>
               <MTextField
