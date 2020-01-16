@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Container, Box } from "@material-ui/core";
-import { Copyright } from "../common/FormElements";
+import { Copyright, MTextField } from "../common/FormElements";
 //import * as ROUTES from "../../constants/routes";
 import * as APIS from "../../constants/fbapis";
 import { withFirebase } from "../Firebase";
@@ -8,15 +8,16 @@ import { compose } from "recompose";
 class Winner extends Component {
   constructor(props) {
     super(props);
+    this.helper = this.props.helper;
     this.state = {
       onChange: this.handleChange(),
-      bidlist: [],
-      userslist: [],
       apis: [
-        { name: APIS.AUCTIONS, data: [], url: this.props.firebase.auctions() },
-        { name: APIS.BIDLIST, data: [], url: this.props.firebase.bids() },
-        { name: APIS.USERS, data: [], url: this.props.firebase.users() }
-      ]
+        { name: APIS.AUCTIONS, data: [], url: this.props.firebase.auctions() }
+        /* { name: APIS.BIDLIST, data: [], url: this.props.firebase.bids() },
+        { name: APIS.USERS, data: [], url: this.props.firebase.users() } */
+      ],
+      auction_id: "",
+      bidlist: []
     };
     this.helper = this.props.helper;
     this.current = 0;
@@ -25,6 +26,7 @@ class Winner extends Component {
   componentDidMount = () => {
     this.getDataFromDB();
   };
+
   getDataFromDB = () => {
     if (this.current < this.total) {
       if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
@@ -59,8 +61,6 @@ class Winner extends Component {
           }
         );
       }
-    } else {
-      console.log(this.state);
     }
   };
   getValuesFromDB = () => {
@@ -86,14 +86,44 @@ class Winner extends Component {
     });
   };
   handleChange = () => (event, idx) => {
-    if (event.currentTarget.name === "bid_1") {
+    if (event.target.name === "auctionList") {
+      this.setState({ auction_id: event.target.value }, () => {
+        this.props.firebase
+          .bids()
+          .orderByChild("auction_key")
+          .equalTo(this.state.auction_id)
+          .once("value")
+          .then(v => {
+            let vv = v.val();
+            this.setState({ bidlist: vv }, () => {
+              console.log(this.state.bidlist);
+            });
+          });
+      });
     }
   };
   render() {
-    //const { onChange, bidlist } = this.state;
-
+    const { auction_id, onChange } = this.state;
+    const auction_data = [];
+    const auction_list = this.state.apis[this.helper.getIndex(this.state.apis, APIS.AUCTIONS)].data;
+    for (let i = 0; i < auction_list.length; i++) {
+      const e = auction_list[i];
+      auction_data.push({ value: e.id, label: e.auction_name });
+    }
     return (
       <Container component="main" maxWidth="xs">
+        <div className="auctionList">
+          <MTextField
+            name={"auctionList"}
+            type={"select"}
+            fullWidth={true}
+            data={auction_data}
+            label={"Auction List"}
+            value={auction_id}
+            onChange={onChange}
+            helperText={"Please select a issue type"}
+          ></MTextField>
+        </div>
         <Box mt={4}>
           <Copyright />
         </Box>
