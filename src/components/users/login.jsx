@@ -23,6 +23,9 @@ class Login extends Component {
       passowrd: "",
       error: ""
     };
+    if (localStorage.getItem("token") != null) {
+      this.props.history.push(ROUTES.BIDLIST);
+    }
   }
   handleChange = () => e => {
     if (e.currentTarget.name === "email") {
@@ -35,6 +38,8 @@ class Login extends Component {
         .doSignInWithEmailAndPassword(email, password)
         .then(authUser => {
           this.props.globalVars.userId = authUser.user.uid;
+          localStorage.setItem("uid", authUser.user.uid);
+          localStorage.setItem("token", "token_" + email);
         })
         .then(() => {
           this.props.history.push(ROUTES.BIDLIST);

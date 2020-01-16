@@ -7,6 +7,12 @@ import { compose } from "recompose";
 class BidPage extends Component {
   constructor(props) {
     super(props);
+    if (localStorage.getItem("uid") !== null) {
+      this.props.globalVars.userId = localStorage.getItem("uid");
+    }
+    if (localStorage.getItem("productInfo") !== null) {
+      this.props.globalVars.productInfo = JSON.parse(localStorage.getItem("productInfo"));
+    }
     this.state = {
       bidValue: 0,
       onChange: this.handleChange(),
@@ -16,7 +22,10 @@ class BidPage extends Component {
       snackMsg: "",
       snackOpen: false
     };
-    console.log(this.props.globalVars.productInfo);
+    if (localStorage.getItem("token") === null) {
+      this.props.history.push(ROUTES.SIGN_IN);
+    }
+    console.dir(this.props.globalVars.productInfo);
   }
   snackClose = () => e => {
     this.setState({ snackMsg: "", snackOpen: false }, () => {});
@@ -28,7 +37,7 @@ class BidPage extends Component {
         .push({
           bid_price: this.state.bidValue,
           user_key: this.state.uid,
-          product_key: this.state.pl.pid,
+          product_key: this.state.pl.id,
           auction_key: this.state.pl.auction_id
         })
         .then(e => {

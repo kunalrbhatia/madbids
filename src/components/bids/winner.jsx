@@ -21,9 +21,10 @@ class Winner extends Component {
     this.helper = this.props.helper;
     this.current = 0;
     this.total = this.state.apis.length;
-    this.getDataFromDB();
-    //this.getValuesFromDB();
   }
+  componentDidMount = () => {
+    this.getDataFromDB();
+  };
   getDataFromDB = () => {
     if (this.current < this.total) {
       if (!this.props.globalVars["" + this.state.apis[this.current].name]) {

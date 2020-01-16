@@ -20,8 +20,13 @@ class Bidlist extends Component {
     this.helper = this.props.helper;
     this.current = 0;
     this.total = this.state.apis.length;
-    this.getDataFromDB();
+    if (localStorage.getItem("token") === null) {
+      this.props.history.push(ROUTES.SIGN_IN);
+    }
   }
+  componentDidMount = () => {
+    this.getDataFromDB();
+  };
   getDataFromDB = () => {
     if (this.current < this.total) {
       if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
@@ -85,6 +90,9 @@ class Bidlist extends Component {
   handleAppBarClose = () => str => {
     if (str === "logout") {
       this.props.firebase.doSignOut().then(e => {
+        if (localStorage.getItem("token") != null) {
+          localStorage.removeItem("token");
+        }
         this.props.history.push(ROUTES.LANDING);
       });
     }
@@ -92,6 +100,7 @@ class Bidlist extends Component {
   handleChange = () => (event, idx) => {
     if (event.currentTarget.name === "bid_1") {
       this.props.globalVars.productInfo = this.state.productList[idx];
+      localStorage.setItem("productInfo", JSON.stringify(this.state.productList[idx]));
       this.props.history.push(ROUTES.BIDPAGE);
     }
   };

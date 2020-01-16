@@ -40,8 +40,10 @@ class NewUser extends Component {
     this.helper = this.props.helper;
     this.current = 0;
     this.total = this.state.apis.length;
-    this.getDataFromDB();
   }
+  componentDidMount = () => {
+    this.getDataFromDB();
+  };
   getDataFromDB = () => {
     if (this.current < this.total) {
       if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
@@ -80,6 +82,7 @@ class NewUser extends Component {
             .doCreateUserWithEmailAndPassword(email, password)
             .then(authUser => {
               this.props.globalVars.userId = authUser.user.uid;
+              localStorage.setItem("uid", authUser.user.uid);
               return this.props.firebase.users(this.props.globalVars.userId).set({
                 email,
                 password,
@@ -92,6 +95,7 @@ class NewUser extends Component {
               });
             })
             .then(() => {
+              localStorage.setItem("token", "token_" + email);
               this.props.history.push(ROUTES.BIDLIST);
             })
             .catch(error => {
