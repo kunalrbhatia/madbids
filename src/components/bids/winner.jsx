@@ -12,7 +12,14 @@ class Winner extends Component {
     this.state = {
       onChange: this.handleChange(),
       apis: [
-        { name: APIS.AUCTIONS, data: [], url: this.props.firebase.auctions() }
+        {
+          name: APIS.AUCTIONS,
+          data: [],
+          url: this.props.firebase
+            .auctions()
+            .orderByChild("is_active")
+            .equalTo(0)
+        }
         /* { name: APIS.BIDLIST, data: [], url: this.props.firebase.bids() },
         { name: APIS.USERS, data: [], url: this.props.firebase.users() } */
       ],
