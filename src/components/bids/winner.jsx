@@ -70,27 +70,48 @@ class Winner extends Component {
       }
     }
   };
-  getValuesFromDB = () => {
-    this.props.firebase.bids().on("value", async snapshot => {
-      const bidsObject = snapshot.val();
-      const _bidsList = Object.keys(bidsObject).map(key => ({
-        ...bidsObject[key],
-        bid: key
-      }));
-      this.setState({ bidlist: _bidsList }, async () => {
-        let ul = this.state.userslist;
-        for (let index = 0; index < this.state.bidlist.length; index++) {
-          const e = this.state.bidlist[index];
-          this.props.firebase.user(e.user_key).on("value", snapshot => {
-            const userObject = snapshot.val();
-            ul.push(userObject);
-          });
-        }
-        this.setState({ userslist: ul }, () => {
-          console.log(this.state);
-        });
-      });
-    });
+  findWinner = _bids => {
+    let bids = _bids;
+    let bidValues = [];
+    for (let i = 0; i < bids.length; i++) {
+      const e = bids[i];
+      bidValues.push(e.bid_price);
+    }
+    let minBid = Math.min(...bidValues);
+    let bidsWithMin = this.getBidsByValue(minBid);
+    if (bidsWithMin.length > 1) {
+      let refinedBids = this.removeInvalidBids(minBid);
+      this.findWinner(refinedBids);
+    } else {
+      if (bidsWithMin.length === 0) {
+        
+      } else {
+        declareWinner(bidsWithMin);
+      }
+    }
+  };
+  declareWinner = bid => {};
+  
+  removeInvalidBids = value => {
+    let bids = this.state.bidlist;
+    for (let i = 0; i < this.state.bidlist.length; i++) {
+      const e = this.state.bidlist[i];
+      if (e.bid_price === value) {
+        bids.splice(i, 1);
+        i--;
+      }
+    }
+    return bids;
+  };
+  getBidsByValue = value => {
+    let bids = [];
+    for (let i = 0; i < this.state.bidlist.length; i++) {
+      const e = this.state.bidlist[i];
+      if (e.bid_price === value) {
+        bids.push(e);
+      }
+    }
+    return bids;
   };
   handleChange = () => (event, idx) => {
     if (event.target.name === "auctionList") {
@@ -101,9 +122,13 @@ class Winner extends Component {
           .equalTo(this.state.auction_id)
           .once("value")
           .then(v => {
-            let vv = v.val();
-            this.setState({ bidlist: vv }, () => {
-              console.log(this.state.bidlist);
+            let object = v.val();
+            const _list = Object.keys(object).map(key => ({
+              ...object[key],
+              id: key
+            }));
+            this.setState({ bidlist: _list }, () => {
+              this.findWinner(_list);
             });
           });
       });
