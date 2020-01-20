@@ -38,7 +38,8 @@ class BidPage extends Component {
           bid_price: this.state.bidValue,
           user_key: this.state.uid,
           product_key: this.state.pl.id,
-          auction_key: this.state.pl.auction_id
+          auction_key: this.state.pl.auction_id,
+          biddt: Date.now()
         })
         .then(e => {
           setTimeout(() => {

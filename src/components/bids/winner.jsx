@@ -20,12 +20,11 @@ class Winner extends Component {
             .orderByChild("is_active")
             .equalTo(0)
         }
-        /* { name: APIS.BIDLIST, data: [], url: this.props.firebase.bids() },
-        { name: APIS.USERS, data: [], url: this.props.firebase.users() } */
       ],
       auction_id: "",
       bidlist: []
     };
+    this.objCopy = [];
     this.helper = this.props.helper;
     this.current = 0;
     this.total = this.state.apis.length;
@@ -33,7 +32,6 @@ class Winner extends Component {
   componentDidMount = () => {
     this.getDataFromDB();
   };
-
   getDataFromDB = () => {
     if (this.current < this.total) {
       if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
@@ -70,13 +68,23 @@ class Winner extends Component {
       }
     }
   };
+  findWinnerByTime = _bids => {
+    let new_low_date = new Date(Date.now());
+    let bid;
+    for (let i = 0; i < _bids.length; i++) {
+      let e = _bids[i];
+      let edate = new Date(e.biddt);
+      if (edate < new_low_date) {
+        new_low_date = edate;
+        bid = e;
+      }
+    }
+    //console.log(bid);
+    this.declareWinner(bid);
+  };
   findWinner = _bids => {
     let bids = _bids;
-    let bidValues = [];
-    for (let i = 0; i < bids.length; i++) {
-      const e = bids[i];
-      bidValues.push(e.bid_price);
-    }
+    let bidValues = this.getBidValuesFromBids(bids);
     let minBid = Math.min(...bidValues);
     let bidsWithMin = this.getBidsByValue(minBid);
     if (bidsWithMin.length > 1) {
@@ -84,14 +92,30 @@ class Winner extends Component {
       this.findWinner(refinedBids);
     } else {
       if (bidsWithMin.length === 0) {
-        
+        bids = JSON.parse(JSON.stringify(this.objCopy));
+        bidValues = this.getBidValuesFromBids(bids);
+        minBid = Math.min(...bidValues);
+        bidsWithMin = this.getBidsByValue(minBid);
+        this.findWinnerByTime(bidsWithMin);
       } else {
-        declareWinner(bidsWithMin);
+        //console.log("winner found",this.objCopy);
+        //this.setState({bidlist:this.objCopy},()=>{console.log("no winner found",this.state.bidlist)});
+        //console.log(bidsWithMin);
+        this.declareWinner(bidsWithMin);
       }
     }
   };
-  declareWinner = bid => {};
-  
+  getBidValuesFromBids = _bids => {
+    let bidValues = [];
+    for (let i = 0; i < _bids.length; i++) {
+      const e = _bids[i];
+      bidValues.push(e.bid_price);
+    }
+    return bidValues;
+  };
+  declareWinner = bid => {
+    console.log(bid);
+  };
   removeInvalidBids = value => {
     let bids = this.state.bidlist;
     for (let i = 0; i < this.state.bidlist.length; i++) {
@@ -105,8 +129,8 @@ class Winner extends Component {
   };
   getBidsByValue = value => {
     let bids = [];
-    for (let i = 0; i < this.state.bidlist.length; i++) {
-      const e = this.state.bidlist[i];
+    for (let i = 0; i < this.objCopy.length; i++) {
+      const e = this.objCopy[i];
       if (e.bid_price === value) {
         bids.push(e);
       }
@@ -128,7 +152,9 @@ class Winner extends Component {
               id: key
             }));
             this.setState({ bidlist: _list }, () => {
-              this.findWinner(_list);
+              this.setState({ bidlist: _list });
+              this.objCopy = JSON.parse(JSON.stringify(_list));
+              this.findWinner(this.objCopy);
             });
           });
       });
@@ -155,6 +181,9 @@ class Winner extends Component {
             onChange={onChange}
             helperText={"Please select a issue type"}
           ></MTextField>
+        </div>
+        <div className="winnerName">
+
         </div>
         <Box mt={4}>
           <Copyright />
