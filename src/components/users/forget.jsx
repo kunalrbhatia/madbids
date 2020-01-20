@@ -9,7 +9,7 @@ import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { MButton, MTextField, Copyright, MSnackbar } from "../common/FormElements";
 import * as ROUTES from "../../constants/routes";
-import * as APIS from "../../constants/fbapis";
+//import * as APIS from "../../constants/fbapis";
 import { withFirebase } from "../Firebase";
 import { compose } from "recompose";
 class Forgot extends Component {
@@ -84,9 +84,16 @@ class Forgot extends Component {
         this.setState({ snackMsg: "Answer doesn't match with our records.", snackOpen: true });
       }
     } else if (event.currentTarget.name === "submit" && this.state.userFound && this.state.detailsVerified) {
+      this.helper.showOverlay();
       if (this.state.newPassword === this.state.confirmPassword) {
+        this.props.firebase.users(this.state.user.id).set({
+          password: this.state.newPassword
+        });
         this.setState({ snackMsg: "Password changed", snackOpen: true });
-        this.props.history.push(ROUTES.SIGN_IN);
+        setTimeout(() => {
+          this.helper.hideOverlay();
+          this.props.history.push(ROUTES.SIGN_IN);
+        }, 2000);
       } else {
         this.setState({ snackMsg: "Password and confirm password doesn't match", snackOpen: true });
       }
