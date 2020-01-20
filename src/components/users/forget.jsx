@@ -7,45 +7,145 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { MButton, MTextField, Copyright } from "../common/FormElements";
+import { MButton, MTextField, Copyright, MSnackbar } from "../common/FormElements";
 import * as ROUTES from "../../constants/routes";
-export default class Forgot extends Component {
+import * as APIS from "../../constants/fbapis";
+import { withFirebase } from "../Firebase";
+import { compose } from "recompose";
+class Forgot extends Component {
   constructor(props) {
     super(props);
+    this.helper = this.props.helper;
     this.state = {
-      onChange: this.handleChange()
+      onChange: this.handleChange(),
+      snackClose: this.snackClose(),
+      email: "",
+      user: null,
+      snackMsg: "User doesn't exist!",
+      snackOpen: false,
+      userFound: false,
+      newPassword: "",
+      confirmPassword: "",
+      detailsVerified: false,
+      questionsData: [
+        { value: "1", label: "What is your mother's year of birth?" },
+        { value: "2", label: "What is your family nick name?" },
+        { value: "3", label: "Where you met your life patner first time?" }
+      ],
+      question: "",
+      answer: "",
+      uanswer: ""
     };
   }
+  componentDidMount = () => {};
+  getQuestionsByValue = value => {
+    for (let i = 0; i < this.state.questionsData.length; i++) {
+      const e = this.state.questionsData[i];
+      if (e.value === value) {
+        return e.label;
+      }
+    }
+  };
+  snackClose = () => e => {
+    this.setState({ snackMsg: "", snackOpen: false });
+  };
   handleChange = () => event => {
-    if (event.target.textContent === "Submit") {
+    console.log(event.currentTarget.name);
+    if (event.currentTarget.name === "submit" && !this.state.userFound) {
+      this.helper.showOverlay();
+      this.props.firebase
+        .users()
+        .orderByChild("email")
+        .equalTo(this.state.email)
+        .once("value")
+        .then(v => {
+          this.helper.hideOverlay();
+          let object = v.val();
+          object = Object.keys(object).map(key => ({
+            ...object[key],
+            id: key
+          }));
+          object = object[0];
+          this.setState({ user: object });
+          if (object) {
+            let ques = this.getQuestionsByValue(object.secretQuestion);
+            this.setState({ question: ques, answer: object.secretAnswer }, () => {
+              //console.log(this.state);
+              this.setState({ userFound: true });
+            });
+          } else {
+            this.setState({ snackMsg: "User doesn't exist!", snackOpen: true }, () => {});
+          }
+        });
+    } else if (event.currentTarget.name === "submit" && this.state.userFound) {
+      if (this.state.uanswer === this.state.answer) {
+        this.setState({ snackMsg: "Answer matched, please change password.", snackOpen: true, detailsVerified: true });
+      } else {
+        this.setState({ snackMsg: "Answer doesn't match with our records.", snackOpen: true });
+      }
+    } else if (event.currentTarget.name === "submit" && this.state.userFound && this.state.detailsVerified) {
+      if (this.state.newPassword === this.state.confirmPassword) {
+        this.setState({ snackMsg: "Password changed", snackOpen: true });
+        this.props.history.push(ROUTES.SIGN_IN);
+      } else {
+        this.setState({ snackMsg: "Password and confirm password doesn't match", snackOpen: true });
+      }
+    } else if (event.currentTarget.name === "email") {
+      this.setState({ email: event.currentTarget.value });
+    } else if (event.currentTarget.name === "newPassword") {
+      this.setState({ newPassword: event.currentTarget.value });
+    } else if (event.currentTarget.name === "confirmPassword") {
+      this.setState({ confirmPassword: event.currentTarget.value });
+    } else if (event.currentTarget.name === "uanswer") {
+      this.setState({ uanswer: event.currentTarget.value });
     }
   };
 
   render() {
-    const { onChange } = this.state;
+    const {
+      onChange,
+      email,
+      snackMsg,
+      userFound,
+      snackOpen,
+      snackClose,
+      newPassword,
+      confirmPassword,
+      question,
+      detailsVerified,
+      uanswer
+    } = this.state;
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <div
+          className="base"
           style={{
-            marginTop: "1em",
+            margin: "1em",
+            alignItems: "center",
             display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
+            flexDirection: "column"
           }}
         >
-          <Avatar style={{ margin: 1, backgroundColor: "#000" }}>
+          <Avatar style={{ backgroundColor: "#000", margin: "1em" }}>
             <VpnKeyIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Forgot Password
           </Typography>
-          <form
+        </div>
+        <form
+          style={{
+            width: "100%", // Fix IE 11 issue.
+            marginTop: 1
+          }}
+          noValidate
+        >
+          <div
+            className="getEmail"
             style={{
-              width: "100%", // Fix IE 11 issue.
-              marginTop: 1
+              display: userFound === true ? "none" : "block"
             }}
-            noValidate
           >
             <MTextField
               required={true}
@@ -54,34 +154,90 @@ export default class Forgot extends Component {
               fullWidth={true}
               label="E-mail"
               margin="dense"
+              value={email}
               onChange={onChange}
               helperText="E-mail"
             ></MTextField>
-
-            <MButton
-              name="submit"
-              style={{ margin: "3px 0px 2px" }}
-              value={"Submit"}
-              color={"primary"}
-              onClick={onChange}
+          </div>
+          <div
+            className="getVerification"
+            style={{
+              display: userFound === true && detailsVerified === false ? "block" : "none"
+            }}
+          >
+            <Typography component="h1" variant="subtitle1">
+              {question}
+            </Typography>
+            <MTextField
+              required={true}
+              type="text"
+              name="uanswer"
               fullWidth={true}
-            >
-              Submit
-            </MButton>
-            <Grid container>
-              <Grid item xs>
-                <Link href={ROUTES.LANDING} variant="body2">
-                  Home
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href={ROUTES.SIGN_IN} variant="body2">
-                  {"Login"}
-                </Link>
-              </Grid>
-            </Grid>
-          </form>
-        </div>
+              label="Your answer here"
+              margin="dense"
+              value={uanswer}
+              onChange={onChange}
+            ></MTextField>
+          </div>
+          <div
+            className="setPassword"
+            style={{
+              display: detailsVerified === false ? "none" : "block"
+            }}
+          >
+            <MTextField
+              required={true}
+              type="password"
+              name="newPassword"
+              fullWidth={true}
+              label="New password"
+              margin="dense"
+              value={newPassword}
+              onChange={onChange}
+            ></MTextField>
+            <MTextField
+              required={true}
+              type="password"
+              name="confirmPassword"
+              fullWidth={true}
+              label="Confirm password"
+              margin="dense"
+              value={confirmPassword}
+              onChange={onChange}
+            ></MTextField>
+          </div>
+          <MButton
+            name="submit"
+            style={{ margin: "3px 0px 2px" }}
+            value={"Submit"}
+            color={"primary"}
+            onClick={onChange}
+            fullWidth={true}
+          >
+            Submit
+          </MButton>
+        </form>
+        <Grid container>
+          <Grid item xs>
+            <Link href={ROUTES.LANDING} variant="body2">
+              Home
+            </Link>
+          </Grid>
+          <Grid item>
+            <Link href={ROUTES.SIGN_IN} variant="body2">
+              {"Login"}
+            </Link>
+          </Grid>
+        </Grid>
+        <MSnackbar
+          autoHideDuration={2000}
+          open={snackOpen}
+          vPos={"bottom"}
+          hPos={"left"}
+          message={snackMsg}
+          onClose={snackClose}
+        ></MSnackbar>
+
         <Box mt={4}>
           <Copyright />
         </Box>
@@ -89,3 +245,5 @@ export default class Forgot extends Component {
     );
   }
 }
+const forgot = compose(withFirebase)(Forgot);
+export default withFirebase(forgot);
