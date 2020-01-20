@@ -22,7 +22,8 @@ class Winner extends Component {
         }
       ],
       auction_id: "",
-      bidlist: []
+      bidlist: [],
+      winner_name: null
     };
     this.objCopy = [];
     this.helper = this.props.helper;
@@ -115,6 +116,13 @@ class Winner extends Component {
   };
   declareWinner = bid => {
     console.log(bid);
+    this.props.firebase
+      .user(bid[0].user_key)
+      .once("value")
+      .then(v => {
+        let object = v.val();
+        this.setState({ winner_name: object.fname + " " + object.lname });
+      });
   };
   removeInvalidBids = value => {
     let bids = this.state.bidlist;
@@ -161,7 +169,7 @@ class Winner extends Component {
     }
   };
   render() {
-    const { auction_id, onChange } = this.state;
+    const { auction_id, onChange, winner_name } = this.state;
     const auction_data = [];
     const auction_list = this.state.apis[this.helper.getIndex(this.state.apis, APIS.AUCTIONS)].data;
     for (let i = 0; i < auction_list.length; i++) {
@@ -182,8 +190,8 @@ class Winner extends Component {
             helperText={"Please select a issue type"}
           ></MTextField>
         </div>
-        <div className="winnerName">
-
+        <div className="winnerName" style={{ display: winner_name ? "block" : "none", margin: "auto 0" }}>
+          <h3>Winner name:{winner_name}</h3>
         </div>
         <Box mt={4}>
           <Copyright />
