@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Container, Box } from "@material-ui/core";
-import { Copyright, MCard, MAppBar } from "../common/FormElements";
+import { Copyright, MCard, MAppBar, MMenu } from "../common/FormElements";
 import * as ROUTES from "../../constants/routes";
 import * as APIS from "../../constants/fbapis";
 import { withFirebase } from "../Firebase";
@@ -95,6 +95,8 @@ class Bidlist extends Component {
         }
         this.props.history.push(ROUTES.LANDING);
       });
+    } else if (str === "winner") {
+      this.props.history.push(ROUTES.WINNER);
     }
   };
   handleChange = () => (event, idx) => {
@@ -124,7 +126,19 @@ class Bidlist extends Component {
     });
     return (
       <div>
-        <MAppBar handleClose={onAppBarClose}></MAppBar>
+        <MAppBar
+          name="Products"
+          handleClose={onAppBarClose}
+          menu={
+            <MMenu
+              menuitems={[
+                { name: APIS.WINNER, value: "Winner" },
+                { name: APIS.LOGOUT, value: "Logout" }
+              ]}
+              handleClose={onAppBarClose}
+            ></MMenu>
+          }
+        ></MAppBar>
         <Container component="main" maxWidth="xs" style={{ marginTop: 20 }}>
           {mCards}
           <Box mt={4}>

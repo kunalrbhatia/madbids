@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Container, Box, Paper } from "@material-ui/core";
-import { Copyright, MTextField } from "../common/FormElements";
-//import * as ROUTES from "../../constants/routes";
+import { Copyright, MTextField, MAppBar, MMenu } from "../common/FormElements";
+import * as ROUTES from "../../constants/routes";
 import * as APIS from "../../constants/fbapis";
 import { withFirebase } from "../Firebase";
 import { compose } from "recompose";
@@ -11,6 +11,7 @@ class Winner extends Component {
     this.helper = this.props.helper;
     this.state = {
       onChange: this.handleChange(),
+      onAppBarClose: this.handleAppBarClose(),
       apis: [
         {
           name: APIS.AUCTIONS,
@@ -30,6 +31,18 @@ class Winner extends Component {
     this.current = 0;
     this.total = this.state.apis.length;
   }
+  handleAppBarClose = () => str => {
+    if (str === APIS.LOGOUT) {
+      this.props.firebase.doSignOut().then(e => {
+        if (localStorage.getItem("token") != null) {
+          localStorage.removeItem("token");
+        }
+        this.props.history.push(ROUTES.LANDING);
+      });
+    } else if (str === APIS.PRODUCTS) {
+      this.props.history.push(ROUTES.BIDLIST);
+    }
+  };
   componentDidMount = () => {
     this.getDataFromDB();
   };
@@ -169,7 +182,7 @@ class Winner extends Component {
     }
   };
   render() {
-    const { auction_id, onChange, winner_name } = this.state;
+    const { auction_id, onChange, winner_name, onAppBarClose } = this.state;
     const auction_data = [];
     const auction_list = this.state.apis[this.helper.getIndex(this.state.apis, APIS.AUCTIONS)].data;
     for (let i = 0; i < auction_list.length; i++) {
@@ -177,30 +190,46 @@ class Winner extends Component {
       auction_data.push({ value: e.id, label: e.auction_name });
     }
     return (
-      <Container component="main" maxWidth="xs">
-        <div className="auctionList">
-          <MTextField
-            name={"auctionList"}
-            type={"select"}
-            fullWidth={true}
-            data={auction_data}
-            label={"Auction List"}
-            value={auction_id}
-            onChange={onChange}
-            //helperText={"Please select a issue type"}
-          ></MTextField>
-        </div>
-        <div className="winnerName" style={{ display: winner_name ? "block" : "none", margin: "20px auto" }}>
-          <Paper elevation={4}>
-            <img src={require("../images/winner.jpg")} alt="Winner" className="winner_img" /> 
-            <h3 className="winnerName"><span className="name">{winner_name}</span></h3>
-          </Paper>
-          
-        </div>
-        <Box mt={4}>
-          <Copyright />
-        </Box>
-      </Container>
+      <div>
+        <MAppBar
+          name="Winner"
+          handleClose={onAppBarClose}
+          menu={
+            <MMenu
+              menuitems={[
+                { name: APIS.PRODUCTS, value: "Products" },
+                { name: APIS.LOGOUT, value: "Logout" }
+              ]}
+              handleClose={onAppBarClose}
+            ></MMenu>
+          }
+        ></MAppBar>
+        <Container component="main" maxWidth="xs" style={{ marginTop: 20 }}>
+          <div className="auctionList">
+            <MTextField
+              name={"auctionList"}
+              type={"select"}
+              fullWidth={true}
+              data={auction_data}
+              label={"Auction List"}
+              value={auction_id}
+              onChange={onChange}
+              //helperText={"Please select a issue type"}
+            ></MTextField>
+          </div>
+          <div className="winnerName" style={{ display: winner_name ? "block" : "none", margin: "20px auto" }}>
+            <Paper elevation={4}>
+              <img src={require("../images/winner.jpg")} alt="Winner" className="winner_img" />
+              <h3 className="winnerName">
+                <span className="name">{winner_name}</span>
+              </h3>
+            </Paper>
+          </div>
+          <Box mt={4}>
+            <Copyright />
+          </Box>
+        </Container>
+      </div>
     );
   }
 }

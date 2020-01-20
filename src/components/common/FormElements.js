@@ -391,12 +391,10 @@ function STable(params) {
     </div>
   );
 }
-function MAppBar(params) {
-  const classes = useStyles();
+function MMenu(params) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleMenu = event => {
-    console.log(event.currentTarget);
     setAnchorEl(event.currentTarget);
   };
   const handleClose = str => {
@@ -404,41 +402,55 @@ function MAppBar(params) {
     console.log(str);
     params.handleClose(str);
   };
+  const menuItems = params.menuitems;
+  const mItems = menuItems.map((mi, idx) => {
+    return (
+      <MenuItem key={idx} onClick={e => handleClose(mi.name)}>
+        {mi.value}
+      </MenuItem>
+    );
+  });
+  return (
+    <div style={{ marginRight: 0 }}>
+      <IconButton
+        aria-label="account of current user"
+        aria-controls="menu-appbar"
+        aria-haspopup="true"
+        onClick={handleMenu}
+        color="inherit"
+      >
+        <AccountCircle />
+      </IconButton>
+      <Menu
+        id="menu-appbar"
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right"
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right"
+        }}
+        open={open}
+        onClose={handleClose}
+      >
+        {mItems}
+      </Menu>
+    </div>
+  );
+}
+function MAppBar(params) {
+  const classes = useStyles();
   return (
     <div>
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            Home
+            {params.name}
           </Typography>
-          <div style={{ marginRight: 0 }}>
-            <IconButton
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right"
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right"
-              }}
-              open={open}
-              onClose={handleClose}
-            >
-              <MenuItem onClick={e => handleClose("logout")}>Logout</MenuItem>
-            </Menu>
-          </div>
+          {params.menu}
         </Toolbar>
       </AppBar>
     </div>
@@ -469,4 +481,4 @@ function MSnackbar(params) {
   );
 }
 
-export { MTextField, MButton, MDialog, MSwithch, MCheckbox, MSnackbar, Copyright, MCard, MAppBar, STable };
+export { MTextField, MButton, MDialog, MSwithch, MCheckbox, MSnackbar, Copyright, MCard, MAppBar, STable, MMenu };
