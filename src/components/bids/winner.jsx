@@ -44,6 +44,7 @@ class Winner extends Component {
     }
   };
   componentDidMount = () => {
+    this.helper.showOverlay();
     this.getDataFromDB();
   };
   getDataFromDB = () => {
@@ -80,6 +81,8 @@ class Winner extends Component {
           }
         );
       }
+    } else {
+      this.helper.hideOverlay();
     }
   };
   findWinnerByTime = _bids => {
@@ -134,7 +137,9 @@ class Winner extends Component {
       .once("value")
       .then(v => {
         let object = v.val();
-        this.setState({ winner_name: object.fname + " " + object.lname });
+        this.setState({ winner_name: object.fname + " " + object.lname }, () => {
+          this.helper.hideOverlay();
+        });
       });
   };
   removeInvalidBids = value => {
@@ -160,6 +165,7 @@ class Winner extends Component {
   };
   handleChange = () => (event, idx) => {
     if (event.target.name === "auctionList") {
+      this.helper.showOverlay();
       this.setState({ auction_id: event.target.value }, () => {
         this.props.firebase
           .bids()

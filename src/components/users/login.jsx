@@ -23,6 +23,7 @@ class Login extends Component {
       passowrd: "",
       error: ""
     };
+    this.helper = this.props.helper;
     if (localStorage.getItem("token") != null) {
       this.props.history.push(ROUTES.BIDLIST);
     }
@@ -34,6 +35,7 @@ class Login extends Component {
       this.setState({ password: e.currentTarget.value });
     } else if (e.currentTarget.name === "submit") {
       const { email, password } = this.state;
+      this.helper.showOverlay();
       this.props.firebase
         .doSignInWithEmailAndPassword(email, password)
         .then(authUser => {
@@ -42,6 +44,7 @@ class Login extends Component {
           localStorage.setItem("token", "token_" + email);
         })
         .then(() => {
+          this.helper.hideOverlay();
           this.props.history.push(ROUTES.BIDLIST);
         })
         .catch(error => {

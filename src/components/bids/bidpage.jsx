@@ -7,6 +7,7 @@ import { compose } from "recompose";
 class BidPage extends Component {
   constructor(props) {
     super(props);
+    this.helper = this.props.helper;
     if (localStorage.getItem("uid") !== null) {
       this.props.globalVars.userId = localStorage.getItem("uid");
     }
@@ -31,6 +32,7 @@ class BidPage extends Component {
     this.setState({ snackMsg: "", snackOpen: false }, () => {});
   };
   handleChange = () => event => {
+    this.helper.showOverlay();
     if (event.currentTarget.name === "submit") {
       this.props.firebase
         .bids()
@@ -43,6 +45,7 @@ class BidPage extends Component {
         })
         .then(e => {
           setTimeout(() => {
+            this.helper.hideOverlay();
             this.props.history.push(ROUTES.BIDLIST);
           }, 2000);
           this.setState({ snackMsg: "Thanks for biding!", snackOpen: true }, () => {});

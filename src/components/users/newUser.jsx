@@ -42,6 +42,7 @@ class NewUser extends Component {
     this.total = this.state.apis.length;
   }
   componentDidMount = () => {
+    this.helper.showOverlay();
     this.getDataFromDB();
   };
   getDataFromDB = () => {
@@ -67,17 +68,20 @@ class NewUser extends Component {
         });
       }
     } else {
-      this.setState({ users: this.state.apis[this.helper.getIndex(this.state.apis, APIS.USERS)] });
+      this.setState({ users: this.state.apis[this.helper.getIndex(this.state.apis, APIS.USERS)] }, () => {
+        this.helper.hideOverlay();
+      });
     }
   };
   snackClose = () => e => {
-    this.setState({ snackMsg: "Password and confirm password doesn't match", snackOpen: false }, () => {});
+    this.setState({ snackMsg: "", snackOpen: false }, () => {});
   };
   handleChange = () => event => {
     if (event.currentTarget.name === "register") {
       const { gender, fname, lname, email, password, cpassword, cno, secretQuestion, secretAnswer } = this.state;
       if (password === cpassword) {
         if (!this.findIfUserExists(email)) {
+          this.helper.showOverlay();
           this.props.firebase
             .doCreateUserWithEmailAndPassword(email, password)
             .then(authUser => {
@@ -96,13 +100,14 @@ class NewUser extends Component {
             })
             .then(() => {
               localStorage.setItem("token", "token_" + email);
+              this.helper.hideOverlay();
               this.props.history.push(ROUTES.BIDLIST);
             })
             .catch(error => {
               this.setState({ error });
             });
         } else {
-          console.log("user does exist");
+          this.setState({ snackMsg: "User already exist!", snackOpen: true });
         }
       } else {
         this.setState({ snackMsg: "Password and confirm password doesn't match", snackOpen: true });

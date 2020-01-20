@@ -25,6 +25,7 @@ class Bidlist extends Component {
     }
   }
   componentDidMount = () => {
+    this.helper.showOverlay();
     this.getDataFromDB();
   };
   getDataFromDB = () => {
@@ -84,7 +85,9 @@ class Bidlist extends Component {
           }
         }
       }
-      this.setState({ productList: pl });
+      this.setState({ productList: pl }, () => {
+        this.helper.hideOverlay();
+      });
     }
   };
   handleAppBarClose = () => str => {
