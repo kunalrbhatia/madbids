@@ -45,3 +45,12 @@ code {
   cursor: pointer;
 }
 
+.winner_img{width:100%; height: auto; display:block;}
+.winnerName{font-size:30px; text-align: center; text-transform: uppercase;padding-bottom: 20px; }
+.winnerName .name{
+  background: -webkit-linear-gradient(rgb(219, 90, 90), rgb(87, 9, 9));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  
+}
+

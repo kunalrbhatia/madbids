@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Box } from "@material-ui/core";
+import { Container, Box, Paper } from "@material-ui/core";
 import { Copyright, MTextField } from "../common/FormElements";
 //import * as ROUTES from "../../constants/routes";
 import * as APIS from "../../constants/fbapis";
@@ -187,11 +187,15 @@ class Winner extends Component {
             label={"Auction List"}
             value={auction_id}
             onChange={onChange}
-            helperText={"Please select a issue type"}
+            //helperText={"Please select a issue type"}
           ></MTextField>
         </div>
-        <div className="winnerName" style={{ display: winner_name ? "block" : "none", margin: "auto 0" }}>
-          <h3>Winner name:{winner_name}</h3>
+        <div className="winnerName" style={{ display: winner_name ? "block" : "none", margin: "20px auto" }}>
+          <Paper elevation={4}>
+            <img src={require("../images/winner.jpg")} alt="Winner" className="winner_img" /> 
+            <h3 className="winnerName"><span className="name">{winner_name}</span></h3>
+          </Paper>
+          
         </div>
         <Box mt={4}>
           <Copyright />
