@@ -15,7 +15,7 @@ import { compose } from "recompose";
 class App extends Component {
   constructor(props) {
     super(props);
-    this.Helper = new Helper();
+    this.Helper = new Helper(props);
     this.state = {
       globalVars: {
         userId: "1"

@@ -1,4 +1,5 @@
 import { Component } from "react";
+import * as ROUTES from "../../constants/routes";
 
 let a = [
   "",
@@ -240,9 +241,13 @@ export class Helper extends Component {
       });
   }
 
-  doLogout() {
-    localStorage.setItem("token", "");
-    localStorage.setItem("isLoggedIn", false);
+  doLogout(props) {
+    props.firebase.doSignOut().then(e => {
+      if (localStorage.getItem("token") != null) {
+        localStorage.removeItem("token");
+      }
+      props.history.push(ROUTES.LANDING);
+    });
   }
 
   getDateinFormat(newdate, format = "DD/MM/YYYY") {
@@ -341,5 +346,4 @@ export class Helper extends Component {
     }
   }
 }
-
 export default { Helper };

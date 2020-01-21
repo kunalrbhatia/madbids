@@ -9,7 +9,6 @@ import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { MButton, MTextField, Copyright, MSnackbar } from "../common/FormElements";
 import * as ROUTES from "../../constants/routes";
-//import * as APIS from "../../constants/fbapis";
 import { withFirebase } from "../Firebase";
 import { compose } from "recompose";
 class Forgot extends Component {
@@ -50,7 +49,6 @@ class Forgot extends Component {
     this.setState({ snackMsg: "", snackOpen: false });
   };
   handleChange = () => event => {
-    console.log(event.currentTarget.name);
     if (event.currentTarget.name === "submit" && !this.state.userFound) {
       this.helper.showOverlay();
       this.props.firebase
@@ -70,32 +68,43 @@ class Forgot extends Component {
           if (object) {
             let ques = this.getQuestionsByValue(object.secretQuestion);
             this.setState({ question: ques, answer: object.secretAnswer }, () => {
-              //console.log(this.state);
               this.setState({ userFound: true });
             });
           } else {
             this.setState({ snackMsg: "User doesn't exist!", snackOpen: true }, () => {});
           }
         });
+    } else if (event.currentTarget.name === "submit" && this.state.userFound && this.state.detailsVerified) {
+      this.helper.showOverlay();
+      if (this.state.newPassword === this.state.confirmPassword) {
+        let email = this.state.user.email;
+        let password = this.state.user.password;
+        this.props.firebase.doSignInWithEmailAndPassword(email, password).then(authUser => {
+          let userRef = this.props.firebase.user(this.state.user.id);
+          let user = this.props.firebase.getCurrentUser();
+          user
+            .updatePassword(this.state.newPassword)
+            .then(() => {
+              userRef.update({ password: this.state.newPassword }).then(() => {
+                this.setState({ snackMsg: "Password changed", snackOpen: true });
+                setTimeout(() => {
+                  this.helper.hideOverlay();
+                  this.helper.doLogout(this.props);
+                }, 2000);
+              });
+            })
+            .catch(function(error) {
+              // An error happened.
+            });
+        });
+      } else {
+        this.setState({ snackMsg: "Password and confirm password doesn't match", snackOpen: true });
+      }
     } else if (event.currentTarget.name === "submit" && this.state.userFound) {
       if (this.state.uanswer === this.state.answer) {
         this.setState({ snackMsg: "Answer matched, please change password.", snackOpen: true, detailsVerified: true });
       } else {
         this.setState({ snackMsg: "Answer doesn't match with our records.", snackOpen: true });
-      }
-    } else if (event.currentTarget.name === "submit" && this.state.userFound && this.state.detailsVerified) {
-      this.helper.showOverlay();
-      if (this.state.newPassword === this.state.confirmPassword) {
-        this.props.firebase.users(this.state.user.id).set({
-          password: this.state.newPassword
-        });
-        this.setState({ snackMsg: "Password changed", snackOpen: true });
-        setTimeout(() => {
-          this.helper.hideOverlay();
-          this.props.history.push(ROUTES.SIGN_IN);
-        }, 2000);
-      } else {
-        this.setState({ snackMsg: "Password and confirm password doesn't match", snackOpen: true });
       }
     } else if (event.currentTarget.name === "email") {
       this.setState({ email: event.currentTarget.value });
