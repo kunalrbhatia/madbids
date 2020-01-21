@@ -246,7 +246,7 @@ class Forgot extends Component {
           </Grid>
         </Grid>
         <MSnackbar
-          autoHideDuration={2000}
+          autoHideDuration={4000}
           open={snackOpen}
           vPos={"bottom"}
           hPos={"left"}

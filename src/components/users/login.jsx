@@ -9,25 +9,30 @@ import Box from "@material-ui/core/Box";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import { MButton, Copyright, MTextField } from "../common/FormElements";
+import { MButton, Copyright, MTextField, MSnackbar } from "../common/FormElements";
 import { withFirebase } from "../Firebase";
 import { compose } from "recompose";
 import * as ROUTES from "../../constants/routes";
 class Login extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = {
       onChange: this.handleChange(),
+      snackClose: this.snackClose(),
       email: "",
       passowrd: "",
-      error: ""
+      error: "",
+      snackOpen: false,
+      snackMsg: ""
     };
     this.helper = this.props.helper;
     if (localStorage.getItem("token") != null) {
       this.props.history.push(ROUTES.BIDLIST);
     }
   }
+  snackClose = () => e => {
+    this.setState({ snackMsg: "", snackOpen: false });
+  };
   handleChange = () => e => {
     if (e.currentTarget.name === "email") {
       this.setState({ email: e.currentTarget.value });
@@ -48,13 +53,15 @@ class Login extends Component {
           this.props.history.push(ROUTES.BIDLIST);
         })
         .catch(error => {
+          this.helper.hideOverlay();
+          this.setState({ snackMsg: "Password incorrect", snackOpen: true }, () => {});
           this.setState({ error });
         });
       e.preventDefault();
     }
   };
   render() {
-    const { onChange, email } = this.state;
+    const { onChange, email, snackOpen, snackClose, snackMsg } = this.state;
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -124,6 +131,14 @@ class Login extends Component {
             </Grid>
           </form>
         </div>
+        <MSnackbar
+          autoHideDuration={4000}
+          open={snackOpen}
+          vPos={"bottom"}
+          hPos={"left"}
+          message={snackMsg}
+          onClose={snackClose}
+        ></MSnackbar>
         <Box mt={8}>
           <Copyright />
         </Box>
