@@ -131,7 +131,7 @@ class Winner extends Component {
     return bidValues;
   };
   declareWinner = bid => {
-    console.log(bid);
+    console.log(bid[0].bid_price);
     this.props.firebase
       .user(bid[0].user_key)
       .once("value")
