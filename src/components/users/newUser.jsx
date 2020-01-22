@@ -95,7 +95,8 @@ class NewUser extends Component {
                 lname,
                 gender,
                 secretQuestion,
-                secretAnswer
+                secretAnswer,
+                bids: []
               });
             })
             .then(() => {
