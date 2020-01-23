@@ -24,7 +24,8 @@ class Winner extends Component {
       ],
       auction_id: "",
       bidlist: [],
-      winner_name: null
+      winner_name: null,
+      bid_amount:null
     };
     this.objCopy = [];
     this.helper = this.props.helper;
@@ -137,7 +138,10 @@ class Winner extends Component {
       .once("value")
       .then(v => {
         let object = v.val();
-        this.setState({ winner_name: object.fname + " " + object.lname }, () => {
+        this.setState({ 
+          winner_name: object.fname + " " + object.lname,
+          bid_amount : bid[0].bid_price
+        }, () => {
           this.helper.hideOverlay();
         });
       });
@@ -188,7 +192,7 @@ class Winner extends Component {
     }
   };
   render() {
-    const { auction_id, onChange, winner_name, onAppBarClose } = this.state;
+    const { auction_id, onChange, winner_name, bid_amount, onAppBarClose } = this.state;
     const auction_data = [];
     const auction_list = this.state.apis[this.helper.getIndex(this.state.apis, APIS.AUCTIONS)].data;
     for (let i = 0; i < auction_list.length; i++) {
@@ -226,9 +230,10 @@ class Winner extends Component {
           <div className="winnerName" style={{ display: winner_name ? "block" : "none", margin: "20px auto" }}>
             <Paper elevation={4}>
               <img src={require("../images/winner.jpg")} alt="Winner" className="winner_img" />
-              <h3 className="winnerName">
-                <span className="name">{winner_name}</span>
-              </h3>
+              <div className="winnerName">
+                <p className="name">{winner_name}</p>
+                <span class="bidamount">Bid Amount: {bid_amount}</span>
+              </div>
             </Paper>
           </div>
           <Box mt={4}>
