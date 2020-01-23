@@ -8,45 +8,48 @@ import { compose } from "recompose";
 class Winner extends Component {
   constructor(props) {
     super(props);
-    this.helper = this.props.helper;
-    this.state = {
-      onChange: this.handleChange(),
-      onAppBarClose: this.handleAppBarClose(),
-      apis: [
-        {
-          name: APIS.AUCTIONS,
-          data: [],
-          url: this.props.firebase
-            .auctions()
-            .orderByChild("is_active")
-            .equalTo(0)
-        }
-      ],
-      auction_id: "",
-      bidlist: [],
-      winner_name: null,
-      bid_amount:null
-    };
-    this.objCopy = [];
-    this.helper = this.props.helper;
-    this.current = 0;
-    this.total = this.state.apis.length;
+    if (localStorage.getItem("token") === null) {
+      this.props.history.push(ROUTES.SIGN_IN);
+    } else {
+      this.helper = this.props.helper;
+      this.state = {
+        onChange: this.handleChange(),
+        onAppBarClose: this.handleAppBarClose(),
+        apis: [
+          {
+            name: APIS.AUCTIONS,
+            data: [],
+            url: this.props.firebase
+              .auctions()
+              .orderByChild("is_active")
+              .equalTo(0)
+          }
+        ],
+        auction_id: "",
+        bidlist: [],
+        winner_name: null,
+        bid_amount: null
+      };
+      this.objCopy = [];
+      this.helper = this.props.helper;
+      this.current = 0;
+      this.total = this.state.apis.length;
+    }
   }
   handleAppBarClose = () => str => {
     if (str === APIS.LOGOUT) {
-      this.props.firebase.doSignOut().then(e => {
-        if (localStorage.getItem("token") != null) {
-          localStorage.removeItem("token");
-        }
-        this.props.history.push(ROUTES.LANDING);
-      });
+      this.helper.doLogout(this.props);
     } else if (str === APIS.PRODUCTS) {
       this.props.history.push(ROUTES.BIDLIST);
     }
   };
   componentDidMount = () => {
-    this.helper.showOverlay();
-    this.getDataFromDB();
+    if (localStorage.getItem("token") === null) {
+      this.props.history.push(ROUTES.SIGN_IN);
+    } else {
+      this.helper.showOverlay();
+      this.getDataFromDB();
+    }
   };
   getDataFromDB = () => {
     if (this.current < this.total) {
@@ -138,12 +141,15 @@ class Winner extends Component {
       .once("value")
       .then(v => {
         let object = v.val();
-        this.setState({ 
-          winner_name: object.fname + " " + object.lname,
-          bid_amount : bid[0].bid_price
-        }, () => {
-          this.helper.hideOverlay();
-        });
+        this.setState(
+          {
+            winner_name: object.fname + " " + object.lname,
+            bid_amount: bid[0].bid_price
+          },
+          () => {
+            this.helper.hideOverlay();
+          }
+        );
       });
   };
   removeInvalidBids = value => {
@@ -192,56 +198,61 @@ class Winner extends Component {
     }
   };
   render() {
-    const { auction_id, onChange, winner_name, bid_amount, onAppBarClose } = this.state;
-    const auction_data = [];
-    const auction_list = this.state.apis[this.helper.getIndex(this.state.apis, APIS.AUCTIONS)].data;
-    for (let i = 0; i < auction_list.length; i++) {
-      const e = auction_list[i];
-      auction_data.push({ value: e.id, label: e.auction_name });
+    if (localStorage.getItem("token") === null) {
+      this.props.history.push(ROUTES.SIGN_IN);
+      return <div></div>;
+    } else {
+      const { auction_id, onChange, winner_name, bid_amount, onAppBarClose } = this.state;
+      const auction_data = [];
+      const auction_list = this.state.apis[this.helper.getIndex(this.state.apis, APIS.AUCTIONS)].data;
+      for (let i = 0; i < auction_list.length; i++) {
+        const e = auction_list[i];
+        auction_data.push({ value: e.id, label: e.auction_name });
+      }
+      return (
+        <div>
+          <MAppBar
+            name="Winner"
+            handleClose={onAppBarClose}
+            menu={
+              <MMenu
+                menuitems={[
+                  { name: APIS.PRODUCTS, value: "Products" },
+                  { name: APIS.LOGOUT, value: "Logout" }
+                ]}
+                handleClose={onAppBarClose}
+              ></MMenu>
+            }
+          ></MAppBar>
+          <Container component="main" maxWidth="xs" style={{ marginTop: 20 }}>
+            <div className="auctionList">
+              <MTextField
+                name={"auctionList"}
+                type={"select"}
+                fullWidth={true}
+                data={auction_data}
+                label={"Auction List"}
+                value={auction_id}
+                onChange={onChange}
+                //helperText={"Please select a issue type"}
+              ></MTextField>
+            </div>
+            <div className="winnerName" style={{ display: winner_name ? "block" : "none", margin: "20px auto" }}>
+              <Paper elevation={4}>
+                <img src={require("../images/winner.jpg")} alt="Winner" className="winner_img" />
+                <div className="winnerName">
+                  <p className="name">{winner_name}</p>
+                  <span class="bidamount">Bid Amount: {bid_amount}</span>
+                </div>
+              </Paper>
+            </div>
+            <Box mt={4}>
+              <Copyright />
+            </Box>
+          </Container>
+        </div>
+      );
     }
-    return (
-      <div>
-        <MAppBar
-          name="Winner"
-          handleClose={onAppBarClose}
-          menu={
-            <MMenu
-              menuitems={[
-                { name: APIS.PRODUCTS, value: "Products" },
-                { name: APIS.LOGOUT, value: "Logout" }
-              ]}
-              handleClose={onAppBarClose}
-            ></MMenu>
-          }
-        ></MAppBar>
-        <Container component="main" maxWidth="xs" style={{ marginTop: 20 }}>
-          <div className="auctionList">
-            <MTextField
-              name={"auctionList"}
-              type={"select"}
-              fullWidth={true}
-              data={auction_data}
-              label={"Auction List"}
-              value={auction_id}
-              onChange={onChange}
-              //helperText={"Please select a issue type"}
-            ></MTextField>
-          </div>
-          <div className="winnerName" style={{ display: winner_name ? "block" : "none", margin: "20px auto" }}>
-            <Paper elevation={4}>
-              <img src={require("../images/winner.jpg")} alt="Winner" className="winner_img" />
-              <div className="winnerName">
-                <p className="name">{winner_name}</p>
-                <span class="bidamount">Bid Amount: {bid_amount}</span>
-              </div>
-            </Paper>
-          </div>
-          <Box mt={4}>
-            <Copyright />
-          </Box>
-        </Container>
-      </div>
-    );
   }
 }
 const winner = compose(withFirebase)(Winner);

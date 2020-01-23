@@ -95,12 +95,7 @@ class Bidlist extends Component {
   };
   handleAppBarClose = () => str => {
     if (str === "logout") {
-      this.props.firebase.doSignOut().then(e => {
-        if (localStorage.getItem("token") != null) {
-          localStorage.removeItem("token");
-        }
-        this.props.history.push(ROUTES.LANDING);
-      });
+      this.helper.doLogout(this.props);
     } else if (str === "winner") {
       this.props.history.push(ROUTES.WINNER);
     }
