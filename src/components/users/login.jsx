@@ -23,10 +23,12 @@ class Login extends Component {
       passowrd: "",
       error: "",
       snackOpen: false,
-      snackMsg: ""
+      snackMsg: "",
+      rememberMe: false
     };
     this.helper = this.props.helper;
-    if (localStorage.getItem("token") != null) {
+    if (localStorage.getItem("token") != null && localStorage.getItem("remember_me") != null) {
+      console.log("31");
       this.props.history.push(ROUTES.BIDLIST);
     }
   }
@@ -34,7 +36,13 @@ class Login extends Component {
     this.setState({ snackMsg: "", snackOpen: false });
   };
   handleChange = () => e => {
-    if (e.currentTarget.name === "email") {
+    if (e.currentTarget.name === "rememberMe") {
+      if (!this.state.rememberMe) {
+        this.setState({ rememberMe: true });
+      } else {
+        this.setState({ rememberMe: false });
+      }
+    } else if (e.currentTarget.name === "email") {
       this.setState({ email: e.currentTarget.value });
     } else if (e.currentTarget.name === "password") {
       this.setState({ password: e.currentTarget.value });
@@ -46,6 +54,9 @@ class Login extends Component {
         .then(authUser => {
           this.props.globalVars.userId = authUser.user.uid;
           localStorage.setItem("uid", authUser.user.uid);
+          if (this.state.rememberMe) {
+            localStorage.setItem("remember_me", "remember_me" + email);
+          }
           localStorage.setItem("token", "token_" + email);
         })
         .then(() => {
@@ -61,7 +72,7 @@ class Login extends Component {
     }
   };
   render() {
-    const { onChange, email, snackOpen, snackClose, snackMsg } = this.state;
+    const { onChange, email, snackOpen, snackClose, snackMsg, rememberMe } = this.state;
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -106,7 +117,10 @@ class Login extends Component {
               onChange={onChange}
               helperText="Password"
             ></MTextField>
-            <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
+            <FormControlLabel
+              control={<Checkbox name="rememberMe" value={rememberMe} onChange={onChange} color="primary" />}
+              label="Remember me"
+            />
             <MButton
               style={{ margin: "3px 0px 2px" }}
               value={"Submit"}

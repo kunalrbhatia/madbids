@@ -8,25 +8,28 @@ import { compose } from "recompose";
 class Bidlist extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      onChange: this.handleChange(),
-      onAppBarClose: this.handleAppBarClose(),
-      apis: [
-        { name: APIS.PRODUCTS, data: [], url: this.props.firebase.products() },
-        { name: APIS.AUCTIONS, data: [], url: this.props.firebase.auctions() }
-      ],
-      productList: []
-    };
-    this.helper = this.props.helper;
-    this.current = 0;
-    this.total = this.state.apis.length;
     if (localStorage.getItem("token") === null) {
       this.props.history.push(ROUTES.SIGN_IN);
+    } else {
+      this.state = {
+        onChange: this.handleChange(),
+        onAppBarClose: this.handleAppBarClose(),
+        apis: [
+          { name: APIS.PRODUCTS, data: [], url: this.props.firebase.products() },
+          { name: APIS.AUCTIONS, data: [], url: this.props.firebase.auctions() }
+        ],
+        productList: []
+      };
     }
   }
   componentDidMount = () => {
-    this.helper.showOverlay();
-    this.getDataFromDB();
+    if (localStorage.getItem("token") !== null) {
+      this.helper = this.props.helper;
+      this.current = 0;
+      this.total = this.state.apis.length;
+      this.helper.showOverlay();
+      this.getDataFromDB();
+    }
   };
   getDataFromDB = () => {
     if (this.current < this.total) {
@@ -110,46 +113,51 @@ class Bidlist extends Component {
     }
   };
   render() {
-    const { onChange, onAppBarClose, productList } = this.state;
-    const mCards = productList.map((pl, idx) => {
+    if (localStorage.getItem("token") === null) {
+      this.props.history.push(ROUTES.SIGN_IN);
+      return <div></div>;
+    } else {
+      const { onChange, onAppBarClose, productList } = this.state;
+      const mCards = productList.map((pl, idx) => {
+        return (
+          <div style={{ marginBottom: 20 }} key={pl.id}>
+            <MCard
+              name={"bid_1"}
+              actionEnabled={true}
+              title={pl.name}
+              image={pl.photo_url}
+              imageTitle={pl.name}
+              content={pl.description}
+              price={pl.price}
+              onChange={e => onChange(e, idx)}
+            ></MCard>
+          </div>
+        );
+      });
       return (
-        <div style={{ marginBottom: 20 }} key={pl.id}>
-          <MCard
-            name={"bid_1"}
-            actionEnabled={true}
-            title={pl.name}
-            image={pl.photo_url}
-            imageTitle={pl.name}
-            content={pl.description}
-            price={pl.price}
-            onChange={e => onChange(e, idx)}
-          ></MCard>
+        <div>
+          <MAppBar
+            name="Products"
+            handleClose={onAppBarClose}
+            menu={
+              <MMenu
+                menuitems={[
+                  { name: APIS.WINNER, value: "Winner" },
+                  { name: APIS.LOGOUT, value: "Logout" }
+                ]}
+                handleClose={onAppBarClose}
+              ></MMenu>
+            }
+          ></MAppBar>
+          <Container component="main" maxWidth="xs" style={{ marginTop: 20 }}>
+            {mCards}
+            <Box mt={4}>
+              <Copyright />
+            </Box>
+          </Container>
         </div>
       );
-    });
-    return (
-      <div>
-        <MAppBar
-          name="Products"
-          handleClose={onAppBarClose}
-          menu={
-            <MMenu
-              menuitems={[
-                { name: APIS.WINNER, value: "Winner" },
-                { name: APIS.LOGOUT, value: "Logout" }
-              ]}
-              handleClose={onAppBarClose}
-            ></MMenu>
-          }
-        ></MAppBar>
-        <Container component="main" maxWidth="xs" style={{ marginTop: 20 }}>
-          {mCards}
-          <Box mt={4}>
-            <Copyright />
-          </Box>
-        </Container>
-      </div>
-    );
+    }
   }
 }
 const bidList = compose(withFirebase)(Bidlist);

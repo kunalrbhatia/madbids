@@ -246,6 +246,15 @@ export class Helper extends Component {
       if (localStorage.getItem("token") != null) {
         localStorage.removeItem("token");
       }
+      if (localStorage.getItem("uid") != null) {
+        localStorage.removeItem("uid");
+      }
+      if (localStorage.getItem("productInfo") != null) {
+        localStorage.removeItem("productInfo");
+      }
+      if (localStorage.getItem("remember_me") != null) {
+        localStorage.removeItem("remember_me");
+      }
       props.history.push(ROUTES.LANDING);
     });
   }
