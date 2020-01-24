@@ -83,7 +83,11 @@ class BidPage extends Component {
                   .then(e => {
                     setTimeout(() => {
                       this.helper.hideOverlay();
-                      window.Android.showToast("Thanks for biding!");
+                      try {
+                        window.Android.showToast("Thanks for biding!");
+                      } catch (error) {
+                        console.log(error);
+                      }
                       this.props.history.push(ROUTES.BIDLIST);
                     }, 2000);
                     this.setState({ snackMsg: "Thanks for biding!", snackOpen: true }, () => {});
@@ -92,7 +96,11 @@ class BidPage extends Component {
           } else {
             setTimeout(() => {
               this.helper.hideOverlay();
-              window.Android.showToast("You've already bided for this auction");
+              try {
+                window.Android.showToast("You've already bided for this auction");
+              } catch (error) {
+                console.log(error);
+              }
               this.props.history.push(ROUTES.BIDLIST);
             }, 2000);
             this.setState({ snackMsg: "You've already bided for this auction", snackOpen: true }, () => {});
