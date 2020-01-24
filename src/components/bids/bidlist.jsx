@@ -66,6 +66,7 @@ class Bidlist extends Component {
         );
       }
     } else {
+      this.current = 0;
       let auctionsIndex = this.helper.getIndex(this.state.apis, APIS.AUCTIONS);
       let auctionsList = this.state.apis[auctionsIndex].data;
       let prodsIndex = this.helper.getIndex(this.state.apis, APIS.PRODUCTS);
