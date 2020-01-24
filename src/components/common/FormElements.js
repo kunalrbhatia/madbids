@@ -24,6 +24,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import {
   IconButton,
   Snackbar /* , Icon  */,
@@ -443,10 +444,20 @@ function MMenu(params) {
 }
 function MAppBar(params) {
   const classes = useStyles();
+  const handleMenu = event => {
+    params.handleIconClick();
+  };
+  const iconbutton = (
+    <IconButton onClick={handleMenu} edge="start" color="inherit" aria-label="back">
+      <ArrowBackIcon />
+    </IconButton>
+  );
+
   return (
     <div>
       <AppBar position="static">
         <Toolbar>
+          {params.icon ? iconbutton : ""}
           <Typography variant="h6" className={classes.title}>
             {params.name}
           </Typography>

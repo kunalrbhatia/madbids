@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import { Container, Box, Paper, Grid } from "@material-ui/core";
-import { Copyright, MCard, MTextField, MButton, MSnackbar } from "../common/FormElements";
+import { Copyright, MCard, MTextField, MButton, MSnackbar, MMenu, MAppBar } from "../common/FormElements";
 import * as ROUTES from "../../constants/routes";
+import * as APIS from "../../constants/fbapis";
 import { withFirebase } from "../Firebase";
 import { compose } from "recompose";
 class BidPage extends Component {
@@ -21,6 +22,8 @@ class BidPage extends Component {
         bidValue: 0,
         onChange: this.handleChange(),
         snackClose: this.snackClose(),
+        onAppBarClose: this.handleAppBarClose(),
+        handleIconClick: this.handleIconClick(),
         uid: this.props.globalVars.userId,
         pl: this.props.globalVars.productInfo,
         snackMsg: "",
@@ -32,6 +35,18 @@ class BidPage extends Component {
       }
     }
   }
+  handleAppBarClose = () => str => {
+    if (str === APIS.LOGOUT) {
+      this.helper.doLogout(this.props);
+    } else if (str === APIS.WINNER) {
+      this.props.history.push(ROUTES.WINNER);
+    } else if (str === APIS.BIDLIST) {
+      this.props.history.push(ROUTES.BIDLIST);
+    }
+  };
+  handleIconClick = () => e => {
+    this.props.history.push(ROUTES.BIDLIST);
+  };
   snackClose = () => e => {
     this.setState({ snackMsg: "", snackOpen: false }, () => {});
   };
@@ -113,7 +128,7 @@ class BidPage extends Component {
       this.props.history.push(ROUTES.SIGN_IN);
       return <div></div>;
     } else {
-      const { onChange, bidValue, pl, snackOpen, snackClose, snackMsg } = this.state;
+      const { onChange, bidValue, pl, snackOpen, snackClose, snackMsg, onAppBarClose, handleIconClick } = this.state;
       const handleInputChange = event => {
         this.setState({
           bidValue: parseFloat(event.target.value)
@@ -135,86 +150,104 @@ class BidPage extends Component {
         }
       };
       return (
-        <Container component="main" maxWidth="xs">
-          <Grid container spacing={2} alignItems="center" style={{ marginTop: 10 }}>
-            <Grid item xs={12}>
-              <MCard
-                name={"bid_1"}
-                actionEnabled={false}
-                title={pl.name}
-                image={pl.photo_url}
-                imageTitle={pl.name}
-                content={pl.description}
-                price={pl.price}
-              ></MCard>
-            </Grid>
-          </Grid>
-          <Paper style={{ marginTop: 20, padding: 20 }} elevation={6}>
-            <Grid container spacing={2} alignItems="center">
+        <div>
+          <MAppBar
+            name="Bid"
+            icon={true}
+            handleClose={onAppBarClose}
+            handleIconClick={handleIconClick}
+            menu={
+              <MMenu
+                menuitems={[
+                  { name: APIS.WINNER, value: "Winner" },
+                  { name: APIS.BIDLIST, value: "Products" },
+                  { name: APIS.LOGOUT, value: "Logout" }
+                ]}
+                handleClose={onAppBarClose}
+              ></MMenu>
+            }
+          ></MAppBar>
+          <Container component="main" maxWidth="xs">
+            <Grid container spacing={2} alignItems="center" style={{ marginTop: 10 }}>
               <Grid item xs={12}>
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={typeof bidValue === "number" ? bidValue : 0}
-                  step={0.01}
-                  className="slider"
-                  id="cno"
-                  name="cno"
-                  onChange={handleInputChange}
-                />
+                <MCard
+                  name={"bid_1"}
+                  actionEnabled={false}
+                  title={pl.name}
+                  image={pl.photo_url}
+                  imageTitle={pl.name}
+                  content={pl.description}
+                  price={pl.price}
+                ></MCard>
               </Grid>
             </Grid>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12}>
-                <MTextField
-                  required={true}
-                  type="number"
-                  name="cno"
-                  fullWidth={true}
-                  label="Bid Value"
-                  value={bidValue}
-                  inputProps={{
-                    step: 0.1,
-                    min: 1,
-                    max: 100.0,
+            <Paper style={{ marginTop: 20, padding: 20 }} elevation={6}>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={12}>
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={typeof bidValue === "number" ? bidValue : 0}
+                    step={0.01}
+                    className="slider"
+                    id="cno"
+                    name="cno"
+                    onChange={handleInputChange}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={12}>
+                  <MTextField
+                    required={true}
+                    type="number"
+                    name="cno"
+                    fullWidth={true}
+                    label="Bid Value"
+                    value={bidValue}
+                    inputProps={{
+                      step: 0.1,
+                      min: 1,
+                      max: 100.0,
 
-                    "aria-labelledby": "input-slider"
-                  }}
-                  margin="dense"
-                  onChange={handleInputChange}
-                  onBlur={handleBlur}
-                  helperText="Number in range from 1 to 100, 2 point decimal allowed"
-                ></MTextField>
+                      "aria-labelledby": "input-slider"
+                    }}
+                    margin="dense"
+                    onChange={handleInputChange}
+                    onBlur={handleBlur}
+                    helperText="Number in range from 1 to 100, 2 point decimal allowed"
+                  ></MTextField>
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid container spacing={2} alignItems="center">
-              <Grid item xs={12}>
-                <MButton
-                  name="submit"
-                  style={{ margin: "3px 0px 2px" }}
-                  value={"Submit"}
-                  color={"primary"}
-                  onClick={onChange}
-                  fullWidth={true}
-                >
-                  Register Bid
-                </MButton>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={12}>
+                  <MButton
+                    name="submit"
+                    style={{ margin: "3px 0px 2px" }}
+                    value={"Submit"}
+                    color={"primary"}
+                    onClick={onChange}
+                    fullWidth={true}
+                  >
+                    Register Bid
+                  </MButton>
+                </Grid>
               </Grid>
-            </Grid>
-          </Paper>
-          <MSnackbar
-            autoHideDuration={1900}
-            open={snackOpen}
-            vPos={"bottom"}
-            hPos={"left"}
-            message={snackMsg}
-            onClose={snackClose}
-          ></MSnackbar>
-          <Box mt={4}>
-            <Copyright />
-          </Box>
-        </Container>
+            </Paper>
+            <MSnackbar
+              autoHideDuration={1900}
+              open={snackOpen}
+              vPos={"bottom"}
+              hPos={"left"}
+              message={snackMsg}
+              onClose={snackClose}
+            ></MSnackbar>
+            <Box mt={4}>
+              <Copyright />
+            </Box>
+          </Container>
+        </div>
       );
     }
   }

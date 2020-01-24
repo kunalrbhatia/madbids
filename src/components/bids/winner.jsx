@@ -242,7 +242,7 @@ class Winner extends Component {
                 <img src={require("../images/winner.jpg")} alt="Winner" className="winner_img" />
                 <div className="winnerName">
                   <p className="name">{winner_name}</p>
-                  <span class="bidamount">Bid Amount: {bid_amount}</span>
+                  <span className="bidamount">Bid Amount: {bid_amount}</span>
                 </div>
               </Paper>
             </div>
