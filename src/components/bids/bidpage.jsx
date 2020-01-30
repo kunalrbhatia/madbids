@@ -76,57 +76,61 @@ class BidPage extends Component {
   handleChange = () => event => {
     this.helper.showOverlay();
     if (event.currentTarget.name === "submit") {
-      console.log(this.props.globalVars.userId);
-      this.props.firebase
-        .user(this.props.globalVars.userId)
-        .once("value")
-        .then(v => {
-          let user = v.val();
-          console.log(user);
-          this.userBids = [];
-          if (user.bids !== undefined) {
-            this.userBids = user.bids;
-          }
-          if (this.canUserBid()) {
-            this.props.firebase
-              .bids()
-              .push({
-                bid_price: this.state.bidValue,
-                user_key: this.state.uid,
-                product_key: this.state.pl.id,
-                auction_key: this.state.pl.auction_id,
-                biddt: Date.now()
-              })
-              .then(e => {
-                this.props.firebase
-                  .user(this.props.globalVars.userId)
-                  .update({ bids: this.userBids })
-                  .then(e => {
-                    setTimeout(() => {
-                      this.helper.hideOverlay();
-                      try {
-                        window.Android.showToast("Thanks for biding!");
-                      } catch (error) {
-                        console.log(error);
-                      }
-                      this.props.history.push(ROUTES.BIDLIST);
-                    }, 2000);
-                    this.setState({ snackMsg: "Thanks for biding!", snackOpen: true }, () => {});
-                  });
-              });
-          } else {
-            setTimeout(() => {
-              this.helper.hideOverlay();
-              try {
-                window.Android.showToast("You've already bided for this auction");
-              } catch (error) {
-                console.log(error);
-              }
-              this.props.history.push(ROUTES.BIDLIST);
-            }, 2000);
-            this.setState({ snackMsg: "You've already bided for this auction", snackOpen: true }, () => {});
-          }
-        });
+      if (this.state.bidValue > 0 && this.state.bidValue <= 100) {
+        this.props.firebase
+          .user(this.props.globalVars.userId)
+          .once("value")
+          .then(v => {
+            let user = v.val();
+            console.log(user);
+            this.userBids = [];
+            if (user.bids !== undefined) {
+              this.userBids = user.bids;
+            }
+            if (this.canUserBid()) {
+              this.props.firebase
+                .bids()
+                .push({
+                  bid_price: this.state.bidValue,
+                  user_key: this.state.uid,
+                  product_key: this.state.pl.id,
+                  auction_key: this.state.pl.auction_id,
+                  biddt: Date.now()
+                })
+                .then(e => {
+                  this.props.firebase
+                    .user(this.props.globalVars.userId)
+                    .update({ bids: this.userBids })
+                    .then(e => {
+                      setTimeout(() => {
+                        this.helper.hideOverlay();
+                        try {
+                          window.Android.showToast("Thanks for biding!");
+                        } catch (error) {
+                          console.log(error);
+                        }
+                        this.props.history.push(ROUTES.BIDLIST);
+                      }, 2000);
+                      this.setState({ snackMsg: "Thanks for biding!", snackOpen: true }, () => {});
+                    });
+                });
+            } else {
+              setTimeout(() => {
+                this.helper.hideOverlay();
+                try {
+                  window.Android.showToast("You've already bided for this auction");
+                } catch (error) {
+                  console.log(error);
+                }
+                this.props.history.push(ROUTES.BIDLIST);
+              }, 2000);
+              this.setState({ snackMsg: "You've already bided for this auction", snackOpen: true }, () => {});
+            }
+          });
+      } else {
+        this.setState({ snackMsg: "Bid value can be greater than 0", snackOpen: true }, () => {});
+        this.helper.hideOverlay();
+      }
     }
   };
   render() {

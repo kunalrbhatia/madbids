@@ -73,7 +73,6 @@ class Login extends Component {
   };
   render() {
     const { onChange, email, snackOpen, snackClose, snackMsg, rememberMe } = this.state;
-    console.log(rememberMe);
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
