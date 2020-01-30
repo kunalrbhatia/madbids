@@ -50,7 +50,10 @@ class NewUser extends Component {
       if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
         this.state.apis[this.current].url.on("value", snapshot => {
           const object = snapshot.val();
-          if (object != null) {
+          if (object === null) {
+            this.current++;
+            this.getDataFromDB();
+          } else {
             const _list = Object.keys(object).map(key => ({
               ...object[key],
               id: key
@@ -66,15 +69,11 @@ class NewUser extends Component {
                 this.getDataFromDB();
               }
             );
-          } else {
-            this.current++;
-            this.getDataFromDB();
           }
         });
       }
     } else {
       this.setState({ users: this.state.apis[this.helper.getIndex(this.state.apis, APIS.USERS)] }, () => {
-        console.log(this.state);
         this.current = 0;
         this.helper.hideOverlay();
       });
@@ -94,7 +93,8 @@ class NewUser extends Component {
             .then(authUser => {
               this.props.globalVars.userId = authUser.user.uid;
               localStorage.setItem("uid", authUser.user.uid);
-              return this.props.firebase.users().push({
+              let userRef = this.props.firebase.users();
+              return userRef.child(this.props.globalVars.userId).set({
                 email,
                 password,
                 cno,

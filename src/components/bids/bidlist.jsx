@@ -74,7 +74,17 @@ class Bidlist extends Component {
       let pl = [];
       for (let i = 0; i < auctionsList.length; i++) {
         const e1 = auctionsList[i];
-        let strt_date = new Date();
+        let isActive = e1.is_active;
+        if (isActive === 1) {
+          for (let j = 0; j < prodsData.length; j++) {
+            const e2 = prodsData[j];
+            e2.auction_id = e1.id;
+            if (e1.product_key === parseInt(e2.id)) {
+              pl.push(e2);
+            }
+          }
+        }
+        /* let strt_date = new Date();
         strt_date = Date.parse(e1.start_date);
         let end_date = new Date();
         end_date = Date.parse(e1.end_date);
@@ -87,7 +97,7 @@ class Bidlist extends Component {
               pl.push(e2);
             }
           }
-        }
+        } */
       }
       this.setState({ productList: pl }, () => {
         this.helper.hideOverlay();

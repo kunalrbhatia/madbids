@@ -52,6 +52,7 @@ class BidPage extends Component {
   };
   canUserBid = () => {
     console.log(this.userBids);
+
     for (let i = 0; i < this.userBids.length; i++) {
       const e = this.userBids[i];
       if (e) {
@@ -75,12 +76,17 @@ class BidPage extends Component {
   handleChange = () => event => {
     this.helper.showOverlay();
     if (event.currentTarget.name === "submit") {
+      console.log(this.props.globalVars.userId);
       this.props.firebase
         .user(this.props.globalVars.userId)
         .once("value")
         .then(v => {
           let user = v.val();
-          this.userBids = user.bids === undefined ? [] : user.bids;
+          console.log(user);
+          this.userBids = [];
+          if (user.bids !== undefined) {
+            this.userBids = user.bids;
+          }
           if (this.canUserBid()) {
             this.props.firebase
               .bids()
