@@ -28,7 +28,7 @@ class Login extends Component {
     };
     this.helper = this.props.helper;
     if (localStorage.getItem("token") != null && localStorage.getItem("remember_me") != null) {
-      console.log("31");
+      //console.log("31");
       this.props.history.push(ROUTES.BIDLIST);
     }
   }

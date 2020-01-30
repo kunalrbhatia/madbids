@@ -50,25 +50,32 @@ class NewUser extends Component {
       if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
         this.state.apis[this.current].url.on("value", snapshot => {
           const object = snapshot.val();
-          const _list = Object.keys(object).map(key => ({
-            ...object[key],
-            id: key
-          }));
-          let apis_copy = this.state.apis;
-          apis_copy[this.current]["data"] = _list;
-          this.setState(
-            {
-              apis: apis_copy
-            },
-            () => {
-              this.current++;
-              this.getDataFromDB();
-            }
-          );
+          if (object != null) {
+            const _list = Object.keys(object).map(key => ({
+              ...object[key],
+              id: key
+            }));
+            let apis_copy = this.state.apis;
+            apis_copy[this.current]["data"] = _list;
+            this.setState(
+              {
+                apis: apis_copy
+              },
+              () => {
+                this.current++;
+                this.getDataFromDB();
+              }
+            );
+          } else {
+            this.current++;
+            this.getDataFromDB();
+          }
         });
       }
     } else {
       this.setState({ users: this.state.apis[this.helper.getIndex(this.state.apis, APIS.USERS)] }, () => {
+        console.log(this.state);
+        this.current = 0;
         this.helper.hideOverlay();
       });
     }
@@ -87,7 +94,7 @@ class NewUser extends Component {
             .then(authUser => {
               this.props.globalVars.userId = authUser.user.uid;
               localStorage.setItem("uid", authUser.user.uid);
-              return this.props.firebase.users(this.props.globalVars.userId).set({
+              return this.props.firebase.users().push({
                 email,
                 password,
                 cno,
