@@ -56,21 +56,26 @@ class Winner extends Component {
       if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
         this.state.apis[this.current].url.on("value", snapshot => {
           const object = snapshot.val();
-          const _list = Object.keys(object).map(key => ({
-            ...object[key],
-            id: key
-          }));
-          let apis_copy = this.state.apis;
-          apis_copy[this.current]["data"] = _list;
-          this.setState(
-            {
-              apis: apis_copy
-            },
-            () => {
-              this.current++;
-              this.getDataFromDB();
-            }
-          );
+          if (object === null) {
+            this.current++;
+            this.getDataFromDB();
+          } else {
+            const _list = Object.keys(object).map(key => ({
+              ...object[key],
+              id: key
+            }));
+            let apis_copy = this.state.apis;
+            apis_copy[this.current]["data"] = _list;
+            this.setState(
+              {
+                apis: apis_copy
+              },
+              () => {
+                this.current++;
+                this.getDataFromDB();
+              }
+            );
+          }
         });
       } else {
         let apis_copy = this.state.apis;
@@ -135,22 +140,33 @@ class Winner extends Component {
     return bidValues;
   };
   declareWinner = bid => {
-    console.log(bid[0].bid_price);
-    this.props.firebase
-      .user(bid[0].user_key)
-      .once("value")
-      .then(v => {
-        let object = v.val();
-        this.setState(
-          {
-            winner_name: object.fname + " " + object.lname,
-            bid_amount: bid[0].bid_price
-          },
-          () => {
-            this.helper.hideOverlay();
-          }
-        );
-      });
+    if (bid === null) {
+      this.setState(
+        {
+          winner_name: "No Winner Declared",
+          bid_amount: 0
+        },
+        () => {
+          this.helper.hideOverlay();
+        }
+      );
+    } else {
+      this.props.firebase
+        .user(bid[0].user_key)
+        .once("value")
+        .then(v => {
+          let object = v.val();
+          this.setState(
+            {
+              winner_name: object.fname + " " + object.lname,
+              bid_amount: bid[0].bid_price
+            },
+            () => {
+              this.helper.hideOverlay();
+            }
+          );
+        });
+    }
   };
   removeInvalidBids = value => {
     let bids = this.state.bidlist;
@@ -184,20 +200,26 @@ class Winner extends Component {
           .once("value")
           .then(v => {
             let object = v.val();
-            const _list = Object.keys(object).map(key => ({
-              ...object[key],
-              id: key
-            }));
-            this.setState({ bidlist: _list }, () => {
-              this.setState({ bidlist: _list });
-              this.objCopy = JSON.parse(JSON.stringify(_list));
-              this.findWinner(this.objCopy);
-            });
+            if (object === null) {
+              this.declareWinner(null);
+            } else {
+              const _list = Object.keys(object).map(key => ({
+                ...object[key],
+                id: key
+              }));
+              this.setState({ bidlist: _list }, () => {
+                this.setState({ bidlist: _list });
+                this.objCopy = JSON.parse(JSON.stringify(_list));
+                this.findWinner(this.objCopy);
+              });
+            }
           });
       });
     }
   };
   render() {
+    let showMessage = "";
+    let closedAuctions = true;
     if (localStorage.getItem("token") === null) {
       this.props.history.push(ROUTES.SIGN_IN);
       return <div></div>;
@@ -208,6 +230,10 @@ class Winner extends Component {
       for (let i = 0; i < auction_list.length; i++) {
         const e = auction_list[i];
         auction_data.push({ value: e.id, label: e.auction_name });
+      }
+      if (auction_data.length === 0) {
+        closedAuctions = false;
+        showMessage = "No closed auctions";
       }
       return (
         <div>
@@ -225,7 +251,7 @@ class Winner extends Component {
             }
           ></MAppBar>
           <Container component="main" maxWidth="xs" style={{ marginTop: 20 }}>
-            <div className="auctionList">
+            <div className="auctionList" style={{ display: closedAuctions ? "block" : "none" }}>
               <MTextField
                 name={"auctionList"}
                 type={"select"}
@@ -236,6 +262,11 @@ class Winner extends Component {
                 onChange={onChange}
                 //helperText={"Please select a issue type"}
               ></MTextField>
+            </div>
+            <div className="auctionList" style={{ display: closedAuctions ? "none" : "block" }}>
+              <Paper elevation={1}>
+                <h4 align="center">{showMessage}</h4>
+              </Paper>
             </div>
             <div className="winnerName" style={{ display: winner_name ? "block" : "none", margin: "20px auto" }}>
               <Paper elevation={4}>
