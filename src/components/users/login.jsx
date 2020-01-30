@@ -24,7 +24,7 @@ class Login extends Component {
       error: "",
       snackOpen: false,
       snackMsg: "",
-      rememberMe: false
+      rememberMe: true
     };
     this.helper = this.props.helper;
     if (localStorage.getItem("token") != null && localStorage.getItem("remember_me") != null) {
@@ -73,6 +73,7 @@ class Login extends Component {
   };
   render() {
     const { onChange, email, snackOpen, snackClose, snackMsg, rememberMe } = this.state;
+    console.log(rememberMe);
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -118,7 +119,7 @@ class Login extends Component {
               helperText="Password"
             ></MTextField>
             <FormControlLabel
-              control={<Checkbox name="rememberMe" value={rememberMe} onChange={onChange} color="primary" />}
+              control={<Checkbox checked name="rememberMe" value={rememberMe} onChange={onChange} color="primary" />}
               label="Remember me"
             />
             <MButton
