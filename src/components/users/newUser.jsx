@@ -107,9 +107,9 @@ class NewUser extends Component {
               });
             })
             .then(() => {
-              localStorage.setItem("token", "token_" + email);
               this.helper.hideOverlay();
-              this.props.history.push(ROUTES.BIDLIST);
+              this.helper.doLogout();
+              this.setState({ snackMsg: "Congratulations! Now please sign-in", snackOpen: true });
             })
             .catch(error => {
               this.setState({ error });

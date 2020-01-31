@@ -84,8 +84,10 @@ class BidPage extends Component {
             let user = v.val();
             console.log(user);
             this.userBids = [];
-            if (user.bids !== undefined) {
-              this.userBids = user.bids;
+            if (user !== null) {
+              if (user.bids !== undefined) {
+                this.userBids = user.bids;
+              }
             }
             if (this.canUserBid()) {
               this.props.firebase
