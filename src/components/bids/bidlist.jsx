@@ -99,8 +99,14 @@ class Bidlist extends Component {
           }
         } */
       }
+
       this.setState({ productList: pl }, () => {
         this.helper.hideOverlay();
+        try {
+          window.Android.contentLoaded();
+        } catch (error) {
+          console.log(error);
+        }
       });
     }
   };

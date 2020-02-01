@@ -30,6 +30,12 @@ class Login extends Component {
     if (localStorage.getItem("token") != null && localStorage.getItem("remember_me") != null) {
       //console.log("31");
       this.props.history.push(ROUTES.BIDLIST);
+    } else {
+      try {
+        window.Android.contentLoaded();
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
   snackClose = () => e => {
