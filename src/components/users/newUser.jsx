@@ -108,10 +108,23 @@ class NewUser extends Component {
             })
             .then(() => {
               this.helper.hideOverlay();
-              this.helper.doLogout();
-              this.setState({ snackMsg: "Congratulations! Now please sign-in", snackOpen: true });
+              this.setState({
+                snackMsg: "Congratulations! Your're registered with us, please sign-in",
+                snackOpen: true
+              });
+              setTimeout(() => {
+                this.helper.doLogout(this.props);
+              }, 3000);
             })
             .catch(error => {
+              console.log(error.code);
+              if (error.code === "auth/email-already-in-use") {
+                setTimeout(() => {
+                  this.helper.hideOverlay();
+                  this.props.history.push(ROUTES.SIGN_IN);
+                }, 3000);
+                this.setState({ snackMsg: "You're already registered with us! Please login", snackOpen: true });
+              }
               this.setState({ error });
             });
         } else {
