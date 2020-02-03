@@ -34,7 +34,7 @@ class Login extends Component {
       try {
         window.Android.contentLoaded();
       } catch (error) {
-        console.log(error);
+        //console.log(error);
       }
     }
   }

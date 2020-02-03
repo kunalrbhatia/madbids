@@ -16,7 +16,14 @@ class Bidlist extends Component {
         onAppBarClose: this.handleAppBarClose(),
         apis: [
           { name: APIS.PRODUCTS, data: [], url: this.props.firebase.products() },
-          { name: APIS.AUCTIONS, data: [], url: this.props.firebase.auctions() }
+          {
+            name: APIS.AUCTIONS,
+            data: [],
+            url: this.props.firebase
+              .auctions()
+              .orderByChild("is_active")
+              .equalTo("1")
+          }
         ],
         productList: []
       };
@@ -35,22 +42,27 @@ class Bidlist extends Component {
     if (this.current < this.total) {
       if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
         this.state.apis[this.current].url.on("value", snapshot => {
-          const object = snapshot.val();
-          const _list = Object.keys(object).map(key => ({
-            ...object[key],
-            id: key
-          }));
-          let apis_copy = this.state.apis;
-          apis_copy[this.current]["data"] = _list;
-          this.setState(
-            {
-              apis: apis_copy
-            },
-            () => {
-              this.current++;
-              this.getDataFromDB();
-            }
-          );
+          if (snapshot.val() === null) {
+            this.current++;
+            this.getDataFromDB();
+          } else {
+            const object = snapshot.val();
+            const _list = Object.keys(object).map(key => ({
+              ...object[key],
+              id: key
+            }));
+            let apis_copy = this.state.apis;
+            apis_copy[this.current]["data"] = _list;
+            this.setState(
+              {
+                apis: apis_copy
+              },
+              () => {
+                this.current++;
+                this.getDataFromDB();
+              }
+            );
+          }
         });
       } else {
         let apis_copy = this.state.apis;
@@ -69,21 +81,31 @@ class Bidlist extends Component {
       this.current = 0;
       let auctionsIndex = this.helper.getIndex(this.state.apis, APIS.AUCTIONS);
       let auctionsList = this.state.apis[auctionsIndex].data;
+      if (auctionsList.length === 0) {
+        let start_date = Date.now();
+        let sd = new Date(start_date);
+        let ed = new Date(start_date);
+        ed.setDate(ed.getDate() + 1);
+        let end_date = ed.getTime();
+        let is_active = 1;
+        let product_key = 1;
+        let type = "daily";
+        let auction_name = sd.getDate() + "/" + sd.getMonth() + 1 + "/" + sd.getFullYear();
+        this.props.firebase.auctions().push({ auction_name, start_date, end_date, is_active, product_key, type });
+      }
       let prodsIndex = this.helper.getIndex(this.state.apis, APIS.PRODUCTS);
       let prodsData = this.state.apis[prodsIndex].data;
       let pl = [];
       for (let i = 0; i < auctionsList.length; i++) {
         const e1 = auctionsList[i];
-        let isActive = e1.is_active;
-        if (isActive === 1) {
-          for (let j = 0; j < prodsData.length; j++) {
-            const e2 = prodsData[j];
-            e2.auction_id = e1.id;
-            if (e1.product_key === parseInt(e2.id)) {
-              pl.push(e2);
-            }
+        for (let j = 0; j < prodsData.length; j++) {
+          const e2 = prodsData[j];
+          e2.auction_id = e1.id;
+          if (e1.product_key === parseInt(e2.id)) {
+            pl.push(e2);
           }
         }
+
         /* let strt_date = new Date();
         strt_date = Date.parse(e1.start_date);
         let end_date = new Date();
@@ -105,7 +127,7 @@ class Bidlist extends Component {
         try {
           window.Android.contentLoaded();
         } catch (error) {
-          console.log(error);
+          //console.log(error);
         }
       });
     }
