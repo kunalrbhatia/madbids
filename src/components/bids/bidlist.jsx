@@ -8,6 +8,7 @@ import { compose } from "recompose";
 class Bidlist extends Component {
   constructor(props) {
     super(props);
+    this.auctionsList = [];
     if (localStorage.getItem("token") === null) {
       this.props.history.push(ROUTES.SIGN_IN);
     } else {
@@ -43,8 +44,17 @@ class Bidlist extends Component {
       if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
         this.state.apis[this.current].url.on("value", snapshot => {
           if (snapshot.val() === null) {
-            this.current++;
-            this.getDataFromDB();
+            let apis_copy = this.state.apis;
+            apis_copy[this.current]["data"] = [];
+            this.setState(
+              {
+                apis: apis_copy
+              },
+              () => {
+                this.current++;
+                this.getDataFromDB();
+              }
+            );
           } else {
             const object = snapshot.val();
             const _list = Object.keys(object).map(key => ({
@@ -80,9 +90,8 @@ class Bidlist extends Component {
     } else {
       this.current = 0;
       let auctionsIndex = this.helper.getIndex(this.state.apis, APIS.AUCTIONS);
-      let auctionsList = this.state.apis[auctionsIndex].data;
-      console.log(auctionsList);
-      if (auctionsList.length === 0) {
+      this.auctionsList = this.state.apis[auctionsIndex].data;
+      if (this.auctionsList.length === 0) {
         let start_date = Date.now();
         let sd = new Date(start_date);
         let ed = new Date(start_date);
@@ -91,52 +100,66 @@ class Bidlist extends Component {
         let is_active = 1;
         let product_key = 1;
         let type = "daily";
-        let auction_name = sd.getDate() + "/" + sd.getMonth() + 1 + "/" + sd.getFullYear();
+        let auction_name = sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear();
         this.props.firebase
           .auctions()
           .push({ auction_name, start_date, end_date, is_active, product_key, type })
           .then(() => {
             this.current = 0;
+            this.auctionsList = [];
+            this.getDataFromDB();
           });
-      }
-      let prodsIndex = this.helper.getIndex(this.state.apis, APIS.PRODUCTS);
-      let prodsData = this.state.apis[prodsIndex].data;
-      let pl = [];
-      for (let i = 0; i < auctionsList.length; i++) {
-        const e1 = auctionsList[i];
-        for (let j = 0; j < prodsData.length; j++) {
-          const e2 = prodsData[j];
-          e2.auction_id = e1.id;
-          if (e1.product_key === parseInt(e2.id)) {
-            pl.push(e2);
-          }
-        }
-
-        /* let strt_date = new Date();
-        strt_date = Date.parse(e1.start_date);
-        let end_date = new Date();
-        end_date = Date.parse(e1.end_date);
-        let now = new Date();
-        if (now > strt_date && now < end_date) {
-          for (let j = 0; j < prodsData.length; j++) {
-            const e2 = prodsData[j];
-            e2.auction_id = e1.id;
-            if (e1.product_key === parseInt(e2.id)) {
-              pl.push(e2);
+      } else {
+        for (let index = 0; index < this.auctionsList.length; index++) {
+          const e = this.auctionsList[index];
+          if (e.is_active === 1 && e.type === "daily") {
+            let sd = new Date(e.start_date);
+            let nw = new Date();
+            if (sd.getFullYear() === nw.getFullYear()) {
+              if (sd.getMonth() + 1 === nw.getMonth() + 1) {
+                if (sd.getDate() !== nw.getDate()) {
+                  console.log(sd.getDate(), nw.getDate());
+                  e.is_active = 0;
+                  this.props.firebase
+                    .auctions()
+                    .child(e.id)
+                    .update({ is_active: 0 })
+                    .then(() => {
+                      this.current = 0;
+                      this.auctionsList = [];
+                      this.getDataFromDB();
+                    });
+                }
+              }
             }
           }
-        } */
-      }
-
-      this.setState({ productList: pl }, () => {
-        this.helper.hideOverlay();
-        try {
-          window.Android.contentLoaded();
-        } catch (error) {
-          //console.log(error);
         }
-      });
+      }
+      this.afterUpdate();
     }
+  };
+  afterUpdate = () => {
+    let prodsIndex = this.helper.getIndex(this.state.apis, APIS.PRODUCTS);
+    let prodsData = this.state.apis[prodsIndex].data;
+    let pl = [];
+    for (let i = 0; i < this.auctionsList.length; i++) {
+      let e1 = this.auctionsList[i];
+      for (let j = 0; j < prodsData.length; j++) {
+        let e2 = JSON.parse(JSON.stringify(prodsData[j]));
+        if (e1.product_key === parseInt(e2.id)) {
+          e2.auction_id = e1.id;
+          pl.push(e2);
+        }
+      }
+    }
+    this.setState({ productList: pl }, () => {
+      this.helper.hideOverlay();
+      try {
+        window.Android.contentLoaded();
+      } catch (error) {
+        //console.log(error);
+      }
+    });
   };
   handleAppBarClose = () => str => {
     if (str === "logout") {
@@ -160,7 +183,7 @@ class Bidlist extends Component {
       const { onChange, onAppBarClose, productList } = this.state;
       const mCards = productList.map((pl, idx) => {
         return (
-          <div style={{ marginBottom: 20 }} key={pl.id}>
+          <div style={{ marginBottom: 20 }} key={pl.auction_id}>
             <MCard
               name={"bid_1"}
               actionEnabled={true}
