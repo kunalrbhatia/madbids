@@ -22,7 +22,7 @@ class Bidlist extends Component {
             url: this.props.firebase
               .auctions()
               .orderByChild("is_active")
-              .equalTo("1")
+              .equalTo(1)
           }
         ],
         productList: []
@@ -81,6 +81,7 @@ class Bidlist extends Component {
       this.current = 0;
       let auctionsIndex = this.helper.getIndex(this.state.apis, APIS.AUCTIONS);
       let auctionsList = this.state.apis[auctionsIndex].data;
+      console.log(auctionsList);
       if (auctionsList.length === 0) {
         let start_date = Date.now();
         let sd = new Date(start_date);
@@ -91,7 +92,12 @@ class Bidlist extends Component {
         let product_key = 1;
         let type = "daily";
         let auction_name = sd.getDate() + "/" + sd.getMonth() + 1 + "/" + sd.getFullYear();
-        this.props.firebase.auctions().push({ auction_name, start_date, end_date, is_active, product_key, type });
+        this.props.firebase
+          .auctions()
+          .push({ auction_name, start_date, end_date, is_active, product_key, type })
+          .then(() => {
+            this.current = 0;
+          });
       }
       let prodsIndex = this.helper.getIndex(this.state.apis, APIS.PRODUCTS);
       let prodsData = this.state.apis[prodsIndex].data;
