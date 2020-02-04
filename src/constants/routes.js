@@ -6,3 +6,4 @@ export const BIDLIST = "/bidlist";
 export const BIDPAGE = "/bidpage";
 export const PASSWORD_FORGET = "/forgot-password";
 export const WINNER = "/winner";
+export const NOINTERNET = "/nointernet";
