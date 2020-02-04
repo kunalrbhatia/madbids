@@ -23,6 +23,9 @@ class App extends Component {
       }
     };
   }
+  netOn = connected => {
+    window.document.write("ok");
+  };
   render() {
     //hash = history.location.pathname;
     const { globalVars } = this.state;
@@ -65,3 +68,5 @@ class App extends Component {
 }
 const app = compose(withFirebase)(App);
 export default withFirebase(app);
+
+

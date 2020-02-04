@@ -225,3 +225,4 @@ class Bidlist extends Component {
 }
 const bidList = compose(withFirebase)(Bidlist);
 export default withFirebase(bidList);
+
