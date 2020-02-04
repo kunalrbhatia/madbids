@@ -7,9 +7,11 @@
 
 # testing
 /coverage
+/mblogo
 
 # production
 /build
+/mblogo
 
 # misc
 .DS_Store

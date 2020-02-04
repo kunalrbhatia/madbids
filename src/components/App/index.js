@@ -4,6 +4,7 @@ import NewUser from "../users/newUser";
 import Forgot from "../users/forget";
 import { Router, Route, Switch } from "react-router-dom";
 import history from "../common/history";
+import NoInternet from "../common/NoInternet";
 import { Helper } from "../common/helper";
 import Bidlist from "../bids/bidlist";
 import BidPage from "../bids/bidpage";
@@ -51,6 +52,10 @@ class App extends Component {
           <Route
             path={ROUTES.WINNER}
             component={props => <Winner {...props} globalVars={globalVars} helper={this.Helper} />}
+          />
+          <Route
+            path={ROUTES.NOINTERNET}
+            component={props => <NoInternet {...props} globalVars={globalVars} helper={this.Helper} />}
           />
           <Route path="*" component={props => <Login {...props} globalVars={globalVars} helper={this.Helper} />} />
         </Switch>
