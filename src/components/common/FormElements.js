@@ -278,9 +278,8 @@ function MCheckbox(params) {
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © madbids "}
+      {"Copyright © biD&Win "}
       {new Date().getFullYear()}
-      {"."}
     </Typography>
   );
 }
