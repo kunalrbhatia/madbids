@@ -135,12 +135,12 @@ class Winner extends Component {
     let bidValues = [];
     for (let i = 0; i < _bids.length; i++) {
       const e = _bids[i];
-      bidValues.push(e.bid_price);
+      bidValues.push(parseFloat(e.bid_price));
     }
     return bidValues;
   };
   declareWinner = bid => {
-    if (bid === null) {
+    if (bid === null || bid === undefined) {
       this.setState(
         {
           winner_name: "No Winner Declared",
@@ -183,7 +183,7 @@ class Winner extends Component {
     let bids = [];
     for (let i = 0; i < this.objCopy.length; i++) {
       const e = this.objCopy[i];
-      if (e.bid_price === value) {
+      if (parseFloat(e.bid_price) === value) {
         bids.push(e);
       }
     }
