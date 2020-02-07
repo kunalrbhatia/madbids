@@ -51,7 +51,7 @@ class BidPage extends Component {
     this.setState({ snackMsg: "", snackOpen: false }, () => {});
   };
   canUserBid = () => {
-    console.log(this.userBids);
+    //console.log(this.userBids);
 
     for (let i = 0; i < this.userBids.length; i++) {
       const e = this.userBids[i];
@@ -82,7 +82,7 @@ class BidPage extends Component {
           .once("value")
           .then(v => {
             let user = v.val();
-            console.log(user);
+            //console.log(user);
             this.userBids = [];
             if (user !== null) {
               if (user.bids !== undefined) {

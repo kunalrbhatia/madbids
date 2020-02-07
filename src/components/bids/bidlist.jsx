@@ -110,15 +110,39 @@ class Bidlist extends Component {
             this.getDataFromDB();
           });
       } else {
-        for (let index = 0; index < this.auctionsList.length; index++) {
-          const e = this.auctionsList[index];
-          if (e.is_active === 1 && e.type === "daily") {
-            let sd = new Date(e.start_date);
+        let activeDaily = this.getActiveAuctionsList("daily");
+        let activeWeekly = this.getActiveAuctionsList("weekly");
+        console.log(activeWeekly);
+        for (let index = 0; index < activeDaily.length; index++) {
+          const e = activeDaily[index];
+          let sd = new Date(e.start_date);
+          let nw = new Date();
+          if (sd.getFullYear() === nw.getFullYear()) {
+            if (sd.getMonth() + 1 === nw.getMonth() + 1) {
+              if (sd.getDate() !== nw.getDate()) {
+                console.log(sd.getDate(), nw.getDate());
+                e.is_active = 0;
+                this.props.firebase
+                  .auctions()
+                  .child(e.id)
+                  .update({ is_active: 0 })
+                  .then(() => {
+                    this.current = 0;
+                    this.auctionsList = [];
+                    this.getDataFromDB();
+                  });
+              }
+            }
+          }
+        }
+        if (activeWeekly.length > 0) {
+          for (let index = 0; index < activeWeekly.length; index++) {
+            const e = activeWeekly[index];
+            let ed = new Date(e.end_date);
             let nw = new Date();
-            if (sd.getFullYear() === nw.getFullYear()) {
-              if (sd.getMonth() + 1 === nw.getMonth() + 1) {
-                if (sd.getDate() !== nw.getDate()) {
-                  console.log(sd.getDate(), nw.getDate());
+            if (ed.getFullYear() === nw.getFullYear()) {
+              if (ed.getMonth() + 1 === nw.getMonth() + 1) {
+                if (ed.getDate() - nw.getDate() === 0) {
                   e.is_active = 0;
                   this.props.firebase
                     .auctions()
@@ -133,11 +157,41 @@ class Bidlist extends Component {
               }
             }
           }
+        } else {
+          let sd = new Date();
+          if (sd.getDay() === 5) {
+            let ed = new Date(sd);
+            ed.setDate(ed.getDate() + 7);
+            let end_date = ed.getTime();
+            let is_active = 1;
+            let start_date = sd.getTime();
+            let product_key = 2;
+            let type = "weekly";
+            let auction_name = sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear() + " weekly";
+            this.props.firebase
+              .auctions()
+              .push({ auction_name, start_date, end_date, is_active, product_key, type })
+              .then(() => {
+                this.current = 0;
+                this.auctionsList = [];
+                this.getDataFromDB();
+              });
+          }
         }
       }
       this.afterUpdate();
     }
   };
+  getActiveAuctionsList(type) {
+    let list = [];
+    for (let index = 0; index < this.auctionsList.length; index++) {
+      const e = this.auctionsList[index];
+      if (e.is_active === 1 && e.type === type) {
+        list.push(e);
+      }
+    }
+    return list;
+  }
   afterUpdate = () => {
     let prodsIndex = this.helper.getIndex(this.state.apis, APIS.PRODUCTS);
     let prodsData = this.state.apis[prodsIndex].data;
@@ -225,4 +279,3 @@ class Bidlist extends Component {
 }
 const bidList = compose(withFirebase)(Bidlist);
 export default withFirebase(bidList);
-
