@@ -92,27 +92,10 @@ class Bidlist extends Component {
       let auctionsIndex = this.helper.getIndex(this.state.apis, APIS.AUCTIONS);
       this.auctionsList = this.state.apis[auctionsIndex].data;
       if (this.auctionsList.length === 0) {
-        let start_date = Date.now();
-        let sd = new Date(start_date);
-        let ed = new Date(start_date);
-        ed.setDate(ed.getDate() + 1);
-        let end_date = ed.getTime();
-        let is_active = 1;
-        let product_key = 1;
-        let type = "daily";
-        let auction_name = sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear();
-        this.props.firebase
-          .auctions()
-          .push({ auction_name, start_date, end_date, is_active, product_key, type })
-          .then(() => {
-            this.current = 0;
-            this.auctionsList = [];
-            this.getDataFromDB();
-          });
       } else {
         let activeDaily = this.getActiveAuctionsList("daily");
         let activeWeekly = this.getActiveAuctionsList("weekly");
-        console.log(activeWeekly);
+        //console.log(activeDaily, activeWeekly);
         for (let index = 0; index < activeDaily.length; index++) {
           const e = activeDaily[index];
           let sd = new Date(e.start_date);
@@ -134,6 +117,25 @@ class Bidlist extends Component {
               }
             }
           }
+        }
+        if (activeDaily.length === 0) {
+          let start_date = Date.now();
+          let sd = new Date(start_date);
+          let ed = new Date(start_date);
+          ed.setDate(ed.getDate() + 1);
+          let end_date = ed.getTime();
+          let is_active = 1;
+          let product_key = 1;
+          let type = "daily";
+          let auction_name = sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear();
+          this.props.firebase
+            .auctions()
+            .push({ auction_name, start_date, end_date, is_active, product_key, type })
+            .then(() => {
+              this.current = 0;
+              this.auctionsList = [];
+              this.getDataFromDB();
+            });
         }
         if (activeWeekly.length > 0) {
           for (let index = 0; index < activeWeekly.length; index++) {
