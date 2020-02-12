@@ -18,49 +18,34 @@ class App extends Component {
     super(props);
     this.Helper = new Helper(props);
     this.state = {
-      globalVars: {
-        userId: "1"
+      gv: {
+        userId: "1",
+        updateState: this.updateState
       }
     };
+    this.App = React.createRef();
   }
-  netOn = connected => {
-    window.document.write("ok");
+
+  updateState = () => {
+    this.setState(this.state);
   };
   render() {
     //hash = history.location.pathname;
-    const { globalVars } = this.state;
+    const { gv } = this.state;
     return (
       <Router basename={"/db"} history={history}>
         <Switch>
-          <Route
-            path={ROUTES.SIGN_IN}
-            component={props => <Login {...props} globalVars={globalVars} helper={this.Helper} />}
-          />
-          <Route
-            path={ROUTES.SIGN_UP}
-            component={props => <NewUser {...props} globalVars={globalVars} helper={this.Helper} />}
-          />
+          <Route path={ROUTES.SIGN_IN} component={props => <Login {...props} gv={gv} helper={this.Helper} />} />
+          <Route path={ROUTES.SIGN_UP} component={props => <NewUser {...props} gv={gv} helper={this.Helper} />} />
           <Route
             path={ROUTES.PASSWORD_FORGET}
-            component={props => <Forgot {...props} globalVars={globalVars} helper={this.Helper} />}
+            component={props => <Forgot {...props} gv={gv} helper={this.Helper} />}
           />
-          <Route
-            path={ROUTES.BIDLIST}
-            component={props => <Bidlist {...props} globalVars={globalVars} helper={this.Helper} />}
-          />
-          <Route
-            path={ROUTES.BIDPAGE}
-            component={props => <BidPage {...props} globalVars={globalVars} helper={this.Helper} />}
-          />
-          <Route
-            path={ROUTES.WINNER}
-            component={props => <Winner {...props} globalVars={globalVars} helper={this.Helper} />}
-          />
-          <Route
-            path={ROUTES.NOINTERNET}
-            component={props => <NoInternet {...props} globalVars={globalVars} helper={this.Helper} />}
-          />
-          <Route path="*" component={props => <Login {...props} globalVars={globalVars} helper={this.Helper} />} />
+          <Route path={ROUTES.BIDLIST} component={props => <Bidlist {...props} gv={gv} helper={this.Helper} />} />
+          <Route path={ROUTES.BIDPAGE} component={props => <BidPage {...props} gv={gv} helper={this.Helper} />} />
+          <Route path={ROUTES.WINNER} component={props => <Winner {...props} gv={gv} helper={this.Helper} />} />
+          <Route path={ROUTES.NOINTERNET} component={props => <NoInternet {...props} gv={gv} helper={this.Helper} />} />
+          <Route path="*" component={props => <Login {...props} gv={gv} helper={this.Helper} />} />
         </Switch>
       </Router>
     );
@@ -68,5 +53,3 @@ class App extends Component {
 }
 const app = compose(withFirebase)(App);
 export default withFirebase(app);
-
-

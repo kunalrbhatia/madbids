@@ -53,7 +53,7 @@ class Winner extends Component {
   };
   getDataFromDB = () => {
     if (this.current < this.total) {
-      if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
+      if (!this.props.gv["" + this.state.apis[this.current].name]) {
         this.state.apis[this.current].url.on("value", snapshot => {
           const object = snapshot.val();
           if (object === null) {
@@ -79,7 +79,7 @@ class Winner extends Component {
         });
       } else {
         let apis_copy = this.state.apis;
-        apis_copy[this.current]["data"] = this.props.globalVars["" + this.state.apis[this.current].name];
+        apis_copy[this.current]["data"] = this.props.gv["" + this.state.apis[this.current].name];
         this.setState(
           {
             apis: apis_copy

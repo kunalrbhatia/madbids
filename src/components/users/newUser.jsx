@@ -47,7 +47,7 @@ class NewUser extends Component {
   };
   getDataFromDB = () => {
     if (this.current < this.total) {
-      if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
+      if (!this.props.gv["" + this.state.apis[this.current].name]) {
         this.state.apis[this.current].url.on("value", snapshot => {
           const object = snapshot.val();
           if (object === null) {
@@ -91,10 +91,10 @@ class NewUser extends Component {
           this.props.firebase
             .doCreateUserWithEmailAndPassword(email, password)
             .then(authUser => {
-              this.props.globalVars.userId = authUser.user.uid;
+              this.props.gv.userId = authUser.user.uid;
               localStorage.setItem("uid", authUser.user.uid);
               let userRef = this.props.firebase.users();
-              return userRef.child(this.props.globalVars.userId).set({
+              return userRef.child(this.props.gv.userId).set({
                 email,
                 password,
                 cno,

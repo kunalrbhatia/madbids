@@ -41,7 +41,7 @@ class Bidlist extends Component {
   };
   getDataFromDB = () => {
     if (this.current < this.total) {
-      if (!this.props.globalVars["" + this.state.apis[this.current].name]) {
+      if (!this.props.gv["" + this.state.apis[this.current].name]) {
         this.state.apis[this.current].url.on("value", snapshot => {
           if (snapshot.val() === null) {
             let apis_copy = this.state.apis;
@@ -76,7 +76,7 @@ class Bidlist extends Component {
         });
       } else {
         let apis_copy = this.state.apis;
-        apis_copy[this.current]["data"] = this.props.globalVars["" + this.state.apis[this.current].name];
+        apis_copy[this.current]["data"] = this.props.gv["" + this.state.apis[this.current].name];
         this.setState(
           {
             apis: apis_copy
@@ -226,7 +226,7 @@ class Bidlist extends Component {
   };
   handleChange = () => (event, idx) => {
     if (event.currentTarget.name === "bid_1") {
-      this.props.globalVars.productInfo = this.state.productList[idx];
+      this.props.gv.productInfo = this.state.productList[idx];
       localStorage.setItem("productInfo", JSON.stringify(this.state.productList[idx]));
       this.props.history.push(ROUTES.BIDPAGE);
     }

@@ -13,10 +13,10 @@ class BidPage extends Component {
     } else {
       this.helper = this.props.helper;
       if (localStorage.getItem("uid") !== null) {
-        this.props.globalVars.userId = localStorage.getItem("uid");
+        this.props.gv.userId = localStorage.getItem("uid");
       }
       if (localStorage.getItem("productInfo") !== null) {
-        this.props.globalVars.productInfo = JSON.parse(localStorage.getItem("productInfo"));
+        this.props.gv.productInfo = JSON.parse(localStorage.getItem("productInfo"));
       }
       this.state = {
         bidValue: 0,
@@ -24,8 +24,8 @@ class BidPage extends Component {
         snackClose: this.snackClose(),
         onAppBarClose: this.handleAppBarClose(),
         handleIconClick: this.handleIconClick(),
-        uid: this.props.globalVars.userId,
-        pl: this.props.globalVars.productInfo,
+        uid: this.props.gv.userId,
+        pl: this.props.gv.productInfo,
         snackMsg: "",
         snackOpen: false
       };
@@ -78,7 +78,7 @@ class BidPage extends Component {
     if (event.currentTarget.name === "submit") {
       if (this.state.bidValue > 0 && this.state.bidValue <= 100) {
         this.props.firebase
-          .user(this.props.globalVars.userId)
+          .user(this.props.gv.userId)
           .once("value")
           .then(v => {
             let user = v.val();
@@ -101,7 +101,7 @@ class BidPage extends Component {
                 })
                 .then(e => {
                   this.props.firebase
-                    .user(this.props.globalVars.userId)
+                    .user(this.props.gv.userId)
                     .update({ bids: this.userBids })
                     .then(e => {
                       setTimeout(() => {

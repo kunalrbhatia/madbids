@@ -58,7 +58,7 @@ class Login extends Component {
       this.props.firebase
         .doSignInWithEmailAndPassword(email, password)
         .then(authUser => {
-          this.props.globalVars.userId = authUser.user.uid;
+          this.props.gv.userId = authUser.user.uid;
           localStorage.setItem("uid", authUser.user.uid);
           if (this.state.rememberMe) {
             localStorage.setItem("remember_me", "remember_me" + email);
