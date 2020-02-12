@@ -1,29 +1,29 @@
 import React, { Component } from "react";
-import Login from "./components/users/login";
-import NewUser from "./components/users/newUser";
-import Forgot from "./components/users/forget";
+import Login from "../users/login";
+import NewUser from "../users/newUser";
+import Forgot from "../users/forget";
 import { Router, Route, Switch } from "react-router-dom";
-import history from "./common/history";
-import NoInternet from "./components/common/NoInternet";
-import { Helper } from "./common/helper";
-import Bidlist from "./components/bids/bidlist";
-import BidPage from "./components/bids/bidpage";
-import Winner from "./components/bids/winner";
-import * as ROUTES from "./constants/routes";
+import history from "../common/history";
+import NoInternet from "../common/NoInternet";
+import { Helper } from "../common/helper";
+import Bidlist from "../bids/bidlist";
+import BidPage from "../bids/bidpage";
+import Winner from "../bids/winner";
+import * as ROUTES from "../../constants/routes";
+import { withFirebase } from "../Firebase";
+import { compose } from "recompose";
 import * as firebase from "firebase/app";
-import * as fb from "./constants/fb";
+import * as fb from "../../constants/fb";
 import "firebase/auth";
 import "firebase/database";
 const config = fb.firebase.dev;
 class App extends Component {
   constructor(props) {
     super(props);
-    this.fb = firebase.initializeApp(config);
     this.state = {
       gv: {
         userId: "1",
-        updateState: this.updateState,
-        fb: this.fb
+        updateState: this.updateState
       }
     };
     this.Helper = new Helper(props);
@@ -56,4 +56,5 @@ class App extends Component {
     );
   }
 }
-export default App;
+const app = compose(withFirebase)(App);
+export default withFirebase(app);
