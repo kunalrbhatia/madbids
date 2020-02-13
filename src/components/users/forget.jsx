@@ -48,10 +48,12 @@ class Forgot extends Component {
     this.setState({ snackMsg: "", snackOpen: false });
   };
   handleChange = () => event => {
+    const db = this.props.gv.db;
+    const auth = this.props.gv.auth;
     if (event.currentTarget.name === "submit" && !this.state.userFound) {
       this.helper.showOverlay();
-      this.props.firebase
-        .users()
+      this.helper
+        .users(db)
         .orderByChild("email")
         .equalTo(this.state.email)
         .once("value")
@@ -78,9 +80,9 @@ class Forgot extends Component {
       if (this.state.newPassword === this.state.confirmPassword) {
         let email = this.state.user.email;
         let password = this.state.user.password;
-        this.props.firebase.doSignInWithEmailAndPassword(email, password).then(authUser => {
-          let userRef = this.props.firebase.user(this.state.user.id);
-          let user = this.props.firebase.getCurrentUser();
+        this.helper.doSignInWithEmailAndPassword(email, password, auth).then(authUser => {
+          let userRef = this.helper.user(this.state.user.id, db);
+          let user = this.helper.getCurrentUser(auth);
           user
             .updatePassword(this.state.newPassword)
             .then(() => {

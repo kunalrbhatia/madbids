@@ -19,6 +19,8 @@ import * as APIS from "../../constants/fbapis";
 class NewUser extends Component {
   constructor(props) {
     super(props);
+    this.helper = this.props.helper;
+    const db = this.props.gv.db;
     this.state = {
       onChange: this.handleChange(),
       snackClose: this.snackClose(),
@@ -34,9 +36,8 @@ class NewUser extends Component {
       users: [],
       snackMsg: "",
       snackOpen: false,
-      apis: [{ name: APIS.USERS, data: [], url: this.props.firebase.users() }]
+      apis: [{ name: APIS.USERS, data: [], url: this.helper.users(db) }]
     };
-    this.helper = this.props.helper;
     this.current = 0;
     this.total = this.state.apis.length;
   }
@@ -82,17 +83,19 @@ class NewUser extends Component {
     this.setState({ snackMsg: "", snackOpen: false }, () => {});
   };
   handleChange = () => event => {
+    const auth = this.props.gv.auth;
+    const db = this.props.gv.db;
     if (event.currentTarget.name === "register") {
       const { gender, fname, lname, email, password, cpassword, cno, secretQuestion, secretAnswer } = this.state;
       if (password === cpassword) {
         if (!this.findIfUserExists(email)) {
           this.helper.showOverlay();
-          this.props.firebase
-            .doCreateUserWithEmailAndPassword(email, password)
+          this.helper
+            .doCreateUserWithEmailAndPassword(email, password, auth)
             .then(authUser => {
               this.props.gv.userId = authUser.user.uid;
               localStorage.setItem("uid", authUser.user.uid);
-              let userRef = this.props.firebase.users();
+              let userRef = this.helper.users(db);
               return userRef.child(this.props.gv.userId).set({
                 email,
                 password,

@@ -46,9 +46,7 @@ export class Helper extends Component {
       props.history.push(ROUTES.LANDING);
     });
   }
-  getCurrentUser = () => {
-    return this.auth.currentUser;
-  };
+  getCurrentUser = auth => auth.currentUser;
   doCreateUserWithEmailAndPassword = (email, password, auth) => auth.createUserWithEmailAndPassword(email, password);
   doSignInWithEmailAndPassword = (email, password, auth) => auth.signInWithEmailAndPassword(email, password);
   doSignOut = fb => fb.auth.signOut();
