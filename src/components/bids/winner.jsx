@@ -3,13 +3,13 @@ import { Container, Box, Paper } from "@material-ui/core";
 import { Copyright, MTextField, MAppBar, MMenu } from "../common/FormElements";
 import * as ROUTES from "../../constants/routes";
 import * as APIS from "../../constants/fbapis";
-
 class Winner extends Component {
   constructor(props) {
     super(props);
     if (localStorage.getItem("token") === null) {
       this.props.history.push(ROUTES.SIGN_IN);
     } else {
+      const db = this.props.gv.db;
       this.helper = this.props.helper;
       this.state = {
         onChange: this.handleChange(),
@@ -18,8 +18,8 @@ class Winner extends Component {
           {
             name: APIS.AUCTIONS,
             data: [],
-            url: this.props.firebase
-              .auctions()
+            url: this.helper
+              .auctions(db)
               .orderByChild("is_active")
               .equalTo(0)
           }
@@ -30,7 +30,6 @@ class Winner extends Component {
         bid_amount: null
       };
       this.objCopy = [];
-      this.helper = this.props.helper;
       this.current = 0;
       this.total = this.state.apis.length;
     }
@@ -139,6 +138,7 @@ class Winner extends Component {
     return bidValues;
   };
   declareWinner = bid => {
+    const db = this.props.gv.db;
     if (bid === null || bid === undefined) {
       this.setState(
         {
@@ -150,8 +150,8 @@ class Winner extends Component {
         }
       );
     } else {
-      this.props.firebase
-        .user(bid[0].user_key)
+      this.helper
+        .user(bid[0].user_key, db)
         .once("value")
         .then(v => {
           let object = v.val();
@@ -189,11 +189,12 @@ class Winner extends Component {
     return bids;
   };
   handleChange = () => (event, idx) => {
+    const db = this.props.gv.db;
     if (event.target.name === "auctionList") {
       this.helper.showOverlay();
       this.setState({ auction_id: event.target.value }, () => {
-        this.props.firebase
-          .bids()
+        this.helper
+          .bids(db)
           .orderByChild("auction_key")
           .equalTo(this.state.auction_id)
           .once("value")
