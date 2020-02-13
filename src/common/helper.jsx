@@ -49,17 +49,18 @@ export class Helper extends Component {
   getCurrentUser = () => {
     return this.auth.currentUser;
   };
-  doCreateUserWithEmailAndPassword = (email, password) => this.auth.createUserWithEmailAndPassword(email, password);
-  doSignInWithEmailAndPassword = (email, password) => this.auth.signInWithEmailAndPassword(email, password);
-  doSignOut = () => this.auth.signOut();
-  doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
-  doPasswordUpdate = password => this.auth.currentUser.updatePassword(password);
+  doCreateUserWithEmailAndPassword = (email, password, auth) => auth.createUserWithEmailAndPassword(email, password);
+  doSignInWithEmailAndPassword = (email, password, auth) => auth.signInWithEmailAndPassword(email, password);
+  doSignOut = fb => fb.auth.signOut();
+  doPasswordReset = (email, fb) => fb.auth.sendPasswordResetEmail(email);
+  doPasswordUpdate = (password, fb) => fb.auth.currentUser.updatePassword(password);
   // *** Database API ***
-  auctions = () => this.db.ref("auctions");
-  users = () => this.db.ref("users");
-  user = uid => this.db.ref(`users/${uid}`);
-  products = () => this.db.ref("products");
-  bids = () => this.db.ref("bids");
-  bid = bid => this.db.ref(`bids/${bid}`);
+  auctions = fb => fb.ref("auctions");
+  users = fb => fb.ref("users");
+  user = (uid, fb) => fb.ref(`users/${uid}`);
+  products = db => db.ref("products");
+
+  bids = fb => fb.ref("bids");
+  bid = (bid, fb) => fb.ref(`bids/${bid}`);
 }
 export default { Helper };

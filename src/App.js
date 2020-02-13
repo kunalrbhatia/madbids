@@ -19,17 +19,18 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.fb = firebase.initializeApp(config);
+    this.Helper = new Helper(props, this.state);
     this.state = {
       gv: {
-        userId: "1",
-        updateState: this.updateState,
-        fb: this.fb
+        uid: "1",
+        us: this.updateState,
+        fb: this.fb,
+        auth: this.fb.auth(),
+        db: this.fb.database(),
+        ht: history,
+        hl: this.Helper
       }
     };
-    this.Helper = new Helper(props);
-  }
-  componentDidMount() {
-    console.log(this.state);
   }
   updateState = () => {
     this.setState(this.state);

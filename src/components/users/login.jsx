@@ -15,6 +15,7 @@ import * as ROUTES from "../../constants/routes";
 class Login extends Component {
   constructor(props) {
     super(props);
+    console.log(this.props);
     this.state = {
       onChange: this.handleChange(),
       snackClose: this.snackClose(),
@@ -53,9 +54,10 @@ class Login extends Component {
       this.setState({ password: e.currentTarget.value });
     } else if (e.currentTarget.name === "submit") {
       const { email, password } = this.state;
+      const auth = this.props.gv.auth;
       this.helper.showOverlay();
-      this.props.firebase
-        .doSignInWithEmailAndPassword(email, password)
+      this.helper
+        .doSignInWithEmailAndPassword(email, password, auth)
         .then(authUser => {
           this.props.gv.userId = authUser.user.uid;
           localStorage.setItem("uid", authUser.user.uid);

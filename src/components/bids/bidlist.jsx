@@ -7,6 +7,9 @@ class Bidlist extends Component {
   constructor(props) {
     super(props);
     this.auctionsList = [];
+    console.log(this.props.gv.db);
+    this.helper = this.props.helper;
+    const db = this.props.gv.db;
     if (localStorage.getItem("token") === null) {
       this.props.history.push(ROUTES.SIGN_IN);
     } else {
@@ -14,12 +17,12 @@ class Bidlist extends Component {
         onChange: this.handleChange(),
         onAppBarClose: this.handleAppBarClose(),
         apis: [
-          { name: APIS.PRODUCTS, data: [], url: this.props.firebase.products() },
+          { name: APIS.PRODUCTS, data: [], url: this.helper.products(db) },
           {
             name: APIS.AUCTIONS,
             data: [],
-            url: this.props.firebase
-              .auctions()
+            url: this.helper
+              .auctions(db)
               .orderByChild("is_active")
               .equalTo(1)
           }
@@ -30,8 +33,8 @@ class Bidlist extends Component {
   }
   componentDidMount = () => {
     if (localStorage.getItem("token") !== null) {
-      this.helper = this.props.helper;
       this.current = 0;
+      console.log(this.state.apis[this.current]);
       this.total = this.state.apis.length;
       this.helper.showOverlay();
       this.getDataFromDB();
