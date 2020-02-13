@@ -73,11 +73,12 @@ class BidPage extends Component {
     return true;
   };
   handleChange = () => event => {
+    const db = this.props.gv.db;
     this.helper.showOverlay();
     if (event.currentTarget.name === "submit") {
       if (this.state.bidValue > 0 && this.state.bidValue <= 100) {
-        this.props.firebase
-          .user(this.props.gv.userId)
+        this.helper
+          .user(this.props.gv.userId, db)
           .once("value")
           .then(v => {
             let user = v.val();
@@ -89,8 +90,8 @@ class BidPage extends Component {
               }
             }
             if (this.canUserBid()) {
-              this.props.firebase
-                .bids()
+              this.helper
+                .bids(db)
                 .push({
                   bid_price: this.state.bidValue,
                   user_key: this.state.uid,
@@ -99,8 +100,8 @@ class BidPage extends Component {
                   biddt: Date.now()
                 })
                 .then(e => {
-                  this.props.firebase
-                    .user(this.props.gv.userId)
+                  this.helper
+                    .user(this.props.gv.userId, db)
                     .update({ bids: this.userBids })
                     .then(e => {
                       setTimeout(() => {

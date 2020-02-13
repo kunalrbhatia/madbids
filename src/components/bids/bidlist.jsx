@@ -7,7 +7,7 @@ class Bidlist extends Component {
   constructor(props) {
     super(props);
     this.auctionsList = [];
-    console.log(this.props.gv.db);
+    //console.log(this.props.gv.db);
     this.helper = this.props.helper;
     const db = this.props.gv.db;
     if (localStorage.getItem("token") === null) {
@@ -34,7 +34,7 @@ class Bidlist extends Component {
   componentDidMount = () => {
     if (localStorage.getItem("token") !== null) {
       this.current = 0;
-      console.log(this.state.apis[this.current]);
+      //console.log(this.state.apis[this.current]);
       this.total = this.state.apis.length;
       this.helper.showOverlay();
       this.getDataFromDB();
@@ -104,7 +104,7 @@ class Bidlist extends Component {
           if (sd.getFullYear() === nw.getFullYear()) {
             if (sd.getMonth() + 1 === nw.getMonth() + 1) {
               if (sd.getDate() !== nw.getDate()) {
-                console.log(sd.getDate(), nw.getDate());
+                //console.log(sd.getDate(), nw.getDate());
                 e.is_active = 0;
                 this.props.firebase
                   .auctions()
