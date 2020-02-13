@@ -30,7 +30,7 @@ export class Helper extends Component {
     if (elem) document.body.removeChild(elem);
   };
   doLogout(props) {
-    props.firebase.doSignOut().then(e => {
+    props.gv.auth.signOut().then(e => {
       if (localStorage.getItem("token") != null) {
         localStorage.removeItem("token");
       }
