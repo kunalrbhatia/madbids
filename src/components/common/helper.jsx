@@ -46,5 +46,20 @@ export class Helper extends Component {
       props.history.push(ROUTES.LANDING);
     });
   }
+  getCurrentUser = () => {
+    return this.auth.currentUser;
+  };
+  doCreateUserWithEmailAndPassword = (email, password) => this.auth.createUserWithEmailAndPassword(email, password);
+  doSignInWithEmailAndPassword = (email, password) => this.auth.signInWithEmailAndPassword(email, password);
+  doSignOut = () => this.auth.signOut();
+  doPasswordReset = email => this.auth.sendPasswordResetEmail(email);
+  doPasswordUpdate = password => this.auth.currentUser.updatePassword(password);
+  // *** Database API ***
+  auctions = () => this.db.ref("auctions");
+  users = () => this.db.ref("users");
+  user = uid => this.db.ref(`users/${uid}`);
+  products = () => this.db.ref("products");
+  bids = () => this.db.ref("bids");
+  bid = bid => this.db.ref(`bids/${bid}`);
 }
 export default { Helper };

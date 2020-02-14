@@ -12,20 +12,19 @@ import Winner from "../bids/winner";
 import * as ROUTES from "../../constants/routes";
 import { withFirebase } from "../Firebase";
 import { compose } from "recompose";
-//let hash = "";
+import "firebase/auth";
+import "firebase/database";
 class App extends Component {
   constructor(props) {
     super(props);
-    this.Helper = new Helper(props);
     this.state = {
       gv: {
         userId: "1",
         updateState: this.updateState
       }
     };
-    this.App = React.createRef();
+    this.Helper = new Helper(props);
   }
-
   updateState = () => {
     this.setState(this.state);
   };
