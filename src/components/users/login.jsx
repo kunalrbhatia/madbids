@@ -15,7 +15,6 @@ import * as ROUTES from "../../constants/routes";
 class Login extends Component {
   constructor(props) {
     super(props);
-    console.log(this.props);
     this.state = {
       onChange: this.handleChange(),
       snackClose: this.snackClose(),

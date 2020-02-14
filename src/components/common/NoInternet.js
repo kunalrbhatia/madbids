@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import { withFirebase } from "../Firebase";
 import { MButton } from "../common/FormElements";
 
 class NoInternet extends Component {
@@ -29,5 +28,4 @@ class NoInternet extends Component {
     );
   }
 }
-export default withFirebase(NoInternet);
-//import Divider from '@material-ui/core/Divider';
+export default NoInternet;
