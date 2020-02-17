@@ -29,12 +29,15 @@
     -->
     <title>biD&Win</title>
     <script>
-      function getData(data) {
-        setTimeout(() => {
-          console.log(window.App.state.gv);
-        }, 500);
+      function startScreen(name) {
+        console.log(name);
+        if (name === "bidlist") {
+          window.App.state.gv.ht.push("/bidlist");
+        }
+        if (name === "winner") {
+          window.App.state.gv.ht.push("/winner");
+        }
       }
-      getData("abc");
     </script>
   </head>
   <body>

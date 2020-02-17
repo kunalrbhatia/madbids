@@ -89,6 +89,7 @@ class Bidlist extends Component {
         );
       }
     } else {
+      const db = this.props.gv.db;
       this.current = 0;
       let auctionsIndex = this.helper.getIndex(this.state.apis, APIS.AUCTIONS);
       this.auctionsList = this.state.apis[auctionsIndex].data;
@@ -103,8 +104,8 @@ class Bidlist extends Component {
             if (sd.getDate() !== nw.getDate()) {
               //console.log(sd.getDate(), nw.getDate());
               e.is_active = 0;
-              this.props.firebase
-                .auctions()
+              this.helper
+                .auctions(db)
                 .child(e.id)
                 .update({ is_active: 0 })
                 .then(() => {
@@ -126,8 +127,8 @@ class Bidlist extends Component {
         let product_key = 1;
         let type = "daily";
         let auction_name = sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear();
-        this.props.firebase
-          .auctions()
+        this.helper
+          .auctions(db)
           .push({ auction_name, start_date, end_date, is_active, product_key, type })
           .then(() => {
             this.current = 0;
@@ -144,8 +145,8 @@ class Bidlist extends Component {
             if (ed.getMonth() + 1 === nw.getMonth() + 1) {
               if (ed.getDate() - nw.getDate() === 0) {
                 e.is_active = 0;
-                this.props.firebase
-                  .auctions()
+                this.helper
+                  .auctions(db)
                   .child(e.id)
                   .update({ is_active: 0 })
                   .then(() => {
