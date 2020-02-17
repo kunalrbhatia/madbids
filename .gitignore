@@ -28,3 +28,4 @@ firebase.json
 database.rules.json
 storage.rules
 
+firebase-debug.log
