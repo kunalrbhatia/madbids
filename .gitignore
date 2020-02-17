@@ -22,8 +22,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 package.json
-.firebase/hosting.cHVibGlj.cache
+.firebase
 firebase.json
 .firebaserc
 database.rules.json
 storage.rules
+
