@@ -29,13 +29,18 @@
     -->
     <title>biD&Win</title>
     <script>
+      setTimeout(() => {
+        console.log(window.App.state);
+      }, 1000);
       function startScreen(name) {
         console.log(name);
         if (name === "bidlist") {
           window.App.state.gv.ht.push("/bidlist");
-        }
-        if (name === "winner") {
+        } else if (name === "winner") {
           window.App.state.gv.ht.push("/winner");
+        }
+        if (name === "logout") {
+          window.App.state.gv.hl.doLogout(window.App.state);
         }
       }
     </script>

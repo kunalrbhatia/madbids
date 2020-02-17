@@ -1,9 +1,7 @@
 import React, { Component } from "react";
 import { Container, Box, Paper, Grid } from "@material-ui/core";
-import { Copyright, MCard, MTextField, MButton, MSnackbar, MMenu, MAppBar } from "../common/FormElements";
+import { Copyright, MCard, MTextField, MButton, MSnackbar } from "../common/FormElements";
 import * as ROUTES from "../../constants/routes";
-import * as APIS from "../../constants/fbapis";
-
 class BidPage extends Component {
   constructor(props) {
     super(props);
@@ -21,8 +19,6 @@ class BidPage extends Component {
         bidValue: 0,
         onChange: this.handleChange(),
         snackClose: this.snackClose(),
-        onAppBarClose: this.handleAppBarClose(),
-        handleIconClick: this.handleIconClick(),
         uid: this.props.gv.userId,
         pl: this.props.gv.productInfo,
         snackMsg: "",
@@ -34,18 +30,6 @@ class BidPage extends Component {
       }
     }
   }
-  handleAppBarClose = () => str => {
-    if (str === APIS.LOGOUT) {
-      this.helper.doLogout(this.props);
-    } else if (str === APIS.WINNER) {
-      this.props.history.push(ROUTES.WINNER);
-    } else if (str === APIS.BIDLIST) {
-      this.props.history.push(ROUTES.BIDLIST);
-    }
-  };
-  handleIconClick = () => e => {
-    this.props.history.push(ROUTES.BIDLIST);
-  };
   snackClose = () => e => {
     this.setState({ snackMsg: "", snackOpen: false }, () => {});
   };
@@ -140,7 +124,7 @@ class BidPage extends Component {
       this.props.history.push(ROUTES.SIGN_IN);
       return <div></div>;
     } else {
-      const { onChange, bidValue, pl, snackOpen, snackClose, snackMsg, onAppBarClose, handleIconClick } = this.state;
+      const { onChange, bidValue, pl, snackOpen, snackClose, snackMsg } = this.state;
       const handleInputChange = event => {
         this.setState({
           bidValue: parseFloat(event.target.value)
@@ -163,22 +147,6 @@ class BidPage extends Component {
       };
       return (
         <div>
-          <MAppBar
-            name="Bid"
-            icon={true}
-            handleClose={onAppBarClose}
-            handleIconClick={handleIconClick}
-            menu={
-              <MMenu
-                menuitems={[
-                  { name: APIS.WINNER, value: "Winner" },
-                  { name: APIS.BIDLIST, value: "Products" },
-                  { name: APIS.LOGOUT, value: "Logout" }
-                ]}
-                handleClose={onAppBarClose}
-              ></MMenu>
-            }
-          ></MAppBar>
           <Container component="main" maxWidth="xs">
             <Grid container spacing={2} alignItems="center" style={{ marginTop: 10 }}>
               <Grid item xs={12}>

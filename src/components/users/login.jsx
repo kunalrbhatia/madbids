@@ -31,7 +31,7 @@ class Login extends Component {
       this.props.history.push(ROUTES.BIDLIST);
     } else {
       try {
-        window.Android.contentLoaded();
+        window.Android.contentLoaded("none");
       } catch (error) {
         //console.log(error);
       }

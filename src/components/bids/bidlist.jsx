@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Container, Box } from "@material-ui/core";
-import { Copyright, MCard, MAppBar, MMenu } from "../common/FormElements";
+import { Copyright, MCard } from "../common/FormElements";
 import * as ROUTES from "../../constants/routes";
 import * as APIS from "../../constants/fbapis";
 class Bidlist extends Component {
@@ -15,7 +15,6 @@ class Bidlist extends Component {
     } else {
       this.state = {
         onChange: this.handleChange(),
-        onAppBarClose: this.handleAppBarClose(),
         apis: [
           { name: APIS.PRODUCTS, data: [], url: this.helper.products(db) },
           {
@@ -89,98 +88,111 @@ class Bidlist extends Component {
         );
       }
     } else {
-      const db = this.props.gv.db;
-      this.current = 0;
-      let auctionsIndex = this.helper.getIndex(this.state.apis, APIS.AUCTIONS);
-      this.auctionsList = this.state.apis[auctionsIndex].data;
-      let activeDaily = this.getActiveAuctionsList("daily");
-      let activeWeekly = this.getActiveAuctionsList("weekly");
-      for (let index = 0; index < activeDaily.length; index++) {
-        const e = activeDaily[index];
-        let sd = new Date(e.start_date);
-        let nw = new Date();
-        if (sd.getFullYear() === nw.getFullYear()) {
-          if (sd.getMonth() + 1 === nw.getMonth() + 1) {
-            if (sd.getDate() !== nw.getDate()) {
-              //console.log(sd.getDate(), nw.getDate());
-              e.is_active = 0;
-              this.helper
-                .auctions(db)
-                .child(e.id)
-                .update({ is_active: 0 })
-                .then(() => {
-                  this.current = 0;
-                  this.auctionsList = [];
-                  this.getDataFromDB();
-                });
-            }
-          }
-        }
-      }
-      if (activeDaily.length === 0) {
-        let start_date = Date.now();
-        let sd = new Date(start_date);
-        let ed = new Date(start_date);
-        ed.setDate(ed.getDate() + 1);
-        let end_date = ed.getTime();
-        let is_active = 1;
-        let product_key = 1;
-        let type = "daily";
-        let auction_name = sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear();
-        this.helper
-          .auctions(db)
-          .push({ auction_name, start_date, end_date, is_active, product_key, type })
-          .then(() => {
-            this.current = 0;
-            this.auctionsList = [];
-            this.getDataFromDB();
-          });
-      }
-      if (activeWeekly.length > 0) {
-        for (let index = 0; index < activeWeekly.length; index++) {
-          const e = activeWeekly[index];
-          let ed = new Date(e.end_date);
-          let nw = new Date();
-          if (ed.getFullYear() === nw.getFullYear()) {
-            if (ed.getMonth() + 1 === nw.getMonth() + 1) {
-              if (ed.getDate() - nw.getDate() === 0) {
-                e.is_active = 0;
+      this.props.gv.fb.auth().onAuthStateChanged(user => {
+        if (user !== undefined && user !== null) {
+          this.helper
+            .user(user.uid, this.props.gv.db)
+            .once("value")
+            .then(v => {
+              let user = v.val();
+              this.userName = user.fname + " " + user.lname;
+
+              //AFTER USER'S NAME IS FETCHED
+
+              const db = this.props.gv.db;
+              this.current = 0;
+              let auctionsIndex = this.helper.getIndex(this.state.apis, APIS.AUCTIONS);
+              this.auctionsList = this.state.apis[auctionsIndex].data;
+              let activeDaily = this.getActiveAuctionsList("daily");
+              let activeWeekly = this.getActiveAuctionsList("weekly");
+              for (let index = 0; index < activeDaily.length; index++) {
+                const e = activeDaily[index];
+                let sd = new Date(e.start_date);
+                let nw = new Date();
+                if (sd.getFullYear() === nw.getFullYear()) {
+                  if (sd.getMonth() + 1 === nw.getMonth() + 1) {
+                    if (sd.getDate() !== nw.getDate()) {
+                      //console.log(sd.getDate(), nw.getDate());
+                      e.is_active = 0;
+                      this.helper
+                        .auctions(db)
+                        .child(e.id)
+                        .update({ is_active: 0 })
+                        .then(() => {
+                          this.current = 0;
+                          this.auctionsList = [];
+                          this.getDataFromDB();
+                        });
+                    }
+                  }
+                }
+              }
+              if (activeDaily.length === 0) {
+                let start_date = Date.now();
+                let sd = new Date(start_date);
+                let ed = new Date(start_date);
+                ed.setDate(ed.getDate() + 1);
+                let end_date = ed.getTime();
+                let is_active = 1;
+                let product_key = 1;
+                let type = "daily";
+                let auction_name = sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear();
                 this.helper
                   .auctions(db)
-                  .child(e.id)
-                  .update({ is_active: 0 })
+                  .push({ auction_name, start_date, end_date, is_active, product_key, type })
                   .then(() => {
                     this.current = 0;
                     this.auctionsList = [];
                     this.getDataFromDB();
                   });
               }
-            }
-          }
-        }
-      } else {
-        let sd = new Date();
-        if (sd.getDay() === 5) {
-          let ed = new Date(sd);
-          ed.setDate(ed.getDate() + 7);
-          let end_date = ed.getTime();
-          let is_active = 1;
-          let start_date = sd.getTime();
-          let product_key = 2;
-          let type = "weekly";
-          let auction_name = sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear() + " weekly";
-          this.props.firebase
-            .auctions()
-            .push({ auction_name, start_date, end_date, is_active, product_key, type })
-            .then(() => {
-              this.current = 0;
-              this.auctionsList = [];
-              this.getDataFromDB();
+              if (activeWeekly.length > 0) {
+                for (let index = 0; index < activeWeekly.length; index++) {
+                  const e = activeWeekly[index];
+                  let ed = new Date(e.end_date);
+                  let nw = new Date();
+                  if (ed.getFullYear() === nw.getFullYear()) {
+                    if (ed.getMonth() + 1 === nw.getMonth() + 1) {
+                      if (ed.getDate() - nw.getDate() === 0) {
+                        e.is_active = 0;
+                        this.helper
+                          .auctions(db)
+                          .child(e.id)
+                          .update({ is_active: 0 })
+                          .then(() => {
+                            this.current = 0;
+                            this.auctionsList = [];
+                            this.getDataFromDB();
+                          });
+                      }
+                    }
+                  }
+                }
+              } else {
+                let sd = new Date();
+                if (sd.getDay() === 5) {
+                  let ed = new Date(sd);
+                  ed.setDate(ed.getDate() + 7);
+                  let end_date = ed.getTime();
+                  let is_active = 1;
+                  let start_date = sd.getTime();
+                  let product_key = 2;
+                  let type = "weekly";
+                  let auction_name = sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear() + " weekly";
+                  this.props.firebase
+                    .auctions()
+                    .push({ auction_name, start_date, end_date, is_active, product_key, type })
+                    .then(() => {
+                      this.current = 0;
+                      this.auctionsList = [];
+                      this.getDataFromDB();
+                    });
+                }
+              }
+              this.afterUpdate();
             });
         }
-      }
-
-      this.afterUpdate();
+      });
     }
   };
   getActiveAuctionsList(type) {
@@ -210,18 +222,12 @@ class Bidlist extends Component {
     this.setState({ productList: pl }, () => {
       this.helper.hideOverlay();
       try {
-        window.Android.contentLoaded();
+        console.log(this.userName);
+        window.Android.contentLoaded(this.userName);
       } catch (error) {
         //console.log(error);
       }
     });
-  };
-  handleAppBarClose = () => str => {
-    if (str === "logout") {
-      this.helper.doLogout(this.props);
-    } else if (str === "winner") {
-      this.props.history.push(ROUTES.WINNER);
-    }
   };
   handleChange = () => (event, idx) => {
     if (event.currentTarget.name === "bid_1") {
@@ -235,7 +241,7 @@ class Bidlist extends Component {
       this.props.history.push(ROUTES.SIGN_IN);
       return <div></div>;
     } else {
-      const { onChange, onAppBarClose, productList } = this.state;
+      const { onChange, productList } = this.state;
       const mCards = productList.map((pl, idx) => {
         return (
           <div style={{ marginBottom: 20 }} key={pl.auction_id}>
@@ -254,19 +260,6 @@ class Bidlist extends Component {
       });
       return (
         <div>
-          <MAppBar
-            name="Products"
-            handleClose={onAppBarClose}
-            menu={
-              <MMenu
-                menuitems={[
-                  { name: APIS.WINNER, value: "Winner" },
-                  { name: APIS.LOGOUT, value: "Logout" }
-                ]}
-                handleClose={onAppBarClose}
-              ></MMenu>
-            }
-          ></MAppBar>
           <Container component="main" maxWidth="xs" style={{ marginTop: 20 }}>
             {mCards}
             <Box mt={4}>

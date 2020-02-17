@@ -43,13 +43,11 @@ export class Helper extends Component {
       if (localStorage.getItem("remember_me") != null) {
         localStorage.removeItem("remember_me");
       }
-      props.history.push(ROUTES.LANDING);
+      props.gv.ht.push(ROUTES.LANDING);
     });
   }
-  getCurrentUser = auth => auth.currentUser;
   doCreateUserWithEmailAndPassword = (email, password, auth) => auth.createUserWithEmailAndPassword(email, password);
   doSignInWithEmailAndPassword = (email, password, auth) => auth.signInWithEmailAndPassword(email, password);
-  doSignOut = fb => fb.auth.signOut();
   doPasswordReset = (email, fb) => fb.auth.sendPasswordResetEmail(email);
   doPasswordUpdate = (password, fb) => fb.auth.currentUser.updatePassword(password);
   // *** Database API ***

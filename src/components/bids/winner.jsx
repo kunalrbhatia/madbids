@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Container, Box, Paper } from "@material-ui/core";
-import { Copyright, MTextField, MAppBar, MMenu } from "../common/FormElements";
+import { Copyright, MTextField } from "../common/FormElements";
 import * as ROUTES from "../../constants/routes";
 import * as APIS from "../../constants/fbapis";
 class Winner extends Component {
@@ -13,7 +13,6 @@ class Winner extends Component {
       this.helper = this.props.helper;
       this.state = {
         onChange: this.handleChange(),
-        onAppBarClose: this.handleAppBarClose(),
         apis: [
           {
             name: APIS.AUCTIONS,
@@ -34,13 +33,6 @@ class Winner extends Component {
       this.total = this.state.apis.length;
     }
   }
-  handleAppBarClose = () => str => {
-    if (str === APIS.LOGOUT) {
-      this.helper.doLogout(this.props);
-    } else if (str === APIS.PRODUCTS) {
-      this.props.history.push(ROUTES.BIDLIST);
-    }
-  };
   componentDidMount = () => {
     if (localStorage.getItem("token") === null) {
       this.props.history.push(ROUTES.SIGN_IN);
@@ -224,7 +216,7 @@ class Winner extends Component {
       this.props.history.push(ROUTES.SIGN_IN);
       return <div></div>;
     } else {
-      const { auction_id, onChange, winner_name, bid_amount, onAppBarClose } = this.state;
+      const { auction_id, onChange, winner_name, bid_amount } = this.state;
       const auction_data = [];
       const auction_list = this.state.apis[this.helper.getIndex(this.state.apis, APIS.AUCTIONS)].data;
       for (let i = 0; i < auction_list.length; i++) {
@@ -237,19 +229,6 @@ class Winner extends Component {
       }
       return (
         <div>
-          <MAppBar
-            name="Winner"
-            handleClose={onAppBarClose}
-            menu={
-              <MMenu
-                menuitems={[
-                  { name: APIS.PRODUCTS, value: "Products" },
-                  { name: APIS.LOGOUT, value: "Logout" }
-                ]}
-                handleClose={onAppBarClose}
-              ></MMenu>
-            }
-          ></MAppBar>
           <Container component="main" maxWidth="xs" style={{ marginTop: 20 }}>
             <div className="auctionList" style={{ display: closedAuctions ? "block" : "none" }}>
               <MTextField
