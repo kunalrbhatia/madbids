@@ -26,11 +26,17 @@ class NewUser extends Component {
       snackClose: this.snackClose(),
       gender: "female",
       fname: "",
+      fnameError: false,
+      fnameHelper: "First name",
       lname: "",
       email: "",
+      emailError: false,
+      emailHelper: "E-mail",
       password: "",
       cpassword: "",
       cno: "",
+      cnoError: false,
+      cnoHelper: "Your Contact no.",
       secretQuestion: "",
       secretAnswer: "",
       users: [],
@@ -86,51 +92,68 @@ class NewUser extends Component {
     const auth = this.props.gv.auth;
     const db = this.props.gv.db;
     if (event.currentTarget.name === "register") {
-      const { gender, fname, lname, email, password, cpassword, cno, secretQuestion, secretAnswer } = this.state;
+      const {
+        gender,
+        fname,
+        lname,
+        email,
+        emailError,
+        fnameError,
+        password,
+        cpassword,
+        cno,
+        cnoError,
+        secretQuestion,
+        secretAnswer
+      } = this.state;
       if (password === cpassword) {
-        if (!this.findIfUserExists(email)) {
-          this.helper.showOverlay();
-          this.helper
-            .doCreateUserWithEmailAndPassword(email, password, auth)
-            .then(authUser => {
-              this.props.gv.userId = authUser.user.uid;
-              localStorage.setItem("uid", authUser.user.uid);
-              let userRef = this.helper.users(db);
-              return userRef.child(this.props.gv.userId).set({
-                email,
-                password,
-                cno,
-                fname,
-                lname,
-                gender,
-                secretQuestion,
-                secretAnswer,
-                bids: []
-              });
-            })
-            .then(() => {
-              this.helper.hideOverlay();
-              this.setState({
-                snackMsg: "Congratulations! Your're registered with us, please sign-in",
-                snackOpen: true
-              });
-              setTimeout(() => {
-                this.helper.doLogout(this.props);
-              }, 3000);
-            })
-            .catch(error => {
-              console.log(error.code);
-              if (error.code === "auth/email-already-in-use") {
+        if (fnameError === false || emailError === false || cnoError === false) {
+          if (!this.findIfUserExists(email)) {
+            this.helper.showOverlay();
+            this.helper
+              .doCreateUserWithEmailAndPassword(email, password, auth)
+              .then(authUser => {
+                this.props.gv.userId = authUser.user.uid;
+                localStorage.setItem("uid", authUser.user.uid);
+                let userRef = this.helper.users(db);
+                return userRef.child(this.props.gv.userId).set({
+                  email,
+                  password,
+                  cno,
+                  fname,
+                  lname,
+                  gender,
+                  secretQuestion,
+                  secretAnswer,
+                  bids: []
+                });
+              })
+              .then(() => {
+                this.helper.hideOverlay();
+                this.setState({
+                  snackMsg: "Congratulations! Your're registered with us, please sign-in",
+                  snackOpen: true
+                });
                 setTimeout(() => {
-                  this.helper.hideOverlay();
-                  this.props.history.push(ROUTES.SIGN_IN);
+                  this.helper.doLogout(this.props);
                 }, 3000);
-                this.setState({ snackMsg: "You're already registered with us! Please login", snackOpen: true });
-              }
-              this.setState({ error });
-            });
+              })
+              .catch(error => {
+                console.log(error.code);
+                if (error.code === "auth/email-already-in-use") {
+                  setTimeout(() => {
+                    this.helper.hideOverlay();
+                    this.props.history.push(ROUTES.SIGN_IN);
+                  }, 3000);
+                  this.setState({ snackMsg: "You're already registered with us! Please login", snackOpen: true });
+                }
+                this.setState({ error });
+              });
+          } else {
+            this.setState({ snackMsg: "User already exist!", snackOpen: true });
+          }
         } else {
-          this.setState({ snackMsg: "User already exist!", snackOpen: true });
+          this.setState({ snackMsg: "Fields highlighted in red are required", snackOpen: true });
         }
       } else {
         this.setState({ snackMsg: "Password and confirm password doesn't match", snackOpen: true });
@@ -139,16 +162,31 @@ class NewUser extends Component {
     } else if (event.target.name === "gender") {
       this.setState({ gender: event.target.value });
     } else if (event.target.name === "fname") {
-      this.setState({ fname: event.target.value });
+      if (event.target.value.length > 0) {
+        this.setState({ fname: event.target.value, fnameError: false, fnameHelper: "First name" });
+      } else {
+        this.setState({ fname: event.target.value, fnameError: true, fnameHelper: "First name is required" });
+      }
     } else if (event.target.name === "lname") {
       this.setState({ lname: event.target.value });
     } else if (event.target.name === "email") {
       this.setState({ email: event.target.value });
+      var mailformat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+      if (mailformat.test(event.target.value)) {
+        this.setState({ emailError: false, emailHelper: "E-mail address entered is correct" });
+      } else {
+        this.setState({ emailError: true, emailHelper: "E-mail address entered is incorrect" });
+      }
     } else if (event.target.name === "password") {
       this.setState({ password: event.target.value });
     } else if (event.target.name === "cpassword") {
       this.setState({ cpassword: event.target.value });
     } else if (event.target.name === "cno") {
+      if (event.target.value.length === 10) {
+        this.setState({ cno: event.target.value, cnoError: false, cnoHelper: "Your Contact no." });
+      } else {
+        this.setState({ cno: event.target.value, cnoError: true, cnoHelper: "Contact no. is invalid" });
+      }
       this.setState({ cno: event.target.value });
     } else if (event.target.name === "secretQuestion") {
       this.setState({ secretQuestion: event.target.value });
@@ -180,7 +218,13 @@ class NewUser extends Component {
       secretAnswer,
       snackMsg,
       snackOpen,
-      snackClose
+      snackClose,
+      emailError,
+      emailHelper,
+      fnameError,
+      fnameHelper,
+      cnoError,
+      cnoHelper
     } = this.state;
     return (
       <Container component="main" maxWidth="xs">
@@ -211,11 +255,12 @@ class NewUser extends Component {
               type="text"
               name="fname"
               value={fname}
+              error={fnameError}
               fullWidth={true}
               label="First Name"
               margin="dense"
               onChange={onChange}
-              helperText="First name"
+              helperText={fnameHelper}
             ></MTextField>
             <MTextField
               required={true}
@@ -238,6 +283,7 @@ class NewUser extends Component {
             </FormControl>
             <MTextField
               required={false}
+              error={cnoError}
               type="number"
               name="cno"
               value={cno}
@@ -245,18 +291,19 @@ class NewUser extends Component {
               label="Contact Number"
               margin="dense"
               onChange={onChange}
-              helperText="Contact Number"
+              helperText={cnoHelper}
             ></MTextField>
             <MTextField
               required={true}
               type="email"
+              error={emailError}
               value={email}
               name="email"
               fullWidth={true}
               label="E-mail"
               margin="dense"
               onChange={onChange}
-              helperText="E-mail"
+              helperText={emailHelper}
             ></MTextField>
             <MTextField
               required={true}
