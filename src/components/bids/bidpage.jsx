@@ -22,7 +22,9 @@ class BidPage extends Component {
         uid: this.props.gv.userId,
         pl: this.props.gv.productInfo,
         snackMsg: "",
-        snackOpen: false
+        snackOpen: false,
+        bidValueHelper: "Number in range from 0 to 100, 2 point decimal allowed",
+        bidValueError: false
       };
       this.userBids = [];
       if (localStorage.getItem("token") === null) {
@@ -61,60 +63,65 @@ class BidPage extends Component {
     this.helper.showOverlay();
     if (event.currentTarget.name === "submit") {
       if (this.state.bidValue > 0 && this.state.bidValue <= 100) {
-        this.helper
-          .user(this.props.gv.userId, db)
-          .once("value")
-          .then(v => {
-            let user = v.val();
-            //console.log(user);
-            this.userBids = [];
-            if (user !== null) {
-              if (user.bids !== undefined) {
-                this.userBids = user.bids;
-              }
-            }
-            if (this.canUserBid()) {
-              this.helper
-                .bids(db)
-                .push({
-                  bid_price: this.state.bidValue,
-                  user_key: this.state.uid,
-                  product_key: this.state.pl.id,
-                  auction_key: this.state.pl.auction_id,
-                  biddt: Date.now()
-                })
-                .then(e => {
-                  this.helper
-                    .user(this.props.gv.userId, db)
-                    .update({ bids: this.userBids })
-                    .then(e => {
-                      setTimeout(() => {
-                        this.helper.hideOverlay();
-                        try {
-                          window.Android.showToast("Thanks for biding!");
-                        } catch (error) {
-                          console.log(error);
-                        }
-                        this.props.history.push(ROUTES.BIDLIST);
-                      }, 2000);
-                      this.setState({ snackMsg: "Thanks for biding!", snackOpen: true }, () => {});
-                    });
-                });
-            } else {
-              setTimeout(() => {
-                this.helper.hideOverlay();
-                try {
-                  window.Android.showToast("You've already bided for this auction");
-                } catch (error) {
-                  console.log(error);
+        if (this.state.bidValueError === false) {
+          this.helper
+            .user(this.props.gv.userId, db)
+            .once("value")
+            .then(v => {
+              let user = v.val();
+              //console.log(user);
+              this.userBids = [];
+              if (user !== null) {
+                if (user.bids !== undefined) {
+                  this.userBids = user.bids;
                 }
-                this.props.history.push(ROUTES.BIDLIST);
-              }, 2000);
-              this.setState({ snackMsg: "You've already bided for this auction", snackOpen: true }, () => {});
-            }
-          });
+              }
+              if (this.canUserBid()) {
+                this.helper
+                  .bids(db)
+                  .push({
+                    bid_price: this.state.bidValue,
+                    user_key: this.state.uid,
+                    product_key: this.state.pl.id,
+                    auction_key: this.state.pl.auction_id,
+                    biddt: Date.now()
+                  })
+                  .then(e => {
+                    this.helper
+                      .user(this.props.gv.userId, db)
+                      .update({ bids: this.userBids })
+                      .then(e => {
+                        setTimeout(() => {
+                          this.helper.hideOverlay();
+                          try {
+                            window.Android.showToast("Thanks for biding!");
+                          } catch (error) {
+                            console.log(error);
+                          }
+                          this.props.history.push(ROUTES.BIDLIST);
+                        }, 2000);
+                        this.setState({ snackMsg: "Thanks for biding!", snackOpen: true }, () => {});
+                      });
+                  });
+              } else {
+                setTimeout(() => {
+                  this.helper.hideOverlay();
+                  try {
+                    window.Android.showToast("You've already bided for this auction");
+                  } catch (error) {
+                    console.log(error);
+                  }
+                  this.props.history.push(ROUTES.BIDLIST);
+                }, 2000);
+                this.setState({ snackMsg: "You've already bided for this auction", snackOpen: true }, () => {});
+              }
+            });
+        } else {
+          this.setState({ snackMsg: "Bid value is incorrect", snackOpen: true }, () => {});
+          this.helper.hideOverlay();
+        }
       } else {
-        this.setState({ snackMsg: "Bid value can be greater than 0", snackOpen: true }, () => {});
+        this.setState({ snackMsg: "Bid value must be greater than 0", snackOpen: true }, () => {});
         this.helper.hideOverlay();
       }
     }
@@ -124,11 +131,22 @@ class BidPage extends Component {
       this.props.history.push(ROUTES.SIGN_IN);
       return <div></div>;
     } else {
-      const { onChange, bidValue, pl, snackOpen, snackClose, snackMsg } = this.state;
+      const { onChange, bidValue, pl, snackOpen, snackClose, snackMsg, bidValueHelper, bidValueError } = this.state;
       const handleInputChange = event => {
-        this.setState({
-          bidValue: parseFloat(event.target.value)
-        });
+        let patt = /^(?!00)\d\d?(\.\d\d?)?$/;
+        if (patt.test(event.target.value)) {
+          this.setState({
+            bidValue: parseFloat(event.target.value),
+            bidValueError: false,
+            bidValueHelper: "Bid value entered is correct"
+          });
+        } else {
+          this.setState({
+            bidValue: parseFloat(event.target.value),
+            bidValueError: true,
+            bidValueHelper: "Bid value entered is incorrect"
+          });
+        }
       };
       const handleBlur = e => {
         if (bidValue < 0) {
@@ -196,7 +214,8 @@ class BidPage extends Component {
                     margin="dense"
                     onChange={handleInputChange}
                     onBlur={handleBlur}
-                    helperText="Number in range from 1 to 100, 2 point decimal allowed"
+                    helperText={bidValueHelper}
+                    error={bidValueError}
                   ></MTextField>
                 </Grid>
               </Grid>
