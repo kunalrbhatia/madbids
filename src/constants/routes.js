@@ -9,3 +9,4 @@ export const WINNER = "/winner";
 export const NOINTERNET = "/nointernet";
 export const COMMUNICATE = "/communicate";
 export const PROFILE = "/profile";
+export const SPINWHEEL = "/spinwheel";

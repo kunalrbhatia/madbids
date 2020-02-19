@@ -16,6 +16,7 @@ import "firebase/auth";
 import "firebase/database";
 import Communicate from "./components/communicate/communicate";
 import Profile from "./components/users/profile";
+import SpinWheel from "./components/games/spinwheel";
 const config = fb.firebase.dev;
 class App extends Component {
   constructor(props) {
@@ -53,6 +54,7 @@ class App extends Component {
           <Route path={ROUTES.BIDPAGE} component={props => <BidPage {...props} gv={gv} helper={this.Helper} />} />
           <Route path={ROUTES.WINNER} component={props => <Winner {...props} gv={gv} helper={this.Helper} />} />
           <Route path={ROUTES.PROFILE} component={props => <Profile {...props} gv={gv} helper={this.Helper} />} />
+          <Route path={ROUTES.SPINWHEEL} component={props => <SpinWheel {...props} gv={gv} helper={this.Helper} />} />
           <Route
             path={ROUTES.COMMUNICATE}
             component={props => <Communicate {...props} gv={gv} helper={this.Helper} />}
