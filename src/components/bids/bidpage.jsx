@@ -134,7 +134,7 @@ class BidPage extends Component {
       const { onChange, bidValue, pl, snackOpen, snackClose, snackMsg, bidValueHelper, bidValueError } = this.state;
       const handleInputChange = event => {
         let patt = /^(?!00)\d\d?(\.\d\d?)?$/;
-        if (patt.test(event.target.value)) {
+        if (patt.test(event.target.value) && parseFloat(event.target.value) > 0) {
           this.setState({
             bidValue: parseFloat(event.target.value),
             bidValueError: false,
@@ -186,7 +186,7 @@ class BidPage extends Component {
                     type="range"
                     min={0}
                     max={100}
-                    value={typeof bidValue === "number" ? bidValue : 0}
+                    value={isNaN(bidValue) ? 0 : bidValue}
                     step={0.01}
                     className="slider"
                     id="cno"
@@ -203,7 +203,7 @@ class BidPage extends Component {
                     name="cno"
                     fullWidth={true}
                     label="Bid Value"
-                    value={bidValue}
+                    value={isNaN(bidValue) ? 0 : bidValue}
                     inputProps={{
                       step: 0.1,
                       min: 1,

@@ -23,7 +23,9 @@ class Login extends Component {
       error: "",
       snackOpen: false,
       snackMsg: "",
-      rememberMe: true
+      rememberMe: true,
+      emailHelper: "Email",
+      emailError: false
     };
     this.helper = this.props.helper;
     if (localStorage.getItem("token") != null && localStorage.getItem("remember_me") != null) {
@@ -48,7 +50,20 @@ class Login extends Component {
         this.setState({ rememberMe: false });
       }
     } else if (e.currentTarget.name === "email") {
-      this.setState({ email: e.currentTarget.value });
+      var mailformat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+      if (mailformat.test(e.target.value)) {
+        this.setState({
+          email: e.currentTarget.value,
+          emailError: false,
+          emailHelper: "E-mail address entered is correct"
+        });
+      } else {
+        this.setState({
+          email: e.currentTarget.value,
+          emailError: true,
+          emailHelper: "E-mail address entered is incorrect"
+        });
+      }
     } else if (e.currentTarget.name === "password") {
       this.setState({ password: e.currentTarget.value });
     } else if (e.currentTarget.name === "submit") {
@@ -78,7 +93,7 @@ class Login extends Component {
     }
   };
   render() {
-    const { onChange, email, snackOpen, snackClose, snackMsg, rememberMe } = this.state;
+    const { onChange, email, snackOpen, snackClose, snackMsg, rememberMe, emailHelper, emailError } = this.state;
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -111,7 +126,8 @@ class Login extends Component {
               label="E-mail Address"
               margin="dense"
               onChange={onChange}
-              helperText="E-mail"
+              error={emailError}
+              helperText={emailHelper}
             ></MTextField>
             <MTextField
               required={true}

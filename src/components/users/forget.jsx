@@ -32,7 +32,9 @@ class Forgot extends Component {
       ],
       question: "",
       answer: "",
-      uanswer: ""
+      uanswer: "",
+      emailError: false,
+      emailHelper: "Email"
     };
   }
   componentDidMount = () => {};
@@ -108,6 +110,20 @@ class Forgot extends Component {
         this.setState({ snackMsg: "Answer doesn't match with our records.", snackOpen: true });
       }
     } else if (event.currentTarget.name === "email") {
+      var mailformat = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+      if (mailformat.test(event.target.value)) {
+        this.setState({
+          email: event.currentTarget.value,
+          emailError: false,
+          emailHelper: "E-mail address entered is correct"
+        });
+      } else {
+        this.setState({
+          email: event.currentTarget.value,
+          emailError: true,
+          emailHelper: "E-mail address entered is incorrect"
+        });
+      }
       this.setState({ email: event.currentTarget.value });
     } else if (event.currentTarget.name === "newPassword") {
       this.setState({ newPassword: event.currentTarget.value });
@@ -130,7 +146,9 @@ class Forgot extends Component {
       confirmPassword,
       question,
       detailsVerified,
-      uanswer
+      uanswer,
+      emailError,
+      emailHelper
     } = this.state;
     return (
       <Container component="main" maxWidth="xs">
@@ -173,7 +191,8 @@ class Forgot extends Component {
               margin="dense"
               value={email}
               onChange={onChange}
-              helperText="E-mail"
+              helperText={emailHelper}
+              error={emailError}
             ></MTextField>
           </div>
           <div
