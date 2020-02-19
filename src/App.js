@@ -15,6 +15,7 @@ import * as fb from "./constants/fb";
 import "firebase/auth";
 import "firebase/database";
 import Communicate from "./components/communicate/communicate";
+import Profile from "./components/users/profile";
 const config = fb.firebase.dev;
 class App extends Component {
   constructor(props) {
@@ -51,6 +52,7 @@ class App extends Component {
           <Route path={ROUTES.BIDLIST} component={props => <Bidlist {...props} gv={gv} helper={this.Helper} />} />
           <Route path={ROUTES.BIDPAGE} component={props => <BidPage {...props} gv={gv} helper={this.Helper} />} />
           <Route path={ROUTES.WINNER} component={props => <Winner {...props} gv={gv} helper={this.Helper} />} />
+          <Route path={ROUTES.PROFILE} component={props => <Profile {...props} gv={gv} helper={this.Helper} />} />
           <Route
             path={ROUTES.COMMUNICATE}
             component={props => <Communicate {...props} gv={gv} helper={this.Helper} />}

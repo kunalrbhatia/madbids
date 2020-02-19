@@ -8,3 +8,4 @@ export const PASSWORD_FORGET = "/forgot-password";
 export const WINNER = "/winner";
 export const NOINTERNET = "/nointernet";
 export const COMMUNICATE = "/communicate";
+export const PROFILE = "/profile";
