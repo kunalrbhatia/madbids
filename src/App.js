@@ -14,6 +14,7 @@ import * as firebase from "firebase/app";
 import * as fb from "./constants/fb";
 import "firebase/auth";
 import "firebase/database";
+import Communicate from "./components/communicate/communicate";
 const config = fb.firebase.dev;
 class App extends Component {
   constructor(props) {
@@ -50,6 +51,10 @@ class App extends Component {
           <Route path={ROUTES.BIDLIST} component={props => <Bidlist {...props} gv={gv} helper={this.Helper} />} />
           <Route path={ROUTES.BIDPAGE} component={props => <BidPage {...props} gv={gv} helper={this.Helper} />} />
           <Route path={ROUTES.WINNER} component={props => <Winner {...props} gv={gv} helper={this.Helper} />} />
+          <Route
+            path={ROUTES.COMMUNICATE}
+            component={props => <Communicate {...props} gv={gv} helper={this.Helper} />}
+          />
           <Route path={ROUTES.NOINTERNET} component={props => <NoInternet {...props} gv={gv} helper={this.Helper} />} />
           <Route path="*" component={props => <Login {...props} gv={gv} helper={this.Helper} />} />
         </Switch>
