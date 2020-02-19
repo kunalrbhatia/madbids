@@ -211,18 +211,32 @@ class Bidlist extends Component {
     let pl = [];
     for (let i = 0; i < this.auctionsList.length; i++) {
       let e1 = this.auctionsList[i];
-      for (let j = 0; j < prodsData.length; j++) {
-        let e2 = JSON.parse(JSON.stringify(prodsData[j]));
-        if (e1.product_key === parseInt(e2.id)) {
-          e2.auction_id = e1.id;
-          pl.push(e2);
+      if (e1.type === "daily") {
+        for (let j = 0; j < prodsData.length; j++) {
+          let e2 = JSON.parse(JSON.stringify(prodsData[j]));
+          if (e1.product_key === parseInt(e2.id)) {
+            e2.auction_id = e1.id;
+            pl.push(e2);
+          }
+        }
+      }
+    }
+    for (let i = 0; i < this.auctionsList.length; i++) {
+      let e1 = this.auctionsList[i];
+      if (e1.type === "weekly") {
+        for (let j = 0; j < prodsData.length; j++) {
+          let e2 = JSON.parse(JSON.stringify(prodsData[j]));
+          if (e1.product_key === parseInt(e2.id)) {
+            e2.auction_id = e1.id;
+            pl.push(e2);
+          }
         }
       }
     }
     this.setState({ productList: pl }, () => {
       this.helper.hideOverlay();
       try {
-        console.log(this.userName);
+        //console.log(this.userName);
         window.Android.contentLoaded(this.userName);
       } catch (error) {
         //console.log(error);
