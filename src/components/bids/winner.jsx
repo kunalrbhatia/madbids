@@ -11,16 +11,20 @@ class Winner extends Component {
     } else {
       const db = this.props.gv.db;
       this.helper = this.props.helper;
+      let auc = this.helper
+        .auctions(db)
+        .orderByChild("is_active")
+        .equalTo(0)
+        .limitToLast(5);
+
+      console.log(auc);
       this.state = {
         onChange: this.handleChange(),
         apis: [
           {
             name: APIS.AUCTIONS,
             data: [],
-            url: this.helper
-              .auctions(db)
-              .orderByChild("is_active")
-              .equalTo(0)
+            url: auc
           }
         ],
         auction_id: "",
