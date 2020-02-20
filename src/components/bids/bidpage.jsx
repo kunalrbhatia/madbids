@@ -9,26 +9,22 @@ class BidPage extends Component {
       this.props.history.push(ROUTES.SIGN_IN);
     } else {
       this.helper = this.props.helper;
-      if (localStorage.getItem("uid") !== null) {
-        this.props.gv.userId = localStorage.getItem("uid");
-      }
-      if (localStorage.getItem("productInfo") !== null) {
-        this.props.gv.productInfo = JSON.parse(localStorage.getItem("productInfo"));
-      }
-      this.state = {
-        bidValue: 0,
-        onChange: this.handleChange(),
-        snackClose: this.snackClose(),
-        uid: this.props.gv.userId,
-        pl: this.props.gv.productInfo,
-        snackMsg: "",
-        snackOpen: false,
-        bidValueHelper: "Number in range from 0 to 100, 2 point decimal allowed",
-        bidValueError: false
-      };
+
       this.userBids = [];
       if (localStorage.getItem("token") === null) {
         this.props.history.push(ROUTES.SIGN_IN);
+      } else if (localStorage.getItem("uid") !== null && localStorage.getItem("productInfo") !== null) {
+        this.state = {
+          bidValue: 0,
+          onChange: this.handleChange(),
+          snackClose: this.snackClose(),
+          uid: localStorage.getItem("uid"),
+          pl: JSON.parse(localStorage.getItem("productInfo")),
+          snackMsg: "",
+          snackOpen: false,
+          bidValueHelper: "Number in range from 0 to 100, 2 point decimal allowed",
+          bidValueError: false
+        };
       }
     }
   }
@@ -65,7 +61,7 @@ class BidPage extends Component {
       if (this.state.bidValue > 0 && this.state.bidValue <= 100) {
         if (this.state.bidValueError === false) {
           this.helper
-            .user(this.props.gv.userId, db)
+            .user(this.state.uid, db)
             .once("value")
             .then(v => {
               let user = v.val();
@@ -88,7 +84,7 @@ class BidPage extends Component {
                   })
                   .then(e => {
                     this.helper
-                      .user(this.props.gv.userId, db)
+                      .user(this.state.uid, db)
                       .update({ bids: this.userBids })
                       .then(e => {
                         setTimeout(() => {

@@ -46,16 +46,23 @@ export class Helper extends Component {
       props.gv.ht.push(ROUTES.LANDING);
     });
   }
+  getCurrentUser = auth => auth.currentUser;
   doCreateUserWithEmailAndPassword = (email, password, auth) => auth.createUserWithEmailAndPassword(email, password);
   doSignInWithEmailAndPassword = (email, password, auth) => auth.signInWithEmailAndPassword(email, password);
   doPasswordReset = (email, fb) => fb.auth.sendPasswordResetEmail(email);
   doPasswordUpdate = (password, fb) => fb.auth.currentUser.updatePassword(password);
+  /* getCurrentUserFullName = (fb, db) => {
+    fb.auth().onAuthStateChanged(user => {
+      if (user !== undefined && user !== null) {
+        return db.ref(`users/${user.uid}`).once("value");
+      }
+    });
+  }; */
   // *** Database API ***
   auctions = fb => fb.ref("auctions");
   users = fb => fb.ref("users");
-  user = (uid, fb) => fb.ref(`users/${uid}`);
+  user = (uid, db) => db.ref(`users/${uid}`);
   products = db => db.ref("products");
-
   bids = fb => fb.ref("bids");
   bid = (bid, fb) => fb.ref(`bids/${bid}`);
 }

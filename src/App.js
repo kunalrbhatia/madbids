@@ -22,7 +22,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.fb = firebase.initializeApp(config);
-    this.Helper = new Helper(props, this.state);
+    this.Helper = new Helper();
     this.state = {
       gv: {
         uid: "1",

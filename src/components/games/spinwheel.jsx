@@ -10,7 +10,6 @@ class SpinWheel extends Component {
     } else {
       this.helper = this.props.helper;
       if (localStorage.getItem("uid") !== null) {
-        this.props.gv.userId = localStorage.getItem("uid");
       }
       this.state = {
         onChange: this.handleChange(),

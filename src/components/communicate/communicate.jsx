@@ -9,9 +9,7 @@ class Communicate extends Component {
       this.props.history.push(ROUTES.SIGN_IN);
     } else {
       this.helper = this.props.helper;
-      if (localStorage.getItem("uid") !== null) {
-        this.props.gv.userId = localStorage.getItem("uid");
-      }
+      
       this.state = {
         onChange: this.handleChange(),
         snackClose: this.snackClose(),

@@ -73,7 +73,6 @@ class Login extends Component {
       this.helper
         .doSignInWithEmailAndPassword(email, password, auth)
         .then(authUser => {
-          this.props.gv.userId = authUser.user.uid;
           localStorage.setItem("uid", authUser.user.uid);
           if (this.state.rememberMe) {
             localStorage.setItem("remember_me", "remember_me" + email);

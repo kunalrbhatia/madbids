@@ -91,6 +91,7 @@ class NewUser extends Component {
   handleChange = () => event => {
     const auth = this.props.gv.auth;
     const db = this.props.gv.db;
+    let uid = "";
     if (event.currentTarget.name === "register") {
       const {
         gender,
@@ -113,10 +114,10 @@ class NewUser extends Component {
             this.helper
               .doCreateUserWithEmailAndPassword(email, password, auth)
               .then(authUser => {
-                this.props.gv.userId = authUser.user.uid;
+                uid = authUser.user.uid;
                 localStorage.setItem("uid", authUser.user.uid);
                 let userRef = this.helper.users(db);
-                return userRef.child(this.props.gv.userId).set({
+                return userRef.child(uid).set({
                   email,
                   password,
                   cno,
