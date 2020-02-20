@@ -91,7 +91,16 @@ class Profile extends Component {
           .user(this.uid, this.db)
           .update({ fname, lname, cno, gender, vpa, address, state, city, pincode })
           .then(e => {
-            this.helper.hideOverlay();
+            setTimeout(() => {
+              this.helper.hideOverlay();
+              try {
+                window.Android.profileUpdated();
+              } catch (error) {
+                console.log(error);
+              }
+              this.props.history.push(ROUTES.BIDLIST);
+            }, 2000);
+            this.setState({ snackMsg: "Profile changes has been updated.", snackOpen: true }, () => {});
           });
       } else {
         this.setState({ snackMsg: "Fields highlighted in red have issues", snackOpen: true }, () => {});
