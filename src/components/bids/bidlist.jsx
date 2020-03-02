@@ -160,9 +160,26 @@ class Bidlist extends Component {
                           .child(e.id)
                           .update({ is_active: 0 })
                           .then(() => {
-                            this.current = 0;
-                            this.auctionsList = [];
-                            this.getDataFromDB();
+                            let sd = new Date();
+                            if (sd.getDay() === 5) {
+                              let ed = new Date(sd);
+                              ed.setDate(ed.getDate() + 7);
+                              let end_date = ed.getTime();
+                              let is_active = 1;
+                              let start_date = sd.getTime();
+                              let product_key = 2;
+                              let type = "weekly";
+                              let auction_name =
+                                sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear() + " weekly";
+                              this.props.firebase
+                                .auctions()
+                                .push({ auction_name, start_date, end_date, is_active, product_key, type })
+                                .then(() => {
+                                  this.current = 0;
+                                  this.auctionsList = [];
+                                  this.getDataFromDB();
+                                });
+                            }
                           });
                       }
                     }
