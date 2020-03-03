@@ -13,11 +13,10 @@ class Winner extends Component {
       this.helper = this.props.helper;
       let auc = this.helper
         .auctions(db)
-        .orderByChild("is_active")
-        .equalTo(0)
-        .limitToLast(5);
+        .orderByChild("start_date")
+        .limitToLast(10);
 
-      console.log(auc);
+      //console.log(auc);
       this.state = {
         onChange: this.handleChange(),
         apis: [
@@ -99,7 +98,7 @@ class Winner extends Component {
         bid = e;
       }
     }
-    //console.log(bid);
+    console.log(bid);
     this.declareWinner(bid);
   };
   findWinner = _bids => {
@@ -107,22 +106,24 @@ class Winner extends Component {
     let bidValues = this.getBidValuesFromBids(bids);
     let minBid = Math.min(...bidValues);
     let bidsWithMin = this.getBidsByValue(minBid);
+
     if (bidsWithMin.length > 1) {
-      let refinedBids = this.removeInvalidBids(minBid);
-      this.findWinner(refinedBids);
+      //console.log("bidsWithMin.length > 1");
+      this.findWinnerByTime(bidsWithMin);
+      // let refinedBids = this.removeInvalidBids(minBid);
+      // this.findWinner(refinedBids);
+    } else if (bidsWithMin.length === 0) {
+      //console.log("bidsWithMin.length === 0");
+      bids = JSON.parse(JSON.stringify(this.objCopy));
+      bidValues = this.getBidValuesFromBids(bids);
+      minBid = Math.min(...bidValues);
+      bidsWithMin = this.getBidsByValue(minBid);
+      this.findWinnerByTime(bidsWithMin);
     } else {
-      if (bidsWithMin.length === 0) {
-        bids = JSON.parse(JSON.stringify(this.objCopy));
-        bidValues = this.getBidValuesFromBids(bids);
-        minBid = Math.min(...bidValues);
-        bidsWithMin = this.getBidsByValue(minBid);
-        this.findWinnerByTime(bidsWithMin);
-      } else {
-        //console.log("winner found",this.objCopy);
-        //this.setState({bidlist:this.objCopy},()=>{console.log("no winner found",this.state.bidlist)});
-        //console.log(bidsWithMin);
-        this.declareWinner(bidsWithMin);
-      }
+      //console.log("winner found", bidsWithMin);
+      //this.setState({bidlist:this.objCopy},()=>{console.log("no winner found",this.state.bidlist)});
+      //console.log(bidsWithMin);
+      this.declareWinner(bidsWithMin);
     }
   };
   getBidValuesFromBids = _bids => {
@@ -135,6 +136,9 @@ class Winner extends Component {
   };
   declareWinner = bid => {
     const db = this.props.gv.db;
+    if (bid !== null) {
+      bid = bid[0] === undefined ? bid : bid[0];
+    }
     if (bid === null || bid === undefined) {
       this.setState(
         {
@@ -147,14 +151,14 @@ class Winner extends Component {
       );
     } else {
       this.helper
-        .user(bid[0].user_key, db)
+        .user(bid.user_key, db)
         .once("value")
         .then(v => {
           let object = v.val();
           this.setState(
             {
               winner_name: object.fname + " " + object.lname,
-              bid_amount: bid[0].bid_price
+              bid_amount: bid.bid_price
             },
             () => {
               this.helper.hideOverlay();
@@ -203,6 +207,7 @@ class Winner extends Component {
                 ...object[key],
                 id: key
               }));
+              console.log(_list);
               this.setState({ bidlist: _list }, () => {
                 this.setState({ bidlist: _list });
                 this.objCopy = JSON.parse(JSON.stringify(_list));
@@ -225,7 +230,9 @@ class Winner extends Component {
       const auction_list = this.state.apis[this.helper.getIndex(this.state.apis, APIS.AUCTIONS)].data;
       for (let i = 0; i < auction_list.length; i++) {
         const e = auction_list[i];
-        auction_data.push({ value: e.id, label: e.auction_name });
+        if (e.is_active === 0) {
+          auction_data.push({ value: e.id, label: e.auction_name });
+        }
       }
       if (auction_data.length === 0) {
         closedAuctions = false;

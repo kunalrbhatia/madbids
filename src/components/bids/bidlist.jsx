@@ -7,6 +7,7 @@ class Bidlist extends Component {
   constructor(props) {
     super(props);
     this.auctionsList = [];
+    this.allauctions = [];
     //console.log(this.props.gv.db);
     this.helper = this.props.helper;
     const db = this.props.gv.db;
@@ -24,7 +25,12 @@ class Bidlist extends Component {
               .auctions(db)
               .orderByChild("is_active")
               .equalTo(1)
-          }
+          } /* ,
+          {
+            name: "3/3/2020",
+            data: [],
+            url: this.helper.auctions(db)
+          } */
         ],
         productList: []
       };
@@ -103,28 +109,29 @@ class Bidlist extends Component {
               this.current = 0;
               let auctionsIndex = this.helper.getIndex(this.state.apis, APIS.AUCTIONS);
               this.auctionsList = this.state.apis[auctionsIndex].data;
-              let activeDaily = this.getActiveAuctionsList("daily");
-              let activeWeekly = this.getActiveAuctionsList("weekly");
+              /* let allauctionsIndex = this.helper.getIndex(this.state.apis, "3/3/2020");
+              this.allauctions = this.state.apis[allauctionsIndex].data;
+              let allAuc = this.getActiveAuctionsList("daily", this.allauctions); */
+              let activeDaily = this.getActiveAuctionsList("daily", this.auctionsList);
+              let activeWeekly = this.getActiveAuctionsList("weekly", this.auctionsList);
+              //console.log(activeDaily, activeWeekly);
               for (let index = 0; index < activeDaily.length; index++) {
                 const e = activeDaily[index];
                 let sd = new Date(e.start_date);
                 let nw = new Date();
-                if (sd.getFullYear() === nw.getFullYear()) {
-                  if (sd.getMonth() + 1 === nw.getMonth() + 1) {
-                    if (sd.getDate() !== nw.getDate()) {
-                      //console.log(sd.getDate(), nw.getDate());
-                      e.is_active = 0;
-                      this.helper
-                        .auctions(db)
-                        .child(e.id)
-                        .update({ is_active: 0 })
-                        .then(() => {
-                          this.current = 0;
-                          this.auctionsList = [];
-                          this.getDataFromDB();
-                        });
-                    }
-                  }
+                nw.setHours(0, 0, 0, 0);
+                sd.setHours(0, 0, 0, 0);
+                if (sd.getTime() !== nw.getTime()) {
+                  e.is_active = 0;
+                  this.helper
+                    .auctions(db)
+                    .child(e.id)
+                    .update({ is_active: 0 })
+                    .then(() => {
+                      this.current = 0;
+                      this.auctionsList = [];
+                      this.getDataFromDB();
+                    });
                 }
               }
               if (activeDaily.length === 0) {
@@ -212,10 +219,15 @@ class Bidlist extends Component {
       });
     }
   };
-  getActiveAuctionsList(type) {
+  getActiveAuctionsList(type, auctionlist) {
     let list = [];
-    for (let index = 0; index < this.auctionsList.length; index++) {
-      const e = this.auctionsList[index];
+    for (let index = 0; index < auctionlist.length; index++) {
+      const e = auctionlist[index];
+      /* if (e.auction_name === "3/3/2020") {
+        const db = this.props.gv.db;
+        db.ref("auctions/" + e.id).remove();
+        console.log(e);
+      } */
       if (e.is_active === 1 && e.type === type) {
         list.push(e);
       }
