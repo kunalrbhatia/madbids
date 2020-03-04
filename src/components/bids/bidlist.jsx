@@ -143,7 +143,7 @@ class Bidlist extends Component {
                 let is_active = 1;
                 let product_key = 1;
                 let type = "daily";
-                let auction_name = sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear();
+                let auction_name = sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear() + " daily";
                 this.helper
                   .auctions(db)
                   .push({ auction_name, start_date, end_date, is_active, product_key, type })
@@ -156,40 +156,41 @@ class Bidlist extends Component {
               if (activeWeekly.length > 0) {
                 for (let index = 0; index < activeWeekly.length; index++) {
                   const e = activeWeekly[index];
+                  let one_day = 1000 * 60 * 60 * 24;
                   let ed = new Date(e.end_date);
                   let nw = new Date();
-                  if (ed.getFullYear() === nw.getFullYear()) {
-                    if (ed.getMonth() + 1 === nw.getMonth() + 1) {
-                      if (ed.getDate() - nw.getDate() === 0) {
-                        e.is_active = 0;
-                        this.helper
-                          .auctions(db)
-                          .child(e.id)
-                          .update({ is_active: 0 })
+                  ed.setHours(0, 0, 0, 0);
+                  nw.setHours(0, 0, 0, 0);
+                  let date1_ms = ed.getTime();
+                  let date2_ms = nw.getTime();
+                  let difference_ms = date2_ms - date1_ms;
+                  var res = Math.round(difference_ms / one_day);
+                  if (res === 7) {
+                    e.is_active = 0;
+                    this.helper
+                      .auctions(db)
+                      .child(e.id)
+                      .update({ is_active: 0 })
+                      .then(() => {
+                        let sd = new Date();
+                        let ed = new Date(sd);
+                        ed.setDate(ed.getDate() + 7);
+                        let end_date = ed.getTime();
+                        let is_active = 1;
+                        let start_date = sd.getTime();
+                        let product_key = 2;
+                        let type = "weekly";
+                        let auction_name =
+                          sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear() + " weekly";
+                        this.props.firebase
+                          .auctions()
+                          .push({ auction_name, start_date, end_date, is_active, product_key, type })
                           .then(() => {
-                            let sd = new Date();
-                            if (sd.getDay() === 5) {
-                              let ed = new Date(sd);
-                              ed.setDate(ed.getDate() + 7);
-                              let end_date = ed.getTime();
-                              let is_active = 1;
-                              let start_date = sd.getTime();
-                              let product_key = 2;
-                              let type = "weekly";
-                              let auction_name =
-                                sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear() + " weekly";
-                              this.props.firebase
-                                .auctions()
-                                .push({ auction_name, start_date, end_date, is_active, product_key, type })
-                                .then(() => {
-                                  this.current = 0;
-                                  this.auctionsList = [];
-                                  this.getDataFromDB();
-                                });
-                            }
+                            this.current = 0;
+                            this.auctionsList = [];
+                            this.getDataFromDB();
                           });
-                      }
-                    }
+                      });
                   }
                 }
               } else {
