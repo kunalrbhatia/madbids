@@ -159,13 +159,16 @@ class Bidlist extends Component {
                   let one_day = 1000 * 60 * 60 * 24;
                   let ed = new Date(e.end_date);
                   let nw = new Date();
+                  console.log(ed);
+                  console.log(nw);
                   ed.setHours(0, 0, 0, 0);
                   nw.setHours(0, 0, 0, 0);
-                  let date1_ms = ed.getTime();
-                  let date2_ms = nw.getTime();
+                  let date1_ms = nw.getTime();
+                  let date2_ms = ed.getTime();
                   let difference_ms = date2_ms - date1_ms;
                   var res = Math.round(difference_ms / one_day);
-                  if (res === 7) {
+                  console.log(res);
+                  if (res === 0) {
                     e.is_active = 0;
                     this.helper
                       .auctions(db)
