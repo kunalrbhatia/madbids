@@ -185,8 +185,8 @@ class Bidlist extends Component {
                         let type = "weekly";
                         let auction_name =
                           sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear() + " weekly";
-                        this.props.firebase
-                          .auctions()
+                        this.helper
+                          .auctions(db)
                           .push({ auction_name, start_date, end_date, is_active, product_key, type })
                           .then(() => {
                             this.current = 0;
@@ -207,8 +207,8 @@ class Bidlist extends Component {
                   let product_key = 2;
                   let type = "weekly";
                   let auction_name = sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear() + " weekly";
-                  this.props.firebase
-                    .auctions()
+                  this.helper
+                    .auctions(db)
                     .push({ auction_name, start_date, end_date, is_active, product_key, type })
                     .then(() => {
                       this.current = 0;
