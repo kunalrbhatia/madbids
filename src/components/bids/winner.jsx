@@ -14,7 +14,7 @@ class Winner extends Component {
       let auc = this.helper
         .auctions(db)
         .orderByChild("start_date")
-        .limitToLast(10);
+        .limitToLast(20);
 
       //console.log(auc);
       this.state = {
@@ -227,13 +227,21 @@ class Winner extends Component {
     } else {
       const { auction_id, onChange, winner_name, bid_amount } = this.state;
       const auction_data = [];
+      const auction_data_weekly = [];
       const auction_list = this.state.apis[this.helper.getIndex(this.state.apis, APIS.AUCTIONS)].data;
-      for (let i = 0; i < auction_list.length; i++) {
+      for (let i = auction_list.length - 1; i >= 11; i--) {
         const e = auction_list[i];
-        if (e.is_active === 0) {
+        if (e.is_active === 0 && e.type === "daily") {
           auction_data.push({ value: e.id, label: e.auction_name });
         }
       }
+      for (let i = auction_list.length - 1; i >= 0; i--) {
+        const e = auction_list[i];
+        if (e.is_active === 0 && e.type === "weekly") {
+          auction_data_weekly.push({ value: e.id, label: e.auction_name });
+        }
+      }
+      //console.log(auction_list, auction_data_weekly);
       if (auction_data.length === 0) {
         closedAuctions = false;
         showMessage = "No closed auctions";
@@ -247,7 +255,19 @@ class Winner extends Component {
                 type={"select"}
                 fullWidth={true}
                 data={auction_data}
-                label={"Auction List"}
+                label={"Auction List Daily"}
+                value={auction_id}
+                onChange={onChange}
+                //helperText={"Please select a issue type"}
+              ></MTextField>
+            </div>
+            <div className="auctionList" style={{ display: closedAuctions ? "block" : "none" }}>
+              <MTextField
+                name={"auctionList"}
+                type={"select"}
+                fullWidth={true}
+                data={auction_data_weekly}
+                label={"Auction List Weekly"}
                 value={auction_id}
                 onChange={onChange}
                 //helperText={"Please select a issue type"}
