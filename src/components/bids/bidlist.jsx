@@ -6,7 +6,7 @@ import * as APIS from "../../constants/fbapis";
 class Bidlist extends Component {
   constructor(props) {
     super(props);
-    let date = new Date(2020, 2, 6, 12, 13, 15);
+    let date = new Date(2020, 2, 23, 9, 24, 15);
     console.log("bidwin: Last updated " + date);
     this.auctionsList = [];
     this.allauctions = [];
@@ -116,7 +116,7 @@ class Bidlist extends Component {
               let allAuc = this.getActiveAuctionsList("daily", this.allauctions); */
               let activeDaily = this.getActiveAuctionsList("daily", this.auctionsList);
               let activeWeekly = this.getActiveAuctionsList("weekly", this.auctionsList);
-              //console.log(activeDaily, activeWeekly);
+              console.log(activeDaily, activeWeekly);
               for (let index = 0; index < activeDaily.length; index++) {
                 const e = activeDaily[index];
                 let sd = new Date(e.start_date);
@@ -169,8 +169,8 @@ class Bidlist extends Component {
                   let date2_ms = ed.getTime();
                   let difference_ms = date2_ms - date1_ms;
                   var res = Math.round(difference_ms / one_day);
-                  //console.log(res);
-                  if (res === 0) {
+                  console.log(res);
+                  if (res <= 0) {
                     e.is_active = 0;
                     this.helper
                       .auctions(db)
