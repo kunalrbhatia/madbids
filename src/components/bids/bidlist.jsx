@@ -23,18 +23,15 @@ class Bidlist extends Component {
           {
             name: APIS.AUCTIONS,
             data: [],
-            url: this.helper
-              .auctions(db)
-              .orderByChild("is_active")
-              .equalTo(1)
+            url: this.helper.auctions(db).orderByChild("is_active").equalTo(1),
           } /* ,
           {
             name: "3/3/2020",
             data: [],
             url: this.helper.auctions(db)
-          } */
+          } */,
         ],
-        productList: []
+        productList: [],
       };
     }
   }
@@ -47,16 +44,16 @@ class Bidlist extends Component {
       this.getDataFromDB();
     }
   };
-  getDataFromDB = () => {
+  getDataFromDB = async () => {
     if (this.current < this.total) {
       if (!this.props.gv["" + this.state.apis[this.current].name]) {
-        this.state.apis[this.current].url.on("value", snapshot => {
+        this.state.apis[this.current].url.on("value", (snapshot) => {
           if (snapshot.val() === null) {
             let apis_copy = this.state.apis;
             apis_copy[this.current]["data"] = [];
             this.setState(
               {
-                apis: apis_copy
+                apis: apis_copy,
               },
               () => {
                 this.current++;
@@ -65,15 +62,15 @@ class Bidlist extends Component {
             );
           } else {
             const object = snapshot.val();
-            const _list = Object.keys(object).map(key => ({
+            const _list = Object.keys(object).map((key) => ({
               ...object[key],
-              id: key
+              id: key,
             }));
             let apis_copy = this.state.apis;
             apis_copy[this.current]["data"] = _list;
             this.setState(
               {
-                apis: apis_copy
+                apis: apis_copy,
               },
               () => {
                 this.current++;
@@ -87,7 +84,7 @@ class Bidlist extends Component {
         apis_copy[this.current]["data"] = this.props.gv["" + this.state.apis[this.current].name];
         this.setState(
           {
-            apis: apis_copy
+            apis: apis_copy,
           },
           () => {
             this.current++;
@@ -96,12 +93,12 @@ class Bidlist extends Component {
         );
       }
     } else {
-      this.props.gv.fb.auth().onAuthStateChanged(user => {
+      this.props.gv.fb.auth().onAuthStateChanged(async (user) => {
         if (user !== undefined && user !== null) {
           this.helper
             .user(user.uid, this.props.gv.db)
             .once("value")
-            .then(v => {
+            .then(async (v) => {
               let user = v.val();
               this.userName = user.fname + " " + user.lname;
 
@@ -200,7 +197,7 @@ class Bidlist extends Component {
                 }
               } else {
                 let sd = new Date();
-                if (sd.getDay() === 5) {
+                if (sd.getDay() === 7) {
                   let ed = new Date(sd);
                   ed.setDate(ed.getDate() + 7);
                   let end_date = ed.getTime();
@@ -209,7 +206,7 @@ class Bidlist extends Component {
                   let product_key = 2;
                   let type = "weekly";
                   let auction_name = sd.getDate() + "/" + (sd.getMonth() + 1) + "/" + sd.getFullYear() + " weekly";
-                  this.helper
+                  await this.helper
                     .auctions(db)
                     .push({ auction_name, start_date, end_date, is_active, product_key, type })
                     .then(() => {
@@ -302,7 +299,7 @@ class Bidlist extends Component {
               imageTitle={pl.name}
               content={pl.description}
               price={pl.price}
-              onChange={e => onChange(e, idx)}
+              onChange={(e) => onChange(e, idx)}
             ></MCard>
           </div>
         );

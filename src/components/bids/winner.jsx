@@ -11,10 +11,7 @@ class Winner extends Component {
     } else {
       const db = this.props.gv.db;
       this.helper = this.props.helper;
-      let auc = this.helper
-        .auctions(db)
-        .orderByChild("start_date")
-        .limitToLast(20);
+      let auc = this.helper.auctions(db).orderByChild("start_date").limitToLast(20);
 
       //console.log(auc);
       this.state = {
@@ -23,13 +20,13 @@ class Winner extends Component {
           {
             name: APIS.AUCTIONS,
             data: [],
-            url: auc
-          }
+            url: auc,
+          },
         ],
         auction_id: "",
         bidlist: [],
         winner_name: null,
-        bid_amount: null
+        bid_amount: null,
       };
       this.objCopy = [];
       this.current = 0;
@@ -47,21 +44,21 @@ class Winner extends Component {
   getDataFromDB = () => {
     if (this.current < this.total) {
       if (!this.props.gv["" + this.state.apis[this.current].name]) {
-        this.state.apis[this.current].url.on("value", snapshot => {
+        this.state.apis[this.current].url.on("value", (snapshot) => {
           const object = snapshot.val();
           if (object === null) {
             this.current++;
             this.getDataFromDB();
           } else {
-            const _list = Object.keys(object).map(key => ({
+            const _list = Object.keys(object).map((key) => ({
               ...object[key],
-              id: key
+              id: key,
             }));
             let apis_copy = this.state.apis;
             apis_copy[this.current]["data"] = _list;
             this.setState(
               {
-                apis: apis_copy
+                apis: apis_copy,
               },
               () => {
                 this.current++;
@@ -75,7 +72,7 @@ class Winner extends Component {
         apis_copy[this.current]["data"] = this.props.gv["" + this.state.apis[this.current].name];
         this.setState(
           {
-            apis: apis_copy
+            apis: apis_copy,
           },
           () => {
             this.current++;
@@ -87,7 +84,7 @@ class Winner extends Component {
       this.helper.hideOverlay();
     }
   };
-  findWinnerByTime = _bids => {
+  findWinnerByTime = (_bids) => {
     let new_low_date = new Date(Date.now());
     let bid;
     for (let i = 0; i < _bids.length; i++) {
@@ -101,13 +98,14 @@ class Winner extends Component {
     console.log(bid);
     this.declareWinner(bid);
   };
-  findWinner = _bids => {
+  findWinner = (_bids) => {
     let bids = _bids;
     let bidValues = this.getBidValuesFromBids(bids);
     let minBid = Math.min(...bidValues);
     let bidsWithMin = this.getBidsByValue(minBid);
 
     if (bidsWithMin.length > 1) {
+      console.log(bidsWithMin);
       //console.log("bidsWithMin.length > 1");
       this.findWinnerByTime(bidsWithMin);
       // let refinedBids = this.removeInvalidBids(minBid);
@@ -126,7 +124,7 @@ class Winner extends Component {
       this.declareWinner(bidsWithMin);
     }
   };
-  getBidValuesFromBids = _bids => {
+  getBidValuesFromBids = (_bids) => {
     let bidValues = [];
     for (let i = 0; i < _bids.length; i++) {
       const e = _bids[i];
@@ -134,7 +132,7 @@ class Winner extends Component {
     }
     return bidValues;
   };
-  declareWinner = bid => {
+  declareWinner = (bid) => {
     const db = this.props.gv.db;
     if (bid !== null) {
       bid = bid[0] === undefined ? bid : bid[0];
@@ -143,7 +141,7 @@ class Winner extends Component {
       this.setState(
         {
           winner_name: "No Winner Declared",
-          bid_amount: 0
+          bid_amount: 0,
         },
         () => {
           this.helper.hideOverlay();
@@ -153,12 +151,12 @@ class Winner extends Component {
       this.helper
         .user(bid.user_key, db)
         .once("value")
-        .then(v => {
+        .then((v) => {
           let object = v.val();
           this.setState(
             {
               winner_name: object.fname + " " + object.lname,
-              bid_amount: bid.bid_price
+              bid_amount: bid.bid_price,
             },
             () => {
               this.helper.hideOverlay();
@@ -167,7 +165,7 @@ class Winner extends Component {
         });
     }
   };
-  removeInvalidBids = value => {
+  removeInvalidBids = (value) => {
     let bids = this.state.bidlist;
     for (let i = 0; i < this.state.bidlist.length; i++) {
       const e = this.state.bidlist[i];
@@ -178,7 +176,7 @@ class Winner extends Component {
     }
     return bids;
   };
-  getBidsByValue = value => {
+  getBidsByValue = (value) => {
     let bids = [];
     for (let i = 0; i < this.objCopy.length; i++) {
       const e = this.objCopy[i];
@@ -198,14 +196,14 @@ class Winner extends Component {
           .orderByChild("auction_key")
           .equalTo(this.state.auction_id)
           .once("value")
-          .then(v => {
+          .then((v) => {
             let object = v.val();
             if (object === null) {
               this.declareWinner(null);
             } else {
-              const _list = Object.keys(object).map(key => ({
+              const _list = Object.keys(object).map((key) => ({
                 ...object[key],
-                id: key
+                id: key,
               }));
               console.log(_list);
               this.setState({ bidlist: _list }, () => {
