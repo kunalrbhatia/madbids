@@ -13,7 +13,6 @@ class Winner extends Component {
       this.helper = this.props.helper;
       let auc = this.helper.auctions(db).orderByChild("start_date").limitToLast(20);
 
-      //console.log(auc);
       this.state = {
         onChange: this.handleChange(),
         apis: [
@@ -42,9 +41,11 @@ class Winner extends Component {
     }
   };
   getDataFromDB = () => {
+    //console.log(this.state);
     if (this.current < this.total) {
       if (!this.props.gv["" + this.state.apis[this.current].name]) {
         this.state.apis[this.current].url.on("value", (snapshot) => {
+          //console.log("here --> ", snapshot.val());
           const object = snapshot.val();
           if (object === null) {
             this.current++;
@@ -54,6 +55,7 @@ class Winner extends Component {
               ...object[key],
               id: key,
             }));
+            //console.log(_list);
             let apis_copy = this.state.apis;
             apis_copy[this.current]["data"] = _list;
             this.setState(
@@ -81,13 +83,18 @@ class Winner extends Component {
         );
       }
     } else {
+      //console.log(this.state);
       this.helper.hideOverlay();
     }
   };
   findWinnerByTime = (_bids) => {
+    let bids = _bids;
+    let bidValues = this.getBidValuesFromBids(bids);
+    let minBid = Math.min(...bidValues);
+    let bidsWithMin = this.getBidsByValue(minBid);
     let new_low_date = new Date(Date.now());
     let bid;
-    for (let i = 0; i < _bids.length; i++) {
+    for (let i = 0; i < bidsWithMin.length; i++) {
       let e = _bids[i];
       let edate = new Date(e.biddt);
       if (edate < new_low_date) {
@@ -103,11 +110,12 @@ class Winner extends Component {
     let bidValues = this.getBidValuesFromBids(bids);
     let minBid = Math.min(...bidValues);
     let bidsWithMin = this.getBidsByValue(minBid);
-
+    console.log(bidsWithMin);
     if (bidsWithMin.length > 1) {
       console.log(bidsWithMin);
+      this.removeInvalidBids(bidsWithMin);
       //console.log("bidsWithMin.length > 1");
-      this.findWinnerByTime(bidsWithMin);
+      //this.findWinnerByTime(bidsWithMin);
       // let refinedBids = this.removeInvalidBids(minBid);
       // this.findWinner(refinedBids);
     } else if (bidsWithMin.length === 0) {
@@ -165,16 +173,27 @@ class Winner extends Component {
         });
     }
   };
-  removeInvalidBids = (value) => {
-    let bids = this.state.bidlist;
+  removeInvalidBids = (bids) => {
+    let r_bids = [];
     for (let i = 0; i < this.state.bidlist.length; i++) {
       const e = this.state.bidlist[i];
-      if (e.bid_price === value) {
-        bids.splice(i, 1);
-        i--;
+      let flag = false;
+      console.log(e);
+      for (let j = 0; j < bids.length; j++) {
+        const f = bids[j];
+        console.log(f);
+        if (e.id === f.id) {
+          flag = true;
+          break;
+        }
+      }
+      console.log(flag);
+      if (!flag) {
+        r_bids.push(e);
       }
     }
-    return bids;
+    console.log(r_bids);
+    //return r_bids;
   };
   getBidsByValue = (value) => {
     let bids = [];
@@ -227,7 +246,8 @@ class Winner extends Component {
       const auction_data = [];
       const auction_data_weekly = [];
       const auction_list = this.state.apis[this.helper.getIndex(this.state.apis, APIS.AUCTIONS)].data;
-      for (let i = auction_list.length - 1; i >= 11; i--) {
+      //console.log(auction_list);
+      for (let i = auction_list.length - 1; i >= 0; i--) {
         const e = auction_list[i];
         if (e.is_active === 0 && e.type === "daily") {
           auction_data.push({ value: e.id, label: e.auction_name });
@@ -253,6 +273,7 @@ class Winner extends Component {
                 type={"select"}
                 fullWidth={true}
                 data={auction_data}
+                disabled={auction_data.length > 0 ? false : true}
                 label={"Auction List Daily"}
                 value={auction_id}
                 onChange={onChange}
@@ -265,6 +286,7 @@ class Winner extends Component {
                 type={"select"}
                 fullWidth={true}
                 data={auction_data_weekly}
+                disabled={auction_data_weekly.length > 0 ? false : true}
                 label={"Auction List Weekly"}
                 value={auction_id}
                 onChange={onChange}
