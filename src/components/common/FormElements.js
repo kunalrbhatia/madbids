@@ -350,6 +350,7 @@ function MTextField(params) {
   ) {
     return (
       <TextField
+        style={{marginLeft:'8px'}}
         id={params.id}
         disabled={params.disabled ? params.disabled : false}
         required={params.required ? params.required : false}
