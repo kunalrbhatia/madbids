@@ -1,30 +1,33 @@
-import React from "react";
-import clsx from "clsx";
+import React, { useState } from 'react';
+import clsx from 'clsx';
 /* import PropTypes from "prop-types";
 import NoSsr from "@material-ui/core/NoSsr";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import Chip from "@material-ui/core/Chip";
 import CancelIcon from "@material-ui/icons/Cancel"; */
-import "date-fns";
-import Checkbox from "@material-ui/core/Checkbox";
-import DateFnsUtils from "@date-io/date-fns";
-import { MuiPickersUtilsProvider, DatePicker } from "@material-ui/pickers";
-import { makeStyles, emphasize /* useTheme */ } from "@material-ui/core/styles";
+import 'date-fns';
+import Checkbox from '@material-ui/core/Checkbox';
+import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers';
+import { makeStyles, emphasize /* useTheme */ } from '@material-ui/core/styles';
 /* import "react-inputs-validation/lib/react-inputs-validation.min.css"; */
-import MenuItem from "@material-ui/core/MenuItem";
-import TextField from "@material-ui/core/TextField";
-import Switch from "@material-ui/core/Switch";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import AccountCircle from "@material-ui/icons/AccountCircle";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import MenuItem from '@material-ui/core/MenuItem';
+import TextField from '@material-ui/core/TextField';
+import Switch from '@material-ui/core/Switch';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import AccountCircle from '@material-ui/icons/AccountCircle';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import {
   IconButton,
   Snackbar /* , Icon  */,
@@ -34,60 +37,62 @@ import {
   CardMedia,
   CardContent,
   CardActions,
-  Menu
-} from "@material-ui/core/";
-import CloseIcon from "@material-ui/icons/Close";
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+  Menu,
+  InputLabel,
+  OutlinedInput,
+} from '@material-ui/core/';
+import CloseIcon from '@material-ui/icons/Close';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 //import Divider from '@material-ui/core/Divider';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     margin: 0,
-    padding: theme.spacing(1)
+    padding: theme.spacing(1),
   },
   closeButton: {
-    position: "absolute",
+    position: 'absolute',
     right: theme.spacing(1),
     top: theme.spacing(1),
-    color: theme.palette.grey[500]
+    color: theme.palette.grey[500],
   },
   button: {
     margin: theme.spacing(1),
-    color: "white"
+    color: 'white',
   },
   container: {
-    display: "flex",
-    flexWrap: "wrap"
+    display: 'flex',
+    flexWrap: 'wrap',
   },
   menuButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
   },
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
     fontSize: 12,
-    "& label.Mui-focused": {
-      color: "#2AAA9E"
+    '& label.Mui-focused': {
+      color: '#2AAA9E',
     },
-    "& .MuiInput-underline:after": {
-      borderBottomColor: "#2AAA9E"
+    '& .MuiInput-underline:after': {
+      borderBottomColor: '#2AAA9E',
     },
-    "& .MuiOutlinedInput-root": {
-      "& fieldset": {
-        borderColor: "1px solid rgba(224, 224, 224, 1)"
+    '& .MuiOutlinedInput-root': {
+      '& fieldset': {
+        borderColor: '1px solid rgba(224, 224, 224, 1)',
       },
-      "& fieldset legend": {
+      '& fieldset legend': {
         width: 200,
-        borderColor: "#2AAA9E"
+        borderColor: '#2AAA9E',
       },
-      "&:hover fieldset": {
-        borderColor: "#00A0DB"
+      '&:hover fieldset': {
+        borderColor: '#00A0DB',
       },
-      "&.Mui-focused fieldset": {
-        borderColor: "#2AAA9E"
-      }
+      '&.Mui-focused fieldset': {
+        borderColor: '#2AAA9E',
+      },
     } /* ,
     '& input:invalid + fieldset': {
       borderColor: 'red',
@@ -95,59 +100,64 @@ const useStyles = makeStyles(theme => ({
     },
     '& input:invalid +fieldset legend': {
       color: 'red'
-    } */
+    } */,
   },
   dense: {
     marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(0)
+    marginLeft: theme.spacing(0),
   },
   menu: {
-    width: 200
+    width: 200,
   },
   valueContainer: {
-    display: "flex",
-    flexWrap: "wrap",
+    display: 'flex',
+    flexWrap: 'wrap',
     flex: 1,
-    alignItems: "center",
-    overflow: "hidden"
+    alignItems: 'center',
+    overflow: 'hidden',
   },
   info: {
-    backgroundColor: theme.palette.primary.main
+    backgroundColor: theme.palette.primary.main,
   },
   chip: {
-    margin: theme.spacing(0.5, 0.25)
+    margin: theme.spacing(0.5, 0.25),
   },
   chipFocused: {
-    backgroundColor: emphasize(theme.palette.type === "light" ? theme.palette.grey[300] : theme.palette.grey[700], 0.08)
+    backgroundColor: emphasize(
+      theme.palette.type === 'light'
+        ? theme.palette.grey[300]
+        : theme.palette.grey[700],
+      0.08
+    ),
   },
   noOptionsMessage: {
-    padding: theme.spacing(1, 2)
+    padding: theme.spacing(1, 2),
   },
   singleValue: {
-    fontSize: 16
+    fontSize: 16,
   },
   placeholder: {
-    position: "absolute",
+    position: 'absolute',
     left: 2,
     bottom: 6,
-    fontSize: 16
+    fontSize: 16,
   },
   paper: {
-    position: "absolute",
+    position: 'absolute',
     zIndex: 1,
     marginTop: theme.spacing(1),
     left: 0,
-    right: 0
+    right: 0,
   },
   title: {
-    flexGrow: 1
-  }
+    flexGrow: 1,
+  },
 }));
 
 function MDialog(params) {
   const classes = useStyles();
-  let buttonHTML = function(buttons) {
-    return buttons.map(button => {
+  let buttonHTML = function (buttons) {
+    return buttons.map((button) => {
       return (
         <MButton onClick={params.close} key={button.value} color={button.color}>
           {button.value}
@@ -162,14 +172,24 @@ function MDialog(params) {
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title" disableTypography className={classes.root}>
+      <DialogTitle
+        id="alert-dialog-title"
+        disableTypography
+        className={classes.root}
+      >
         {params.title}
-        <IconButton aria-label="close" className={classes.closeButton} onClick={params.close}>
+        <IconButton
+          aria-label="close"
+          className={classes.closeButton}
+          onClick={params.close}
+        >
           <CloseIcon />
         </IconButton>
       </DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">{params.children}</DialogContentText>
+        <DialogContentText id="alert-dialog-description">
+          {params.children}
+        </DialogContentText>
       </DialogContent>
 
       <DialogActions>{buttonHTML(params.buttons)}</DialogActions>
@@ -182,8 +202,8 @@ function MButton(params) {
     <Button
       disabled={params.disabled ? params.disabled : false}
       fullWidth={params.fullWidth}
-      variant={params.variant ? params.variant : "contained"}
-      color={params.color ? params.color : "primary"}
+      variant={params.variant ? params.variant : 'contained'}
+      color={params.color ? params.color : 'primary'}
       name={params.name}
       className={classes.button}
       onClick={params.onClick}
@@ -197,10 +217,17 @@ function MButton(params) {
 function MSwithch(params) {
   return (
     <FormControlLabel
-      control={<Switch name={params.name} id={params.id} checked={params.isSelected} onChange={params.onChange} />}
+      control={
+        <Switch
+          name={params.name}
+          id={params.id}
+          checked={params.isSelected}
+          onChange={params.onChange}
+        />
+      }
       value={params.value}
       label={params.label}
-      labelPlacement={params.labelPlacement ? params.labelPlacement : "start"}
+      labelPlacement={params.labelPlacement ? params.labelPlacement : 'start'}
     />
   );
 }
@@ -236,7 +263,7 @@ function MCard(params) {
       <CardMedia
         style={{
           height: 0,
-          paddingTop: "56.25%" // 16:9
+          paddingTop: '56.25%', // 16:9
         }}
         image={params.image}
         title={params.imageTitle}
@@ -246,7 +273,7 @@ function MCard(params) {
           {params.content}
         </Typography>
       </CardContent>
-      <CardActions style={{ display: params.actionEnabled ? "block" : "none" }}>
+      <CardActions style={{ display: params.actionEnabled ? 'block' : 'none' }}>
         <Button name={params.name} size="small" onClick={params.onChange}>
           <Typography variant="button" color="textSecondary" component="p">
             Tap to bid
@@ -264,7 +291,7 @@ function MCheckbox(params) {
           <Checkbox
             name={params.name}
             id={params.id}
-            color={"primary"}
+            color={'primary'}
             checked={params.value}
             onChange={params.onChange}
             value={params.name}
@@ -278,14 +305,15 @@ function MCheckbox(params) {
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
-      {"Copyright © biD&Win "}
+      {'Copyright © biD&Win '}
       {new Date().getFullYear()}
     </Typography>
   );
 }
 function MTextField(params) {
   const classes = useStyles();
-  if (params.type === "select") {
+  const [showPwd, setShowPwd] = useState(params.showPassword);
+  if (params.type === 'select') {
     return (
       <TextField
         key={params.name}
@@ -301,13 +329,13 @@ function MTextField(params) {
         name={params.name}
         SelectProps={{
           MenuProps: {
-            className: classes.menu
-          }
+            className: classes.menu,
+          },
         }}
         helperText={params.helperText}
         variant="outlined"
       >
-        {params.data.map(option => (
+        {params.data.map((option) => (
           <MenuItem key={option.value} value={option.value}>
             {option.label}
           </MenuItem>
@@ -315,10 +343,9 @@ function MTextField(params) {
       </TextField>
     );
   } else if (
-    params.type === "text" ||
-    params.type === "number" ||
-    params.type === "email" ||
-    params.type === "password"
+    params.type === 'text' ||
+    params.type === 'number' ||
+    params.type === 'email'
   ) {
     return (
       <TextField
@@ -331,18 +358,63 @@ function MTextField(params) {
         autoFocus={params.autoFocus ? params.autoFocus : false}
         name={params.name}
         fullWidth={params.fullWidth ? params.fullWidth : false}
-        label={"" + params.label}
+        label={'' + params.label}
         className={clsx(classes.textField, classes.dense)}
         margin="dense"
         onBlur={params.onBlur}
         rows={params.rows ? params.rows : 1}
         onChange={params.onChange}
         value={params.value}
-        variant={params.variant ? params.variant : "outlined"}
+        variant={params.variant ? params.variant : 'outlined'}
         helperText={params.helperText}
       />
     );
-  } else if (params.type === "date") {
+  } else if (params.type === 'password') {
+    
+    return (
+      <>
+        <InputLabel htmlFor={params.id}>{params.label}</InputLabel>
+        <OutlinedInput
+          id={params.id}
+          disabled={params.disabled ? params.disabled : false}
+          required={params.required ? params.required : false}
+          error={params.error ? params.error : false}
+          multiline={params.multiline ? params.multiline : false}
+          type={showPwd?'text':'password'}
+          autoFocus={params.autoFocus ? params.autoFocus : false}
+          name={params.name}
+          fullWidth={params.fullWidth ? params.fullWidth : false}
+          placeholder={'' + params.label}
+          className={clsx(classes.textField, classes.dense)}
+          margin="dense"
+          onBlur={params.onBlur}
+          rows={params.rows ? params.rows : 1}
+          onChange={params.onChange}
+          value={params.value}
+          variant={params.variant ? params.variant : 'outlined'}
+          helperText={params.helperText}
+          endAdornment={
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={() => {
+                  if (showPwd) {
+                    setShowPwd(false);
+                  } else {
+                    setShowPwd(true);
+                  }
+                }}
+                onMouseDown={() => {}}
+              >
+                
+                {showPwd ? <Visibility /> : <VisibilityOff />}
+              </IconButton>
+            </InputAdornment>
+          }
+        />
+      </>
+    );
+  } else if (params.type === 'date') {
     return (
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <DatePicker
@@ -369,7 +441,7 @@ function MTextField(params) {
 }
 function STable(params) {
   let data = params.data;
-  let tbody = "";
+  let tbody = '';
   for (let i = 0; i < data.length; i++) {
     const e = data[i];
     tbody += (
@@ -394,10 +466,10 @@ function STable(params) {
 function MMenu(params) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-  const handleMenu = event => {
+  const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = str => {
+  const handleClose = (str) => {
     setAnchorEl(null);
     console.log(str);
     params.handleClose(str);
@@ -405,7 +477,7 @@ function MMenu(params) {
   const menuItems = params.menuitems;
   const mItems = menuItems.map((mi, idx) => {
     return (
-      <MenuItem key={idx} onClick={e => handleClose(mi.name)}>
+      <MenuItem key={idx} onClick={(e) => handleClose(mi.name)}>
         {mi.value}
       </MenuItem>
     );
@@ -425,13 +497,13 @@ function MMenu(params) {
         id="menu-appbar"
         anchorEl={anchorEl}
         anchorOrigin={{
-          vertical: "top",
-          horizontal: "right"
+          vertical: 'top',
+          horizontal: 'right',
         }}
         keepMounted
         transformOrigin={{
-          vertical: "top",
-          horizontal: "right"
+          vertical: 'top',
+          horizontal: 'right',
         }}
         open={open}
         onClose={handleClose}
@@ -443,11 +515,16 @@ function MMenu(params) {
 }
 function MAppBar(params) {
   const classes = useStyles();
-  const handleMenu = event => {
+  const handleMenu = (event) => {
     params.handleIconClick();
   };
   const iconbutton = (
-    <IconButton onClick={handleMenu} edge="start" color="inherit" aria-label="back">
+    <IconButton
+      onClick={handleMenu}
+      edge="start"
+      color="inherit"
+      aria-label="back"
+    >
       <ArrowBackIcon />
     </IconButton>
   );
@@ -456,7 +533,7 @@ function MAppBar(params) {
     <div>
       <AppBar position="static">
         <Toolbar>
-          {params.icon ? iconbutton : ""}
+          {params.icon ? iconbutton : ''}
           <Typography variant="h6" className={classes.title}>
             {params.name}
           </Typography>
@@ -471,24 +548,44 @@ function MSnackbar(params) {
   return (
     <Snackbar
       anchorOrigin={{
-        vertical: params.vPos ? params.vPos : "bottom",
-        horizontal: params.hPos ? params.hPos : "left"
+        vertical: params.vPos ? params.vPos : 'bottom',
+        horizontal: params.hPos ? params.hPos : 'left',
       }}
       open={params.open}
-      autoHideDuration={params.autoHideDuration ? params.autoHideDuration : 600000}
+      autoHideDuration={
+        params.autoHideDuration ? params.autoHideDuration : 600000
+      }
       onClose={params.onClose}
       className={classes.info}
       ContentProps={{
-        "aria-describedby": "message-id"
+        'aria-describedby': 'message-id',
       }}
       message={params.message}
       action={[
-        <IconButton key="close" aria-label="close" color="inherit" className={classes.close} onClick={params.onClose}>
+        <IconButton
+          key="close"
+          aria-label="close"
+          color="inherit"
+          className={classes.close}
+          onClick={params.onClose}
+        >
           <CloseIcon />
-        </IconButton>
+        </IconButton>,
       ]}
     />
   );
 }
 
-export { MTextField, MButton, MDialog, MSwithch, MCheckbox, MSnackbar, Copyright, MCard, MAppBar, STable, MMenu };
+export {
+  MTextField,
+  MButton,
+  MDialog,
+  MSwithch,
+  MCheckbox,
+  MSnackbar,
+  Copyright,
+  MCard,
+  MAppBar,
+  STable,
+  MMenu,
+};

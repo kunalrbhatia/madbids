@@ -129,6 +129,8 @@ class Login extends Component {
               helperText={emailHelper}
             ></MTextField>
             <MTextField
+              id="password_field"
+              showPassword={true}
               required={true}
               type="password"
               name="password"
