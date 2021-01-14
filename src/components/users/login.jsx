@@ -117,7 +117,6 @@ class Login extends Component {
             }}
           >
             <MTextField
-              
               required={true}
               type="email"
               value={email}
