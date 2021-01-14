@@ -40,6 +40,7 @@ import {
   Menu,
   InputLabel,
   OutlinedInput,
+  FormControl,
 } from '@material-ui/core/';
 import CloseIcon from '@material-ui/icons/Close';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -360,7 +361,6 @@ function MTextField(params) {
         fullWidth={params.fullWidth ? params.fullWidth : false}
         label={'' + params.label}
         className={clsx(classes.textField, classes.dense)}
-        margin="dense"
         onBlur={params.onBlur}
         rows={params.rows ? params.rows : 1}
         onChange={params.onChange}
@@ -370,29 +370,28 @@ function MTextField(params) {
       />
     );
   } else if (params.type === 'password') {
-    
     return (
-      <>
+      <FormControl
+        className={clsx(classes.margin, classes.textField)}
+        variant="outlined"
+        fullWidth={params.fullWidth ? params.fullWidth : false}
+      >
         <InputLabel htmlFor={params.id}>{params.label}</InputLabel>
         <OutlinedInput
           id={params.id}
+          labelWidth={90}
           disabled={params.disabled ? params.disabled : false}
           required={params.required ? params.required : false}
           error={params.error ? params.error : false}
           multiline={params.multiline ? params.multiline : false}
-          type={showPwd?'text':'password'}
+          type={showPwd ? 'text' : 'password'}
           autoFocus={params.autoFocus ? params.autoFocus : false}
           name={params.name}
           fullWidth={params.fullWidth ? params.fullWidth : false}
           placeholder={'' + params.label}
-          className={clsx(classes.textField, classes.dense)}
-          margin="dense"
           onBlur={params.onBlur}
-          rows={params.rows ? params.rows : 1}
           onChange={params.onChange}
           value={params.value}
-          variant={params.variant ? params.variant : 'outlined'}
-          helperText={params.helperText}
           endAdornment={
             <InputAdornment position="end">
               <IconButton
@@ -406,13 +405,12 @@ function MTextField(params) {
                 }}
                 onMouseDown={() => {}}
               >
-                
                 {showPwd ? <Visibility /> : <VisibilityOff />}
               </IconButton>
             </InputAdornment>
           }
         />
-      </>
+      </FormControl>
     );
   } else if (params.type === 'date') {
     return (

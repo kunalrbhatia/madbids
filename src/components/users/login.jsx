@@ -130,7 +130,7 @@ class Login extends Component {
             ></MTextField>
             <MTextField
               id="password_field"
-              showPassword={true}
+              showPassword={false}
               required={true}
               type="password"
               name="password"
