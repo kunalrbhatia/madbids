@@ -379,7 +379,7 @@ class NewUser extends Component {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href={ROUTES.SIGN_IN} variant="body2" onClick={()=>{this.props.history.push(ROUTES.SIGN_IN)}}>
+                <Link variant="body2" onClick={()=>{this.props.history.push(ROUTES.SIGN_IN)}}>
                   {"Login"}
                 </Link>
               </Grid>
