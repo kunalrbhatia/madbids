@@ -156,12 +156,12 @@ class Login extends Component {
             </MButton>
             <Grid container>
               <Grid item xs>
-                <Link href={ROUTES.PASSWORD_FORGET} variant="body2">
+                <Link variant="body2" onClick={()=>{this.props.history.push(ROUTES.PASSWORD_FORGET)}}>
                   Forgot password?
                 </Link>
               </Grid>
               <Grid item>
-                <Link href={ROUTES.SIGN_UP} variant="body2">
+                <Link variant="body2" onClick={()=>{this.props.history.push(ROUTES.SIGN_UP);}}>
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>
